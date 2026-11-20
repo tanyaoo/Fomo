@@ -60,16 +60,3 @@ jobs:
             gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --draft --target "$RELEASE_SHA" --title "Fomo $RELEASE_TAG"
           fi
           node scripts/release-recover.cjs "$GITHUB_REPOSITORY" "$RELEASE_TAG" recovered-build
-      - name: Recover legacy release
-        env:
-          GH_TOKEN: ${{ secrets.MEMOFLOW_RELEASES_TOKEN }}
-          RELEASE_TAG: ${{ inputs.tag }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -n "$GH_TOKEN"
-          if ! gh release view "$RELEASE_TAG" --repo tanyaoo/FOMO-releases >/dev/null 2>&1; then
-            gh api repos/tanyaoo/FOMO-releases --silent
-            gh release create "$RELEASE_TAG" --repo tanyaoo/FOMO-releases --draft --target main --title "Fomo $RELEASE_TAG"
-          fi
-          node scripts/release-recover.cjs tanyaoo/FOMO-releases "$RELEASE_TAG" recovered-build

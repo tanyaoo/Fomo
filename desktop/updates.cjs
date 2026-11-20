@@ -2,8 +2,8 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { atomicWrite } = require('./file-store.cjs');
-const FEED = Object.freeze({ provider: 'github', owner: 'tanyaoo', repo: 'FOMO-releases', private: false, releaseType: 'release' });
-const RELEASES = 'https://github.com/tanyaoo/FOMO-releases/releases';
+const FEED = Object.freeze({ provider: 'github', owner: 'tanyaoo', repo: 'Fomo', private: false, releaseType: 'release' });
+const RELEASES = 'https://github.com/tanyaoo/Fomo/releases';
 class Updates {
   constructor({ updater, directory, version, enabled, notify = () => {} }) {
     Object.assign(this, { updater, directory, notify, enabled });

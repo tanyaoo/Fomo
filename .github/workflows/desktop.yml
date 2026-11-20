@@ -104,21 +104,3 @@ jobs:
           fi
           gh release create "$RELEASE_TAG" --draft --target "$RELEASE_SHA" --title "Fomo $RELEASE_TAG" --generate-notes
           node scripts/release-recover.cjs "$GH_REPO" "$RELEASE_TAG" release
-      - name: Publish public installer feed
-        if: env.PUBLISH_RELEASE == 'true'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.MEMOFLOW_RELEASES_TOKEN }}
-          GH_REPO: tanyaoo/FOMO-releases
-          RELEASE_TAG: ${{ steps.version.outputs.tag }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "Configure a fine-grained MEMOFLOW_RELEASES_TOKEN with Contents write access to the installer repository."
-            exit 1
-          fi
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "Public releases are immutable. Bump the version rather than replacing an installed update."
-            exit 1
-          fi
-          gh release create "$RELEASE_TAG" --target main --draft --title "Fomo $RELEASE_TAG" --notes "Windows installer. Source code is maintained separately."
-          node scripts/release-recover.cjs "$GH_REPO" "$RELEASE_TAG" release

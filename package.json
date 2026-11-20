@@ -1,6 +1,6 @@
 {
   "name": "fomo",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "private": true,
   "description": "本地优先的个人卡片笔记桌面应用。",
   "author": "Tyao",
@@ -100,7 +100,7 @@
       {
         "provider": "github",
         "owner": "tanyaoo",
-        "repo": "FOMO-releases",
+        "repo": "Fomo",
         "private": false,
         "releaseType": "release"
       }

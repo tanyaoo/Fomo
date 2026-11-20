@@ -1,6 +1,9 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),{EventEmitter}=require('node:events'),fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os');
 const {Updates,FEED}=require('../desktop/updates.cjs');
+test('installed updates use the public Fomo repository',()=>{
+ assert.deepEqual(FEED,{provider:'github',owner:'tanyaoo',repo:'Fomo',private:false,releaseType:'release'});
+});
 async function fixture(t,auto=true){
  const parent=path.resolve(__dirname,'../work');await fs.mkdir(parent,{recursive:true});const directory=await fs.mkdtemp(path.join(parent,'memo-updates-'));t.after(()=>fs.rm(directory,{recursive:true,force:true}));
  const updater=new EventEmitter();updater.setFeedURL=value=>updater.feed=value;updater.checks=0;updater.downloads=0;updater.installs=0;

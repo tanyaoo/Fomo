@@ -14,7 +14,7 @@ for(const required of ['dist/share.css','desktop/share-images.cjs','dist/editor.
 assert.match(fs.readFileSync(path.join(root,'release/latest.yml'),'utf8'),new RegExp('version: '+version.replace(/\./g,'\\.')));
 const artifacts={};for(const ext of ['exe','zip']){const filename=`Fomo-${version}-x64.${ext}`,file=path.join(root,'release',filename),data=fs.readFileSync(file);assert.ok(data.length>1000000,filename);artifacts[ext]={filename,bytes:data.length,sha256:hash(data)};}
 const yaml=require('js-yaml'),update=yaml.load(fs.readFileSync(path.join(root,'release/latest.yml'),'utf8')),feed=yaml.load(fs.readFileSync(path.join(root,'release/win-unpacked/resources/app-update.yml'),'utf8'));
-assert.equal(feed.provider,'github');assert.equal(feed.owner,'tanyaoo');assert.equal(feed.repo,'FOMO-releases');assert.equal(feed.private,false);assert.ok(!feed.token&&!feed.requestHeaders,'发布凭据不得进入安装包');
+assert.equal(feed.provider,'github');assert.equal(feed.owner,'tanyaoo');assert.equal(feed.repo,'Fomo');assert.equal(feed.private,false);assert.ok(!feed.token&&!feed.requestHeaders,'发布凭据不得进入安装包');
 assert.equal(update.version,version);assert.equal(update.path,artifacts.exe.filename);assert.equal(update.sha512,crypto.createHash('sha512').update(fs.readFileSync(path.join(root,'release',update.path))).digest('base64'),'更新元数据摘要必须与本次安装包一致');
 const {signingConfiguration,validateSignature}=require('./windows-signing.cjs'),signingConfig=signingConfiguration();let signing={mode:signingConfig.mode,verified:false};
 if(signingConfig.mode!=='none'){
