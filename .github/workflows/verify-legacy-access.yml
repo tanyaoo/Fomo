@@ -1,0 +1,24 @@
+name: Verify legacy update repository access
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check configured token access without changing releases
+        env:
+          GH_TOKEN: ${{ secrets.MEMOFLOW_RELEASES_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "MEMOFLOW_RELEASES_TOKEN is not configured."
+            exit 1
+          fi
+          if [ "$(gh api repos/tanyaoo/FOMO-releases --jq '.permissions.push // false')" != true ]; then
+            echo "The token did not report push access to the legacy update repository."
+            exit 1
+          fi
+          echo "The token reports push access to the legacy update repository. No release was changed."
