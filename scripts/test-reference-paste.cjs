@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),root=path.resolve(__dirname,'..'),electron=require('electron');
+if(typeof electron==='string'){
+ const env={...process.env,MEMOFLOW_ALLOW_MULTI_INSTANCE:'1'};delete env.ELECTRON_RUN_AS_NODE;
+ const child=require('node:child_process').spawn(electron,['--headless','--no-sandbox','--disable-gpu',__filename],{env,stdio:'inherit',windowsHide:true});const timer=setTimeout(()=>child.kill(),90000);child.on('exit',code=>{clearTimeout(timer);process.exitCode=code??1;});
+}else{
+ const {app,BrowserWindow}=electron,Core=require('../dist/core.js');fs.mkdirSync(path.join(root,'work'),{recursive:true});const dir=fs.mkdtempSync(path.join(root,'work/reference-paste-'));process.env.MEMOFLOW_DATA_DIR=dir;app.setAppPath(root);app.setPath('userData',path.join(dir,'profile'));fs.mkdirSync(path.join(dir,'data'));const now=new Date().toISOString();
+ fs.writeFileSync(path.join(dir,'data/state.json'),JSON.stringify(Core.upgrade({memos:[{id:'source',content:'测试来源 #标签 需要显示的笔记摘要',html:'',images:[],created:now,updated:now,deleted:false,starred:false}]})));
+ const pause=ms=>new Promise(r=>setTimeout(r,ms));
+ async function run(){let w;for(let i=0;i<180;i++){w=BrowserWindow.getAllWindows().find(x=>x.webContents.getURL().includes('app/index.html'));if(w)break;await pause(40);}assert.ok(w);w.webContents.setBackgroundThrottling(false);const ev=s=>w.webContents.executeJavaScript(s,true);const until=async s=>{for(let i=0;i<200;i++){if(await ev(s))return;await pause(40);}throw Error('Timeout: '+s);};await until('!!document.querySelector("#editor")?.memoEditor && !!document.querySelector("[data-id=source] .memo-menu-button")');
+ await ev(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{write:async items=>{window.copiedPlain=await(await items[0].getType('text/plain')).text();window.copiedHtml=await(await items[0].getType('text/html')).text();}}});document.querySelector('[data-id="source"] .memo-menu-button').click();document.querySelector('.memo-menu [data-action="copy-link"]').click();true`);
+ await until('!!window.copiedHtml');assert.equal(await ev('window.copiedPlain'),'fomo://note/source');assert.match(await ev('window.copiedHtml'),/↗.*测试来源/);
+ await ev(`(()=>{const e=document.querySelector('#editor'),data=new DataTransfer();data.setData('text/plain',window.copiedPlain);data.setData('text/html',window.copiedHtml);e.memoEditor.focus();e.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));})()`);
+ await until('!!document.querySelector("#editor .editor-reference-preview")');assert.deepEqual(await ev('document.querySelector("#editor").memoEditor.getReferenceIds()'),['source']);assert.match(await ev('document.querySelector("#editor").textContent'),/测试来源/);await ev('document.querySelector("#saveMemo").click()');await until('document.querySelectorAll("#memos>.memo").length===2');
+ const saved=await ev('MemoStore.readState().then(s=>s.memos.find(m=>m.id!=="source"))');assert.ok(saved.content.includes('fomo://note/source'));assert.ok(saved.html.includes('data-memo-id="source"'));assert.ok(await ev('!!document.querySelector("#memos [data-memo-id=source]")'));
+ await ev(`document.querySelector('#memos [data-id="source"] .memo-menu-button').click();document.querySelector('.memo-menu [data-action="related"]').click()`);await until('!!document.querySelector(".note-detail")');await ev('document.querySelector("#detailTabs [data-detail-tab=quoted]").click()');await until('document.querySelectorAll("#detailTabContent [data-relation-id]").length>0');
+ console.log('PASS: copied note link pastes as a reference, saves its identity and appears in backlinks');app.exit(0);
+ }require('../desktop/main.cjs');app.whenReady().then(run).catch(error=>{console.error(error);app.exit(1)});
+}

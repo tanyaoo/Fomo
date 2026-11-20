@@ -1,0 +1,75 @@
+name: Recover existing draft release
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Original tag build run ID
+        required: true
+        type: string
+      tag:
+        description: Existing release tag, for example v1.2.3
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: fomo-release-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate original run and download retained build
+        id: original
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          run_json=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID")
+          test "$(jq -r .status <<<"$run_json")" = completed
+          test "$(jq -r .event <<<"$run_json")" = push
+          test "$(jq -r .head_branch <<<"$run_json")" = "$RELEASE_TAG"
+          test "$(jq -r .path <<<"$run_json")" = .github/workflows/desktop.yml
+          run_sha=$(jq -r .head_sha <<<"$run_json")
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_TAG" --jq .sha)
+          test "$run_sha" = "$tag_sha"
+          mkdir recovered-build
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name "fomo-$RELEASE_TAG-$RUN_ID" --dir recovered-build
+          node scripts/verify-release-artifact.cjs recovered-build "$RELEASE_TAG" "$run_sha"
+          echo "sha=$run_sha" >> "$GITHUB_OUTPUT"
+      - name: Recover source release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_SHA: ${{ steps.original.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh api "repos/$GITHUB_REPOSITORY" --silent
+            gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --draft --target "$RELEASE_SHA" --title "Fomo $RELEASE_TAG"
+          fi
+          node scripts/release-recover.cjs "$GITHUB_REPOSITORY" "$RELEASE_TAG" recovered-build
+      - name: Recover legacy release
+        env:
+          GH_TOKEN: ${{ secrets.MEMOFLOW_RELEASES_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          if ! gh release view "$RELEASE_TAG" --repo tanyaoo/FOMO-releases >/dev/null 2>&1; then
+            gh api repos/tanyaoo/FOMO-releases --silent
+            gh release create "$RELEASE_TAG" --repo tanyaoo/FOMO-releases --draft --target main --title "Fomo $RELEASE_TAG"
+          fi
+          node scripts/release-recover.cjs tanyaoo/FOMO-releases "$RELEASE_TAG" recovered-build

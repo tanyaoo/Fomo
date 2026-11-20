@@ -1,0 +1,33 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {planReviewSync}=require('../desktop/obsidian-review-sync.cjs');
+const fs=require('node:fs/promises'),path=require('node:path'),{FileStore}=require('../desktop/file-store.cjs'),sync=require('../desktop/obsidian-sync.cjs');
+async function fixture(t){const root=await fs.mkdtemp(path.join(process.cwd(),'work','review-sync-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));const folder=path.join(root,'Fomo');await fs.mkdir(folder);const store=new FileStore(path.join(root,'data'));let state=await store.init(),next=structuredClone(state),created='2026-01-01T00:00:00.000Z';next.memos.push(...['a','b'].map(id=>({id,content:id,created,updated:created,deleted:false,images:[]})));await store.save(state,next);await sync.apply(store,folder,(await sync.preview(store,folder)).token);state=await store.readState();next=structuredClone(state);next.reviewed={'2026-11-07':['a','private']};await store.save(state,next);return {root,folder,store};}
+test('review marks merge in both directions only for paired notes',()=>{
+ const fomo={'2026-11-07':['shared-a','local-private'],'2026-11-08':['shared-b']},obsidian={'2026-11-07':['shared-b','vault-only'],'2026-11-09':['shared-a']},before=structuredClone({fomo,obsidian});
+ const result=planReviewSync(fomo,obsidian,['shared-a','shared-b']);assert.deepEqual(result,{toFomo:{'2026-11-07':['shared-b'],'2026-11-09':['shared-a']},toObsidian:{'2026-11-07':['shared-a'],'2026-11-08':['shared-b']}});assert.deepEqual({fomo,obsidian},before);assert.equal(JSON.stringify(result).includes('private'),false);assert.equal(JSON.stringify(result).includes('vault-only'),false);
+});
+test('merged progress is idempotent and never removes unpaired marks',()=>{
+ const fomo={'2026-11-07':['a','local']},obsidian={'2026-11-07':['b','vault']},eligible=['a','b'],first=planReviewSync(fomo,obsidian,eligible);fomo['2026-11-07'].push(...first.toFomo['2026-11-07']);obsidian['2026-11-07'].push(...first.toObsidian['2026-11-07']);assert.deepEqual(planReviewSync(fomo,obsidian,eligible),{toFomo:{},toObsidian:{}});assert.ok(fomo['2026-11-07'].includes('local'));assert.ok(obsidian['2026-11-07'].includes('vault'));
+});
+test('invalid or ambiguous progress and identity lists are rejected',()=>{
+ for(const progress of [null,[],{'bad':['a']},{'2026-11-07':['a','a']},{'2026-11-07':['../outside']},{'2026-11-07':'a'}])assert.throws(()=>planReviewSync(progress,{},[]),/回顾进度/);
+ for(const eligible of [null,['a','a'],['../outside']])assert.throws(()=>planReviewSync({}, {},eligible),/同步笔记身份/);
+});
+test('eligible review identities require a unique matching active synchronized note',()=>{
+ const {eligibleReviewIds}=require('../desktop/obsidian-sync.cjs'),{encode}=require('../desktop/obsidian-sync-plan.cjs'),created='2026-01-01T00:00:00.000Z',note=(id,extra={})=>({id,created,content:id,...extra}),files=[{text:encode(note('ok'))},{text:encode(note('duplicate'))},{text:encode(note('duplicate'))},{text:encode(note('deleted'))},{text:encode(note('wrong-date',{created:'2025-01-01T00:00:00.000Z'}))},{text:encode(note('unpaired'))},{text:'not a Fomo document'}];
+ const snap={files,state:{memos:['ok','duplicate','wrong-date','unpaired'].map(id=>note(id)).concat(note('deleted',{deleted:true}))},manifest:{entries:{ok:{deleted:false},duplicate:{deleted:false},'wrong-date':{deleted:false},deleted:{deleted:false}}}};assert.deepEqual(eligibleReviewIds(snap),['ok']);
+});
+test('review coordinator merges both directions while preserving unrelated progress',async t=>{
+ const {folder,store}=await fixture(t),remote={'2026-11-07':['b','outside']};const opts={getReviews:async({notes})=>{const allowed=new Set(notes.map(n=>n.id));return Object.fromEntries(Object.entries(remote).map(([day,ids])=>[day,ids.filter(id=>allowed.has(id))]));},mergeReviews:async({progress})=>{for(const [day,ids] of Object.entries(progress))remote[day]=[...new Set([...(remote[day]||[]),...ids])];}};
+ const p=await sync.previewReviewProgress(store,folder,opts);assert.equal(p.notes,2);assert.equal(p.toFomo,1);assert.equal(p.toObsidian,1);assert.deepEqual(await sync.applyReviewProgress(store,folder,p.token,opts),{toFomo:1,toObsidian:1});assert.deepEqual((await store.readState()).reviewed['2026-11-07'],['a','private','b']);assert.deepEqual(remote['2026-11-07'],['b','outside','a']);const next=await sync.previewReviewProgress(store,folder,opts);assert.equal(next.toFomo,0);assert.equal(next.toObsidian,0);
+});
+test('lost acknowledgement leaves progress safe to retry and stale previews fail',async t=>{
+ const {folder,store}=await fixture(t),remote={'2026-11-07':['b']};let first=true;const opts={getReviews:async()=>structuredClone(remote),mergeReviews:async({progress})=>{for(const [day,ids] of Object.entries(progress))remote[day]=[...new Set([...(remote[day]||[]),...ids])];if(first){first=false;throw Error('回执丢失');}}};
+ const p=await sync.previewReviewProgress(store,folder,opts);await assert.rejects(sync.applyReviewProgress(store,folder,p.token,opts),/回执丢失/);assert.deepEqual((await store.readState()).reviewed['2026-11-07'],['a','private']);const retry=await sync.previewReviewProgress(store,folder,opts);assert.equal(retry.toObsidian,0);assert.equal(retry.toFomo,1);await sync.applyReviewProgress(store,folder,retry.token,opts);assert.deepEqual((await store.readState()).reviewed['2026-11-07'],['a','private','b']);
+ const stale=await sync.previewReviewProgress(store,folder,opts);remote['2026-11-08']=['a'];await assert.rejects(sync.applyReviewProgress(store,folder,stale.token,opts),/预览已过期/);
+});
+test('a concurrent Fomo mark during Obsidian merge is preserved and retried',async t=>{
+ const {folder,store}=await fixture(t),remote={'2026-11-07':['b']};let injected=false;const opts={getReviews:async()=>structuredClone(remote),mergeReviews:async({progress})=>{for(const [day,ids] of Object.entries(progress))remote[day]=[...new Set([...(remote[day]||[]),...ids])];if(!injected){injected=true;const base=await store.readState(),next=structuredClone(base);next.reviewed['2026-11-08']=['a'];await store.save(base,next);}}};
+ const p=await sync.previewReviewProgress(store,folder,opts);await assert.rejects(sync.applyReviewProgress(store,folder,p.token,opts),/回顾状态已变化/);let state=await store.readState();assert.deepEqual(state.reviewed['2026-11-08'],['a']);assert.deepEqual(state.reviewed['2026-11-07'],['a','private']);const retry=await sync.previewReviewProgress(store,folder,opts);await sync.applyReviewProgress(store,folder,retry.token,opts);state=await store.readState();assert.deepEqual(state.reviewed['2026-11-07'],['a','private','b']);assert.deepEqual(state.reviewed['2026-11-08'],['a']);assert.deepEqual(remote['2026-11-08'],['a']);
+});

@@ -1,0 +1,151 @@
+{
+  "name": "fomo",
+  "version": "1.0.60",
+  "private": true,
+  "description": "本地优先的个人卡片笔记桌面应用。",
+  "author": "Tyao",
+  "main": "desktop/main.cjs",
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tanyaoo/Fomo.git"
+  },
+  "scripts": {
+    "postinstall": "node node_modules/electron/install.js",
+    "start": "electron .",
+    "dev": "node scripts/dev-preview.cjs",
+    "pretest": "node scripts/check-env.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "pretest:obsidian-package": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:obsidian-package": "node scripts/check-obsidian-plugin.cjs",
+    "clean": "node scripts/clean.cjs --yes",
+    "clean:all": "node scripts/clean.cjs --release --yes",
+    "clean:dry": "node scripts/clean.cjs",
+    "test:desktop": "node scripts/smoke-desktop.cjs",
+    "preview:studio": "node scripts/preview-desktop.cjs",
+    "preview:sidebar": "node scripts/sidebar-preview-server.cjs",
+    "audit:visual": "electron scripts/audit-visual.cjs",
+    "audit:matrix": "electron scripts/audit-matrix.cjs",
+    "audit:icons": "electron scripts/audit-icon-states.cjs",
+    "prebuild": "node scripts/check-env.cjs",
+    "build": "node build.cjs",
+    "pack": "electron-builder --config electron-builder.config.cjs --dir",
+    "dist:win": "electron-builder --config electron-builder.config.cjs --win nsis zip --x64 --publish never",
+    "signing:status": "node scripts/windows-signing.cjs",
+    "prestart": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "pretest:desktop": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "prepreview:studio": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "prepack": "node scripts/check-env.cjs && node build.cjs",
+    "predist:win": "node scripts/check-env.cjs && node build.cjs",
+    "test:lifecycle": "node scripts/test-lifecycle.cjs",
+    "test:workspace": "node scripts/test-workspace.cjs",
+    "test:exports": "node scripts/test-exports.cjs",
+    "pretest:settings": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:settings": "node scripts/test-settings.cjs",
+    "pretest:ai-insight": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:ai-insight": "node scripts/test-ai-insights.cjs",
+    "test:agent-chat": "node scripts/test-agent-chat.cjs",
+    "test:dialogs": "node scripts/test-dialogs.cjs",
+    "test:discovery": "node scripts/test-discovery.cjs",
+    "pretest:feedback": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:feedback": "node scripts/test-feedback.cjs",
+    "pretest:editor": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:editor": "node scripts/test-editor-interactions.cjs",
+    "test:reference-navigation": "node scripts/test-reference-navigation.cjs",
+    "test:annotation-drafts": "node scripts/test-annotation-drafts.cjs",
+    "test:updates": "node scripts/test-updates.cjs",
+    "pretest:updates": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "pretest:workspace": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "postdist:win": "node scripts/check-package.cjs",
+    "test:refinements": "node scripts/test-refinements.cjs",
+    "test:list-menu": "node scripts/test-list-menu.cjs",
+    "test:tags-cards": "node scripts/test-tags-cards.cjs",
+    "test:inline-edit": "node scripts/test-inline-edit.cjs",
+    "pretest:sidebar": "node scripts/check-env.cjs && node scripts/build-icons.cjs && node scripts/build-editor.cjs",
+    "test:sidebar": "node scripts/test-sidebar.cjs",
+    "test:tag-management": "node scripts/test-tag-management.cjs",
+    "pretest:refinements": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "pretest:cards": "node scripts/check-env.cjs && node scripts/build-editor.cjs",
+    "test:cards": "node scripts/test-card-layout.cjs",
+    "test:share-images": "node scripts/test-share-images.cjs",
+    "test:detail-relations": "node scripts/test-detail-relations.cjs",
+    "test:note-scrollbar": "node scripts/test-note-scrollbar.cjs",
+    "test:statistics": "node scripts/test-statistics.cjs",
+    "test:compose": "node scripts/test-compose-attachments.cjs",
+    "test:compose-editor": "node scripts/test-compose-editor.cjs",
+    "test:release": "node scripts/test-release.cjs"
+  },
+  "devDependencies": {
+    "bootstrap-icons": "1.13.1",
+    "electron": "44.9.3",
+    "electron-builder": "26.15.3",
+    "electron-updater": "6.8.9",
+    "esbuild": "0.28.2",
+    "js-yaml": "4.3.2",
+    "prosemirror-commands": "1.7.2",
+    "prosemirror-history": "1.5.1",
+    "prosemirror-inputrules": "1.5.1",
+    "prosemirror-keymap": "1.2.3",
+    "prosemirror-model": "1.25.12",
+    "prosemirror-schema-basic": "1.2.5",
+    "prosemirror-schema-list": "1.5.1",
+    "prosemirror-state": "1.4.4",
+    "prosemirror-transform": "1.12.2",
+    "prosemirror-view": "1.42.6"
+  },
+  "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "tanyaoo",
+        "repo": "FOMO-releases",
+        "private": false,
+        "releaseType": "release"
+      }
+    ],
+    "appId": "com.tanyaoo.fomo",
+    "productName": "Fomo",
+    "protocols": [
+      {
+        "name": "Fomo note link",
+        "schemes": [
+          "fomo",
+          "writeboom",
+          "memo-flow"
+        ]
+      }
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "desktop/assets"
+    },
+    "files": [
+      "desktop/**/*",
+      "dist/**/*",
+      "package.json",
+      "THIRD-PARTY-NOTICES.md"
+    ],
+    "asar": true,
+    "electronDist": "node_modules/electron/dist",
+    "npmRebuild": false,
+    "win": {
+      "icon": "desktop/assets/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "guid": "7ac11bba-4499-5617-b4e9-38d3847c1e7d",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "artifactName": "Fomo-${version}-${arch}.${ext}"
+  }
+}

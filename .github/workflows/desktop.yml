@@ -1,0 +1,118 @@
+name: Windows desktop
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fomo-release-${{ github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      PUBLISH_RELEASE: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    steps:
+      - name: Prevent rebuilding a release on retry
+        if: env.PUBLISH_RELEASE == 'true' && github.run_attempt != 1
+        shell: bash
+        run: |
+          echo "Release runs must not be rebuilt. Recover using the retained original artifact."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Read package version
+        id: version
+        run: node -e "require('node:fs').appendFileSync(process.env.GITHUB_OUTPUT, 'tag=v' + require('./package.json').version + '\n')"
+      - if: env.PUBLISH_RELEASE == 'true'
+        env:
+          MEMOFLOW_RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.version.outputs.tag }}
+        run: node scripts/check-release.cjs
+      - run: npm run test:release
+      - run: npm run test:obsidian-package
+      - name: Build Windows packages with explicit signing mode
+        env:
+          MEMOFLOW_WINDOWS_SIGNING: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING || 'none' }}
+          MEMOFLOW_REQUIRE_SIGNING: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_REQUIRE_SIGNING || 'false' }}
+          MEMOFLOW_SIGNING_PUBLISHER: ${{ vars.MEMOFLOW_SIGNING_PUBLISHER }}
+          MEMOFLOW_CERTIFICATE_SHA1: ${{ vars.MEMOFLOW_CERTIFICATE_SHA1 }}
+          WIN_CSC_LINK: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING == 'certificate' && secrets.MEMOFLOW_CSC_LINK || '' }}
+          WIN_CSC_KEY_PASSWORD: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING == 'certificate' && secrets.MEMOFLOW_CSC_KEY_PASSWORD || '' }}
+          MEMOFLOW_AZURE_SIGNING_ENDPOINT: ${{ vars.MEMOFLOW_AZURE_SIGNING_ENDPOINT }}
+          MEMOFLOW_AZURE_SIGNING_ACCOUNT: ${{ vars.MEMOFLOW_AZURE_SIGNING_ACCOUNT }}
+          MEMOFLOW_AZURE_CERTIFICATE_PROFILE: ${{ vars.MEMOFLOW_AZURE_CERTIFICATE_PROFILE }}
+          AZURE_TENANT_ID: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING == 'azure' && secrets.MEMOFLOW_AZURE_TENANT_ID || '' }}
+          AZURE_CLIENT_ID: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING == 'azure' && secrets.MEMOFLOW_AZURE_CLIENT_ID || '' }}
+          AZURE_CLIENT_SECRET: ${{ env.PUBLISH_RELEASE == 'true' && vars.MEMOFLOW_WINDOWS_SIGNING == 'azure' && secrets.MEMOFLOW_AZURE_CLIENT_SECRET || '' }}
+        run: |
+          npm run signing:status
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run dist:win
+      - name: Record release asset checksums
+        if: env.PUBLISH_RELEASE == 'true'
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          cd release
+          sha256sum "Fomo-${RELEASE_TAG#v}-x64.exe" "Fomo-${RELEASE_TAG#v}-x64.zip" "Fomo-${RELEASE_TAG#v}-x64.exe.blockmap" latest.yml > SHA256SUMS.txt
+          printf '%s\n%s\n' "$RELEASE_TAG" "$RELEASE_SHA" > BUILD-IDENTITY.txt
+          cd ..
+          node scripts/verify-release-artifact.cjs release "$RELEASE_TAG" "$RELEASE_SHA"
+      - name: Preserve exact build for recovery
+        if: env.PUBLISH_RELEASE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fomo-${{ steps.version.outputs.tag }}-${{ github.run_id }}
+          path: |
+            release/*.exe
+            release/*.zip
+            release/*.blockmap
+            release/latest.yml
+            release/SHA256SUMS.txt
+            release/BUILD-IDENTITY.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish source release
+        if: env.PUBLISH_RELEASE == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release already exists; never overwrite published assets. Recover from the preserved build artifact after verifying its hashes."
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" --draft --target "$RELEASE_SHA" --title "Fomo $RELEASE_TAG" --generate-notes
+          node scripts/release-recover.cjs "$GH_REPO" "$RELEASE_TAG" release
+      - name: Publish public installer feed
+        if: env.PUBLISH_RELEASE == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.MEMOFLOW_RELEASES_TOKEN }}
+          GH_REPO: tanyaoo/FOMO-releases
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Configure a fine-grained MEMOFLOW_RELEASES_TOKEN with Contents write access to the installer repository."
+            exit 1
+          fi
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Public releases are immutable. Bump the version rather than replacing an installed update."
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" --target main --draft --title "Fomo $RELEASE_TAG" --notes "Windows installer. Source code is maintained separately."
+          node scripts/release-recover.cjs "$GH_REPO" "$RELEASE_TAG" release

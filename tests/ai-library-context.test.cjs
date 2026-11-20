@@ -1,0 +1,7 @@
+'use strict';
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {buildLibraryContext,MAX_CHARS}=require('../desktop/ai-library-context.cjs');
+const note=(id,content,deleted=false)=>({id,content,deleted,created:'2026-01-'+String(Number(id)%28+1).padStart(2,'0')});
+test('small library includes every active note without leaking trash',()=>{const value=buildLibraryContext([note('1','写作'),note('2','交易'),note('3','私密回收站',true)],'我在做什么');assert.equal(value.total,2);assert.equal(value.included,2);assert.equal(value.truncated,false);assert.deepEqual(new Set(value.notes.map(m=>m.content)),new Set(['写作','交易']));});
+test('large libraries are bounded, disclose truncation and prioritize relevant notes',()=>{const data=Array.from({length:100},(_,i)=>note(String(i),'普通笔记 '+i+'a'.repeat(2000)));data[30].content='特殊目标：交易系统'+ 'b'.repeat(2000);const value=buildLibraryContext(data,'我的交易系统怎么样');assert.equal(value.total,100);assert.equal(value.truncated,true);assert.ok(value.notes.some(m=>m.id==='30'));assert.ok(value.notes.length<100);assert.ok(value.notes.reduce((n,m)=>n+m.content.length,0)<=MAX_CHARS);assert.ok(value.notes.some(m=>m.id==='0'||m.id==='99'));});
+test('single oversized note reports incomplete coverage',()=>{const value=buildLibraryContext([note('1','文'.repeat(5000))]);assert.equal(value.truncated,true);assert.equal(value.notes[0].content.length,4000);});

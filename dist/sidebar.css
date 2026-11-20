@@ -1,0 +1,309 @@
+/* Sidebar source of truth: shared states, optical alignment and fixed hit areas. */
+/* flomo's default UI stack leads with Barlow; the bundled faces preserve its Latin metrics. */
+.fomo-shell #sidebar {--fl-font-sidebar:var(--fl-font-ui);--sidebar-muted:#949494;--sidebar-count:#767b77;--sidebar-tag-text:#121212;--sidebar-tag-hover:#121212;font-family:var(--fl-font-sidebar)}
+.fomo-shell.dark #sidebar {--sidebar-muted:#9d9d9d;--sidebar-count:#b0b8b2;--sidebar-tag-text:#fff;--sidebar-tag-hover:#fff;--green:#397354;color:#fff}
+.fomo-shell.dark #sidebar :is(.nav-item:not(.active),#quickFilters button:not(.active)) svg {color:#9d9d9d}
+.fomo-shell #sidebar .account-row {margin:0 0 6px;padding:0 10px;gap:8px;min-height:36px}
+.fomo-shell #sidebar .profile {min-height:36px;padding:6px 10px;gap:0;border-radius:8px}
+.fomo-shell #sidebar .profile .avatar,.fomo-shell #sidebar .profile small {display:none}
+.fomo-shell #sidebar #profileName {max-width:120px;text-overflow:ellipsis;overflow:hidden;font-size:18px;line-height:24px;font-weight:600}
+.fomo-shell #sidebar .profile .chevron {display:block;position:relative;flex:0 0 12px;width:12px;height:12px;margin-left:4px;font-size:0;color:var(--sidebar-muted);opacity:0;transition:opacity 180ms,color 180ms}
+.fomo-shell #sidebar .profile .chevron::after {content:"";position:absolute;left:3px;top:3px;width:5px;height:5px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
+.fomo-shell #sidebar .profile:is(:hover,:focus-visible) .chevron {opacity:1;color:var(--text)}
+.fomo-shell:not(.dark) #sidebar #profileName {color:#121212}
+.fomo-shell #sidebar #sidebarRefresh {display:none}
+.fomo-shell #sidebar #sidebarLayout {display:grid;width:28px;height:28px;min-width:28px;min-height:28px;padding:5px;color:var(--sidebar-muted);border-radius:5px}
+.fomo-shell #sidebar #sidebarLayout:hover {background:var(--hover);color:var(--text)}
+.fomo-shell #sidebar .numbers strong {font-family:var(--fl-font-number);font-weight:600;font-size:26px;line-height:27px;font-variant-numeric:tabular-nums;color:#949494;transition:color 180ms}
+.fomo-shell.system-font-sidebar #sidebar {font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif}
+.fomo-shell.system-font-win #sidebar .numbers strong {font-family:"Bahnschrift SemiCondensed","Bahnschrift Condensed",Bahnschrift,"Segoe UI Variable","Segoe UI","Microsoft YaHei",sans-serif;font-stretch:85%}
+.fomo-shell #sidebar .numbers span,.fomo-shell #sidebar .tag-heading,.fomo-shell #sidebar .heat-month {color:var(--sidebar-muted)}
+.fomo-shell #sidebar .numbers button {border-radius:4px;min-width:44px}
+.fomo-shell #sidebar .numbers span {position:relative;width:max-content;margin-top:8px;font-size:12px;font-weight:500;line-height:16px;transition:color 180ms}
+.fomo-shell #sidebar .numbers span::after {content:"";position:absolute;top:50%;left:calc(100% + 4px);width:5px;height:5px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;opacity:0;transform:translate(-2px,-50%) rotate(45deg);transition:opacity 150ms,transform 150ms}
+.fomo-shell #sidebar .numbers button:is(:hover,:focus-visible) :is(strong,span) {color:#696969}
+.fomo-shell #sidebar .numbers button:is(:hover,:focus-visible) span::after {opacity:1;transform:translate(0,-50%) rotate(45deg)}
+.fomo-shell #sidebar .nav-item {padding:0 10px;gap:12px;transform:none;font-size:14px;line-height:20px}
+.fomo-shell #sidebar .nav-item>span:first-child,.fomo-shell #sidebar .tag-select>.hash {display:grid;place-items:center;flex:0 0 16px;width:16px;height:20px}
+.fomo-shell #sidebar .nav-item svg,.fomo-shell #sidebar .tag-select>.hash svg {width:16px;height:16px;fill:currentColor;stroke:none}
+.fomo-shell #sidebar .nav-item:hover {background:var(--hover)}
+.fomo-shell #sidebar .nav-item.active {background:var(--green);color:white;font-weight:600;--sidebar-icon-cutout:var(--green)}
+.fomo-shell #sidebar .nav-all-row .nav-item {padding-right:36px}
+.fomo-shell #sidebar #toggleQuickFilters {display:grid;place-items:center;opacity:1;pointer-events:auto;top:4px;right:4px;width:28px;height:28px;padding:7px;border-radius:5px;color:var(--sidebar-muted)}
+.fomo-shell #sidebar .nav-all-row:has(.active) #toggleQuickFilters {color:white}
+.fomo-shell #sidebar #toggleQuickFilters:hover {background:#0000000d}
+.fomo-shell #sidebar #quickFilters {display:grid;gap:2px;padding:3px 0 5px 20px}
+.fomo-shell #sidebar #quickFilters[hidden] {display:none}
+.fomo-shell #sidebar #quickFilters button {min-height:32px;border-radius:6px;font-size:13px;color:var(--sidebar-muted)}
+.fomo-shell #sidebar #quickFilters button.active {color:var(--green-dark);background:var(--green-pale)}
+.fomo-shell #sidebar #quickFilters button:disabled {opacity:.5;cursor:default}
+.fomo-shell #sidebar .nav-capability {margin-left:auto;font-size:11px;color:var(--sidebar-muted);white-space:nowrap;font-weight:400}
+.fomo-shell #sidebar .active .nav-capability {color:inherit;opacity:.85}
+
+.fomo-shell #sidebar .tag-heading {margin:20px 10px 0;padding-bottom:4px;font-size:12px;font-weight:400;line-height:12px;min-height:28px;cursor:pointer}
+.fomo-shell #sidebar .tag-heading>div {display:flex;align-items:center;gap:4px}
+.fomo-shell #sidebar .tag-heading button {display:grid;place-items:center;min-width:28px;width:28px;height:28px;min-height:28px;padding:6px;color:var(--sidebar-muted);border-radius:8px;transform:scale(.96);transition:background-color 180ms,color 180ms,opacity 120ms,transform 120ms}
+.fomo-shell #sidebar .tag-heading :is(#manageTags,#addTag) {display:none}
+.fomo-shell #sidebar #toggleAllTags {opacity:1;display:flex;gap:4px;width:auto;padding:0;font-size:12px;white-space:nowrap}
+.fomo-shell #sidebar .section-chevron {font-size:18px;line-height:1;opacity:0;transform:rotate(0);transition:opacity 120ms,transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar #toggleAllTags[aria-expanded=true] .section-chevron {transform:rotate(90deg)}
+.fomo-shell #sidebar #toggleAllTags:is(:hover,:focus-visible) .section-chevron {opacity:1}
+.fomo-shell #sidebar #allTagsHeading>div {opacity:0;transform:scale(.96);transition:opacity 180ms,transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar #allTagsSection:is(:hover,:focus-within) #allTagsHeading>div {opacity:1;transform:scale(1)}
+.fomo-shell #sidebar .tag-heading #tagSort {width:auto;min-width:28px;height:28px;padding:6px 8px;margin-left:4px;margin-right:2px;font-size:12px;line-height:12px;border-radius:8px}
+.fomo-shell #sidebar .tag-heading button:hover {background:var(--hover);color:var(--text);transform:scale(1)}
+.fomo-shell #sidebar .tag-heading :is(#toggleTagSearch,#tagSort) {opacity:0;transition:opacity 120ms}
+.fomo-shell #sidebar #allTagsSection:is(:hover,:focus-within) .tag-heading :is(#toggleTagSearch,#tagSort),.fomo-shell #sidebar .tag-heading:is(:hover,:focus-within) :is(#toggleTagSearch,#tagSort) {opacity:1}
+.fomo-shell #sidebar :is(#allTagsHeading,#tagSearchBar,#tags)[hidden] {display:none}
+.fomo-shell #sidebar #tagSearchBar {display:flex;align-items:center;margin:0 10px 4px;min-height:28px;gap:4px;background:var(--hover);border-radius:8px;padding:6px 4px 6px 6px;box-sizing:border-box}
+.fomo-shell #sidebar .tag-search-icon {display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;color:var(--sidebar-muted)}
+.fomo-shell #sidebar .tag-search-icon svg {width:14px;height:14px}
+.fomo-shell #sidebar #tagSearch {flex:1;min-width:0;width:0;margin:0;padding:0;border:0;outline:0;background:transparent;font-size:13px;font-weight:500;height:24px;color:var(--text)}
+.fomo-shell #sidebar #closeTagSearch {width:18px;min-width:18px;height:22px;padding:0;font-size:18px;color:var(--sidebar-muted)}
+.fomo-shell #sidebar .tag-search-highlight {background:#fff3a6;color:inherit;border-radius:2px}
+.fomo-shell #sidebar .tag-row {min-height:36px;border-radius:8px;transition:none}
+.fomo-shell #sidebar .tag-row:active {transform:scale(.96)}
+.fomo-shell #sidebar .tag-select {display:flex;align-items:center;gap:12px;width:100%;min-height:36px;padding:0 10px!important;font-size:14px;line-height:20px;font-weight:400;border-radius:8px;color:var(--sidebar-tag-text);min-width:0}
+.fomo-shell #sidebar #tags>.tag-row .label {font-weight:400}
+.fomo-shell #sidebar .tag-select>.hash {transition:none}
+.fomo-shell #sidebar .tag-select>.hash svg {width:16px;height:16px;opacity:1}
+.fomo-shell #sidebar .tag-select .label {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell #sidebar .tag-select .count {flex:0 0 40px;min-width:40px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:var(--sidebar-count);margin:0 4px 0 auto;padding:0;opacity:0;transition:opacity 120ms}
+.fomo-shell #sidebar #allTagsSection:hover .count,#pinnedTags:hover .count,.fomo-shell #sidebar .tag-row.active .count {opacity:1}
+.fomo-shell #sidebar .tag-row:is(:hover,:focus-within):not(.active) {background:var(--hover)}
+.fomo-shell #sidebar .tag-row:is(:hover,:focus-within):not(.active) .tag-select {color:var(--sidebar-tag-hover)}
+.fomo-shell #sidebar .tag-row.active,.fomo-shell #sidebar .tag-select.active {background:var(--green);color:white}
+.fomo-shell #sidebar .tag-row.active .tag-select,.fomo-shell #sidebar .tag-row.active .count {color:white}
+.fomo-shell #sidebar .tag-row.child:before {display:block;left:-14px;background:var(--line);opacity:0;transition:opacity 180ms}
+.fomo-shell #sidebar #allTagsSection:hover .tag-row.child:before {opacity:1}
+.fomo-shell #sidebar .tag-collapse {position:absolute;left:6px;top:50%;bottom:auto;width:24px;min-width:24px;height:24px;min-height:24px;padding:0;display:grid;place-items:center;opacity:0;pointer-events:none;background:transparent;border-radius:4px;color:var(--sidebar-muted);filter:blur(4px);transform:translateY(-50%) scale(.25);transition:opacity 180ms,filter 180ms,transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-collapse svg {width:12px;height:12px;fill:currentColor;stroke:none;transition:transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-collapse svg {transform:rotate(90deg)}
+.fomo-shell #sidebar .tag-collapse.is-collapsed svg {transform:rotate(0)}
+.fomo-shell #sidebar .tag-row:is(:hover,:focus-within) .tag-collapse {opacity:1;pointer-events:auto;background:transparent;color:inherit;filter:blur(0);transform:translateY(-50%) scale(1)}
+.fomo-shell #sidebar .tag-row.has-children:is(:hover,:focus-within) .hash {opacity:0;filter:blur(4px);transform:scale(.25)}
+.fomo-shell #sidebar .tag-more {position:absolute;right:6px;top:6px;bottom:6px;min-width:24px;width:24px;min-height:24px;height:24px;padding:0;border-radius:8px;background:transparent;color:var(--sidebar-muted);opacity:0;visibility:hidden;transition:none}
+.fomo-shell #sidebar .tag-more svg {width:16px;height:16px}
+.fomo-shell #sidebar .tag-row:is(:hover,:focus-within) .tag-more,.fomo-shell #sidebar .tag-more[aria-expanded=true] {opacity:1;visibility:visible}
+.fomo-shell #sidebar .tag-more:hover {background:var(--hover)}
+.fomo-shell #sidebar .tag-row.active .tag-more {color:#fff}
+/* Match the section hover selector's specificity; count and actions share a slot. */
+.fomo-shell #sidebar #allTagsSection .tag-row:is(:hover,:focus-within,:has(.tag-more[aria-expanded=true])) .count {opacity:0;visibility:hidden}
+.fomo-shell #sidebar #pinnedTags {display:grid;gap:0;min-width:0}
+.fomo-shell #sidebar :is(#tags,#pinnedTags) {margin-top:8px}
+.fomo-shell #sidebar #pinnedTags .tag-row {width:100%;min-width:0}
+.fomo-shell #sidebar #pinnedTags .tag-select {padding-right:36px!important}
+.fomo-shell #mergeTagForm {display:grid;gap:12px}
+.fomo-shell #mergeTagForm p {margin:0}
+.fomo-shell #mergeTagTarget {display:block;width:100%;padding:9px 10px;font-size:14px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text)}
+.fomo-shell .tag-merge-preview {padding:12px;border-radius:6px;background:var(--hover);overflow-wrap:anywhere}
+.fomo-shell #sidebar .sidebar-bottom {padding:8px 0 0;color:var(--sidebar-muted)}
+.fomo-shell #sidebar .sidebar-bottom>[data-view] {flex:1;min-height:36px;padding:0 10px;gap:12px;border-radius:8px;font-size:14px}
+.fomo-shell #sidebar .sidebar-bottom>[data-view]:hover {background:var(--hover)}
+.fomo-shell #sidebar .sidebar-bottom>[data-view].active {color:var(--green-dark);background:var(--green-pale)}
+.fomo-shell #sidebar .sidebar-bottom>a {min-width:30px;min-height:30px;border-radius:5px}
+.fomo-shell #sidebar :is(button,a,input):focus-visible,.fomo-shell :is(#accountMenu,#tagMenu,#tagSortMenu) button:focus-visible {outline:2px solid var(--green-dark);outline-offset:-2px}
+.fomo-shell #tagSortMenu {width:190px}
+.fomo-shell #tagSortMenu button {display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%}
+.fomo-shell #tagSortMenu svg {width:14px;height:14px;fill:currentColor;stroke:none}
+.fomo-shell #tagMenu {box-sizing:border-box;overscroll-behavior:contain}
+@media(min-width:781px) {
+ .fomo-shell.sidebar-collapsed .app-shell {grid-template-columns:minmax(0,1fr);grid-template-areas:"main";padding-left:20px}
+ .fomo-shell.sidebar-collapsed #sidebar {display:none}
+ .fomo-shell.sidebar-collapsed #mobileMenu {display:grid}
+}
+@media(max-width:780px) {
+ .fomo-shell.sidebar-collapsed #sidebar {display:flex}
+ .fomo-shell #sidebar #sidebarLayout {display:none}
+ .fomo-shell #sidebar #allTagsHeading>div {opacity:1;transform:none}
+ .fomo-shell #sidebar .nav-item,.fomo-shell #sidebar .tag-select {min-height:40px;height:auto}
+ .fomo-shell #sidebar #toggleQuickFilters {top:6px}
+ .fomo-shell #sidebar .tag-more {opacity:1;visibility:visible;min-height:36px}
+ .fomo-shell #sidebar #tags .tag-select {padding-right:38px!important}
+ .fomo-shell #sidebar #allTagsSection .tag-select .count {opacity:0;visibility:hidden}
+}
+@media(prefers-reduced-motion:reduce) {.fomo-shell #sidebar * {transition:none}}
+
+/* Tag popovers and sorting are shared by desktop and the standalone preview. */
+.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu {position:fixed;inset:auto;margin:0;box-sizing:border-box;min-width:240px;padding:5px;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px #0002;overflow:visible}
+.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu button {display:flex;align-items:center;gap:10px;width:100%;min-height:36px;margin:0;border:0;border-radius:6px;padding:7px 12px;font-size:14px;line-height:20px;text-align:left;font-weight:400}
+.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu button:hover,.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu button:focus-visible {background:var(--hover)}
+.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu button.danger {color:#e24d4d}
+.fomo-shell .native-tag-menu .tag-action-icon {fill:none;stroke:currentColor;stroke-width:1.7;width:16px;height:16px;flex:0 0 16px}
+.fomo-shell .native-tag-menu [data-tag-command=delete]:after {content:'\203a';margin-left:auto;font-size:20px;color:var(--sidebar-muted,#888)}
+.fomo-shell .native-tag-menu hr {height:1px;background:var(--line);border:0;margin:5px -5px}
+.fomo-shell #tagDeleteMenu.native-tag-menu {min-width:200px}
+.fomo-shell #tagMenu.native-tag-menu:popover-open,.fomo-shell #tagDeleteMenu.native-tag-menu:popover-open {transform-origin:top left;animation:tag-menu-enter 120ms cubic-bezier(.2,0,0,1)}
+@keyframes tag-menu-enter {from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.fomo-shell #tagSortSheet {box-sizing:border-box;width:720px;height:800px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 64px);padding:0;border:0;border-radius:18px;background:var(--bg);color:var(--text);box-shadow:0 25px 60px #0004;overflow:auto}
+.fomo-shell #tagSortSheet::backdrop {background:#0006;backdrop-filter:blur(5px)}
+.fomo-shell .tag-sort-content {padding:0 12px 24px;min-height:100%;position:relative}
+.fomo-shell .tag-sort-content>header {display:flex;align-items:center;justify-content:flex-end;height:60px;gap:20px;position:sticky;top:0;z-index:1;background:var(--bg)}
+.fomo-shell #tagSortTitle {position:absolute;left:50%;transform:translateX(-50%);margin:0;font-size:16px;font-weight:600;white-space:nowrap}
+.fomo-shell #closeTagSort {order:3;font-size:22px;color:var(--muted);width:24px;height:24px;padding:0}
+.fomo-shell #resetTagSort {font-size:12px;color:var(--muted);padding:0}
+.fomo-shell #tagSortList {padding:0 0 0 8px;max-height:calc(100dvh - 260px);overflow:auto}
+.fomo-shell .tag-sort-row {display:flex;align-items:center;gap:10px;height:36px;margin-left:calc(var(--depth)*29px);padding:0 8px 0 0;border-radius:6px;cursor:grab;font-size:14px}
+.fomo-shell .tag-sort-row:hover {background:var(--hover)}
+.fomo-shell .tag-sort-row.drop-target {box-shadow:inset 0 -2px var(--green);background:var(--green-pale)}
+.fomo-shell .tag-sort-row .sort-fold {width:20px;min-width:20px;padding:0;height:24px;color:#999}
+.fomo-shell .tag-sort-row .sort-fold:disabled {visibility:hidden}
+.fomo-shell .sort-hash {width:16px;font-size:18px}
+.fomo-shell .sort-label {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell .sort-drag {margin-left:auto;color:#ccc;display:grid;place-items:center}
+.fomo-shell .sort-drag svg {width:16px;height:16px}
+.fomo-shell .tag-sort-content>footer {display:flex;gap:12px;padding-top:0}
+.fomo-shell .tag-sort-content>footer button {flex:1;height:42px;border:1px solid #aaa;border-radius:6px;font-size:14px;color:var(--muted);background:var(--hover)}
+.fomo-shell .tag-sort-content>footer .primary-button {color:white;background:var(--green);border-color:var(--green);font-weight:600}
+.fomo-shell #tagSortError {font-size:12px;color:#d44}
+.fomo-shell .tag-sort-confirm {position:fixed;inset:0;z-index:3;display:grid;place-items:center;background:#0003;border-radius:inherit}
+.fomo-shell .tag-sort-confirm[hidden] {display:none}
+.fomo-shell .tag-sort-confirm>div {padding:24px;background:var(--surface);border-radius:12px;box-shadow:0 12px 32px #0003;max-width:90%}
+.fomo-shell .tag-sort-confirm p {margin:0 0 20px;font-size:14px}
+.fomo-shell .tag-sort-confirm>div>div {display:flex;justify-content:flex-end;gap:12px}
+.fomo-shell .tag-sort-confirm button {min-width:72px;padding:7px 12px;border-radius:5px}
+.fomo-shell .sr-label {position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.fomo-shell .tag-icon-editor {display:flex;align-items:baseline;gap:12px}
+.fomo-shell #dialogBody #editTagIcon {width:72px;text-align:center}
+.fomo-shell #clearTagIcon {white-space:nowrap;font-size:12px;color:var(--muted)}
+.fomo-shell #editTagError {color:#d44;min-height:16px}
+@media(prefers-reduced-motion:reduce){.fomo-shell :is(#tagMenu,#tagDeleteMenu).native-tag-menu:popover-open {animation:none}}
+
+.fomo-shell #sidebar .tag-select:not(:has(.count)) {padding-right:36px!important}
+.fomo-shell #sidebar .tag-search-empty {margin:8px 10px 12px;color:var(--sidebar-muted);font-size:12px;line-height:20px}
+.fomo-shell .tag-sort-confirm button:focus-visible {outline:2px solid var(--green-dark);outline-offset:2px}
+/* The sidebar animates the icon swap instead of letting filter and transform jump. */
+.fomo-shell #sidebar .tag-row {transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1),transform 120ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-row:active {transform:scale(.96)}
+.fomo-shell #sidebar .tag-select>.hash {transition:opacity 180ms cubic-bezier(.2,0,0,1),filter 180ms cubic-bezier(.2,0,0,1),transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-collapse {transition:opacity 180ms cubic-bezier(.2,0,0,1),filter 180ms cubic-bezier(.2,0,0,1),transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-collapse svg {transition:transform 180ms cubic-bezier(.2,0,0,1)}
+@media(prefers-reduced-motion:reduce){.fomo-shell #sidebar :is(.tag-row,.tag-collapse,.tag-collapse svg,.tag-select>.hash,.tag-heading button){transition:none}.fomo-shell #sidebar .tag-heading button{transform:none}}
+/* Sidebar disclosure and quick filters aligned to the supplied desktop reference. */
+.fomo-shell #sidebar .nav-all-row .nav-item {padding-left:10px;padding-right:10px}
+.fomo-shell #sidebar #toggleQuickFilters {left:4px;right:auto;top:4px;padding:6px;opacity:0;pointer-events:none;color:inherit;z-index:2}
+.fomo-shell #sidebar .nav-all-row:is(:hover,:focus-within) #toggleQuickFilters {opacity:1;pointer-events:auto}
+.fomo-shell #sidebar .nav-all-row:is(:hover,:focus-within) .nav-item>span:first-child,
+.fomo-shell #sidebar .nav-all-row:is(:hover,:focus-within) .nav-item>span:first-child {opacity:0}
+.fomo-shell #sidebar #toggleQuickFilters svg {width:14px;height:14px;fill:currentColor;stroke:none;transform:rotate(0);transition:transform 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar #toggleQuickFilters[aria-expanded=true] svg {transform:rotate(90deg)}
+.fomo-shell #sidebar #quickFilters {padding:0 0 0 29px;gap:0}
+.fomo-shell #sidebar #quickFilters button {display:flex;align-items:center;gap:12px;min-height:40px;padding:10px;font-size:14px;line-height:20px;color:var(--text);text-align:left}
+.fomo-shell #sidebar #quickFilters button[hidden] {display:none}
+.fomo-shell #sidebar #quickFilters button>span:first-child {display:grid;place-items:center;flex:0 0 16px;width:16px;height:20px}
+.fomo-shell #sidebar #quickFilters svg {width:16px;height:16px}
+.fomo-shell #sidebar #quickFilters .quick-count {margin-left:auto;min-width:24px;text-align:right;font-size:12px;line-height:20px;font-weight:400;color:var(--sidebar-count);font-variant-numeric:tabular-nums}
+.fomo-shell #sidebar #quickFilters button.active {color:var(--green-dark)}
+.fomo-shell #sidebar .tag-collapse svg {width:16px;height:16px}
+@media(prefers-reduced-motion:reduce){.fomo-shell #sidebar #toggleQuickFilters svg {transition:none}}
+.fomo-shell #sidebar #quickFilters {margin:0;border:0}
+.fomo-shell #sidebar #quickFilters [data-quick=untagged] svg,
+.fomo-shell #sidebar #quickFilters [data-quick=voice] svg {fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.fomo-shell #sidebar #tagSearchBar {margin:0 10px 4px;padding:6px 4px 6px 6px;gap:4px;border-radius:8px;min-height:28px}
+.fomo-shell #sidebar #tagSearchBar:focus-within {box-shadow:inset 0 0 0 1px var(--line)}
+.fomo-shell #sidebar #tagSearchCount {flex:0 0 auto;font-size:11px;color:var(--sidebar-muted);font-variant-numeric:tabular-nums}
+.fomo-shell #sidebar #tagSearchBar :is(#clearTagSearch,#closeTagSearch) {flex:0 0 18px;display:grid;place-items:center;width:18px;min-width:18px;height:22px;min-height:22px;padding:0;color:var(--sidebar-muted)}
+.fomo-shell #sidebar #tagSearchBar :is(#clearTagSearch,#tagSearchCount)[hidden] {display:none}
+.fomo-shell #sidebar #closeTagSearch {opacity:0;pointer-events:none}
+.fomo-shell #sidebar #tagSearchBar:is(:hover,:focus-within) #closeTagSearch {opacity:1;pointer-events:auto}
+.fomo-shell #sidebar #closeTagSearch svg {width:10px;height:10px}
+.fomo-shell #sidebar #clearTagSearch {font-size:17px;border-right:1px solid var(--line);border-radius:0}
+/* Desktop reference content area: 250px rail, 212px navigation surface. */
+@media (min-width:781px) {
+ .fomo-shell #sidebar {padding-left:19px;padding-right:19px}
+ .fomo-shell #sidebar .account-row {padding-left:0;padding-right:0}
+}
+
+.fomo-shell #sidebar #quickFilters .quick-count{opacity:0;transition:opacity 120ms}
+.fomo-shell #sidebar #quickFilters:hover .quick-count,.fomo-shell #sidebar #quickFilters button:hover .quick-count,.fomo-shell #sidebar #quickFilters button.active .quick-count{opacity:1}
+/* Image is an outlined glyph; link uses filled paths. */
+.fomo-shell #sidebar #quickFilters [data-quick=images] svg{fill:none;stroke:currentColor;stroke-width:1.5}
+.fomo-shell #sidebar #quickFilters [data-quick=links] svg{fill:currentColor;stroke:none}
+.fomo-shell #sidebar #quickFilters {position:relative}
+.fomo-shell #sidebar #quickFilters::before{content:"";position:absolute;left:19px;top:4px;bottom:4px;width:1px;background:#efefef;pointer-events:none;transition:background 180ms}
+.fomo-shell #sidebar #quickFilters:is(:hover,:focus-within)::before{background:var(--line)}
+.fomo-shell.dark #sidebar #quickFilters::before{background:#2e2e2e}
+.fomo-shell.dark #sidebar #quickFilters:is(:hover,:focus-within)::before{background:var(--line)}
+.fomo-shell #sidebar #quickFilters .quick-count{opacity:0}
+.fomo-shell #sidebar:is(:hover,:focus-within) #quickFilters .quick-count,
+.fomo-shell #sidebar #quickFilters .active .quick-count{opacity:1}
+.fomo-shell #sidebar .nav-all-row:has(#toggleQuickFilters[aria-expanded=true]) #toggleQuickFilters{opacity:1;pointer-events:auto}
+.fomo-shell #sidebar .nav-all-row:has(#toggleQuickFilters[aria-expanded=true]) .nav-item>span:first-child{opacity:0}
+/* Sidebar text and selected submenu state, based on the desktop reference. */
+.fomo-shell:not(.dark) #sidebar :is(.nav-item:not(.active),#quickFilters button:not(.active)){color:#121212}
+.fomo-shell:not(.dark) #sidebar .tag-row:not(.active) .tag-select:not(.active){color:var(--sidebar-tag-text)}
+.fomo-shell:not(.dark) #sidebar :is(.nav-item:not(.active),#quickFilters button:not(.active)) svg{color:#323232}
+.fomo-shell #sidebar #quickFilters button.active{background:var(--green);color:#fff;font-weight:600}
+.fomo-shell #sidebar #quickFilters button.active .quick-count{color:#fff;font-weight:400}
+.fomo-shell #sidebar #quickFilters button.active svg{color:#fff}
+/* Week count follows sidebar width; each week keeps seven fixed-size days. */
+.fomo-shell #sidebar #heatmap{grid-template-columns:repeat(var(--heat-columns,10),16px);grid-template-rows:repeat(7,16px);column-gap:0;row-gap:8px;justify-content:space-between}
+.fomo-shell #sidebar #heatmap button{width:16px;height:16px;border-radius:3px}
+.fomo-shell #sidebar #heatMonth{display:block;position:relative;height:12px;font-size:12px;line-height:12px}
+.fomo-shell #sidebar #heatMonth span{position:absolute;width:36px;text-align:left}
+.fomo-shell #sidebar #heatmap button{background:#efefef}
+.fomo-shell #sidebar #heatmap .level1{background:#c2e8d1}
+.fomo-shell #sidebar #heatmap .level2{background:#8ad9b1}
+.fomo-shell #sidebar #heatmap .level3{background:#53b88b}
+.fomo-shell.dark #sidebar #heatmap button{background:#3d3d3d}
+.fomo-shell.dark #sidebar #heatmap .level1{background:#3f5847}
+.fomo-shell.dark #sidebar #heatmap .level2{background:#698064}
+.fomo-shell.dark #sidebar #heatmap .level3{background:#93bf89}
+.fomo-shell #sidebar #heatmap button{transition:scale 120ms,box-shadow 180ms;--heat-pulse:transparent}
+.fomo-shell #sidebar #heatmap button{border:1px solid transparent}
+.fomo-shell #sidebar #heatmap .today{border-color:rgba(0,0,0,.2);outline:none}
+.fomo-shell #sidebar #heatmap .selected{border-color:rgba(0,0,0,.4);outline:none}
+.fomo-shell.dark #sidebar #heatmap .today{border-color:rgba(255,255,255,.2)}
+.fomo-shell.dark #sidebar #heatmap .selected{border-color:rgba(255,255,255,.4)}
+.fomo-shell #sidebar #heatmap .level1{--heat-pulse:#c2e8d1}
+.fomo-shell #sidebar #heatmap .level2{--heat-pulse:#8ad9b1}
+.fomo-shell #sidebar #heatmap .level3{--heat-pulse:#53b88b}
+.fomo-shell.dark #sidebar #heatmap .level1{--heat-pulse:#3f5847}
+.fomo-shell.dark #sidebar #heatmap .level2{--heat-pulse:#698064}
+.fomo-shell.dark #sidebar #heatmap .level3{--heat-pulse:#93bf89}
+.fomo-shell #sidebar #heatmap button:hover{position:relative;z-index:1;scale:1.15;box-shadow:0 0 0 1px var(--heat-pulse),0 4px 12px -2px var(--heat-pulse)}
+.fomo-shell #sidebar #heatmap button:not(.today):not(.selected):hover{outline:none}
+.fomo-shell #sidebar #heatmap button:active:not(:disabled){scale:1.05}
+@media(prefers-reduced-motion:reduce){.fomo-shell #sidebar #heatmap button{transition:none}.fomo-shell #sidebar #heatmap button:hover{scale:1}}
+
+/* Final sidebar layout values matched to the reference Sidebar and HeatGrid layout. */
+.fomo-shell #sidebar{padding-top:0;padding-bottom:0}
+.fomo-shell #sidebar .account-row{min-height:60px;margin:0;gap:2px}
+.fomo-shell #sidebar .profile{min-height:60px;padding:6px 10px;margin-left:0}
+.fomo-shell #sidebar .profile .chevron{opacity:0}
+.fomo-shell #sidebar:is(:hover,:focus-within) .profile .chevron{opacity:1}
+.fomo-shell #sidebar #sidebarRefresh{display:grid;place-items:center;width:28px;height:28px;min-width:28px;min-height:28px;padding:6px;border-radius:8px;color:var(--sidebar-muted);opacity:0;pointer-events:none;transition:opacity 180ms,background-color 180ms,color 180ms}
+.fomo-shell #sidebar #sidebarRefresh:hover{background:var(--hover);color:var(--text)}
+.fomo-shell #sidebar #sidebarRefresh svg{width:16px;height:16px}
+.fomo-shell #sidebar #sidebarLayout{width:28px;height:28px;padding:6px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity 180ms,background-color 180ms,color 180ms}
+.fomo-shell #sidebar:is(:hover,:focus-within) :is(#sidebarRefresh,#sidebarLayout){opacity:1;pointer-events:auto}
+.fomo-shell #sidebar #sidebarLayout svg{width:16px;height:16px}
+.fomo-shell #sidebar .numbers{padding:0}
+.fomo-shell #sidebar #heatmap{grid-template-columns:repeat(var(--heat-columns,10),16px);grid-template-rows:repeat(7,16px)}
+.fomo-shell #sidebar #heatmap button{width:16px;height:16px}
+.fomo-shell #sidebar #heatMonth{margin-top:8px;margin-bottom:20px}
+.fomo-shell #sidebar .tag-heading{box-sizing:border-box;margin:20px 0 0;padding:0 0 4px 12px;min-height:28px;height:28px}
+.fomo-shell #sidebar .tag-heading>div{height:19px}
+.fomo-shell #sidebar #toggleAllTags{height:19px;min-height:19px;align-items:center}
+.fomo-shell #sidebar .sidebar-trash{margin:0 0 0 2px}
+.fomo-shell #sidebar .sidebar-bottom{height:30px;min-height:30px;padding:0}
+.fomo-shell #sidebar .sidebar-bottom>a{display:none}
+.fomo-shell #sidebar .tag-row{transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1),transform 120ms cubic-bezier(.2,0,0,1)}
+.fomo-shell #sidebar .tag-row.active .tag-select{font-weight:600}
+.fomo-shell #sidebar .tag-row.active .count{font-weight:400}
+
+/* Keep the identity and navigation visible while the tag menu scrolls. */
+.fomo-shell #sidebar .sidebar-scroll{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.fomo-shell #sidebar .sidebar-scroll> :not(.tag-scroll){flex-shrink:0}
+.fomo-shell #sidebar .tag-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;overflow-anchor:none;scrollbar-width:none}
+.fomo-shell #sidebar #pinnedTagSection{max-height:min(28vh,220px);overflow-y:auto;scrollbar-width:none}
+.fomo-shell #sidebar :is(.tag-scroll,#pinnedTagSection)::-webkit-scrollbar{display:none}
+.fomo-shell #sidebar #tagScroll :is(#allTagsHeading,#tagSearchBar){position:sticky;top:0;z-index:2;background:var(--bg)}
+@media(max-height:620px){.fomo-shell #sidebar .sidebar-scroll{overflow-y:auto}.fomo-shell #sidebar .tag-scroll{flex:0 0 auto;overflow:visible}}
+/* The overview panel is hidden: do not reserve a third, empty grid column. */
+@media(min-width:781px){body.fomo-shell:not(.sidebar-collapsed) .app-shell{grid-template-columns:var(--writeboom-sidebar-width,280px) minmax(0,1fr)}}
+@media(min-width:1191px){body.fomo-shell .app-shell,body.fomo-shell.overview-collapsed .app-shell{max-width:1164px;padding-inline:28px}body.fomo-shell.sidebar-collapsed .app-shell{grid-template-columns:minmax(0,1fr);padding-inline:28px}}
+/* Preserve the native Windows controls while allowing the background to reach the top. */
+body.native-titlebar::before{content:"";position:fixed;z-index:40;top:0;left:0;width:calc(100% - 150px);height:32px;app-region:drag;-webkit-app-region:drag}
+@media(min-width:781px){body.native-titlebar .app-shell{box-sizing:border-box;padding-top:32px!important}body.native-titlebar .app-shell>.main,body.native-titlebar .app-shell>.sidebar{height:100%;min-height:0}body.native-titlebar .topbar{padding-right:0}}
+@media(max-width:780px){body.native-titlebar .main{padding-top:40px}body.native-titlebar #sidebar{padding-top:40px}}

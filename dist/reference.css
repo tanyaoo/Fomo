@@ -1,0 +1,1070 @@
+﻿/* Screenshot reference, 2026-10-21. One layer owns the current visual system. */
+.fomo-shell .memo.inline-edit-card {padding:0;min-height:0;background:transparent;overflow:visible}
+.fomo-shell .inline-composer {margin:0;border-color:#16d966;box-shadow:0 2px 11px #22b66a24}
+.fomo-shell .inline-composer #cancelEdit {font-size:14px;color:var(--muted);padding:2px 6px;white-space:nowrap}
+.fomo-shell .memo-content p+p {margin-top:8px}
+.fomo-shell .memo-content li+li {margin-top:2px}
+.fomo-shell .memo-content.collapsed {max-height:280px;mask-image:linear-gradient(#000 0%,#000 85%,transparent 100%)}
+.fomo-shell .expand-button {color:var(--tag);min-height:28px;font-size:13px}
+.fomo-shell .expand-button:focus-visible {outline:2px solid var(--green);outline-offset:2px;border-radius:3px}
+.fomo-shell .memo-images {display:grid;grid-template-columns:repeat(3,minmax(0,144px));gap:8px;max-width:100%;margin-top:12px}
+.fomo-shell .memo-images[data-count="2"],.fomo-shell .memo-images[data-count="4"] {grid-template-columns:repeat(2,minmax(0,160px))}
+.fomo-shell .memo-images button {min-width:0;border-radius:6px;overflow:hidden;aspect-ratio:1;background:var(--hover)}
+.fomo-shell .memo-images img {width:100%;height:100%;object-fit:cover;border-radius:6px}
+.fomo-shell .memo-images[data-count="1"] {display:block;max-width:360px}
+.fomo-shell .memo-images[data-count="1"] button {display:block;aspect-ratio:auto;max-width:100%;background:transparent}
+.fomo-shell .memo-images[data-count="1"] img {width:auto;height:auto;max-width:100%;max-height:360px;object-fit:contain}
+.fomo-shell #tagSuggestions {width:min(340px,calc(100% - 32px));padding:6px;border-radius:12px;box-shadow:0 14px 36px rgba(0,0,0,.14);scrollbar-width:thin;scrollbar-color:transparent transparent}
+.fomo-shell #tagSuggestions:hover {scrollbar-color:rgba(128,128,128,.28) transparent}
+.fomo-shell #tagSuggestions::-webkit-scrollbar {width:5px!important;height:10px!important;background:transparent;border-radius:999px}
+.fomo-shell #tagSuggestions::-webkit-scrollbar-thumb {background:transparent;border-radius:999px}
+.fomo-shell #tagSuggestions:hover::-webkit-scrollbar-thumb {background:rgba(128,128,128,.28)}
+.fomo-shell #tagSuggestions button {font-size:14px;border-radius:6px;padding:7px 10px}
+.fomo-shell .tag-row.active .count {opacity:1}
+.fomo-shell .tag-select .label {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell .tag-select:focus-visible,.fomo-shell .tag-collapse:focus-visible {outline-offset:-2px}
+.fomo-shell .memo-menu {width:240px;padding:4px 0;border-color:var(--line);box-shadow:0 5px 20px #00000014}
+.fomo-shell .memo-menu>button {min-height:38px;padding:8px 16px;line-height:1.5;gap:12px;font-size:14px;font-weight:400}
+.fomo-shell .memo-menu>button>span {flex:1;text-align:left}
+.fomo-shell .memo-menu svg[stroke] {fill:none;stroke:currentColor;stroke-width:1.6}
+.fomo-shell .memo-menu .more-chevron {width:12px;height:12px;margin-left:auto}
+.fomo-shell .memo-menu .unconfigured-action {color:var(--muted)}
+.fomo-shell .memo-menu .danger {color:#ef6965}
+.fomo-shell .memo-menu .menu-meta {display:grid;gap:7px;padding:11px 16px 8px;font-size:12px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line);margin-top:4px}
+.fomo-shell .memo-menu .memo-more-menu {position:fixed;width:240px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #00000014;z-index:12}
+.fomo-shell .memo-menu button[aria-expanded=true],.fomo-shell .memo-menu button:focus-visible {background:var(--hover);outline:none}
+.fomo-shell .memo-menu .memo-more-menu button {min-height:36px;padding:7px 11px;font-size:14px;border-radius:7px}
+.fomo-shell #sortMenu.note-list-menu {width:200px;padding:5px;border-radius:12px;overflow:visible;box-shadow:0 5px 20px #00000014}
+.fomo-shell #sortMenu button {min-height:36px;padding:7px 11px;gap:12px;border-radius:8px;font-size:14px;line-height:1.35;color:var(--text)}
+.fomo-shell #sortMenu button:focus-visible {outline:none;background:var(--hover)}
+.fomo-shell #sortMenu svg[stroke] {fill:none;stroke:currentColor;stroke-width:1.7}
+.fomo-shell #sortMenu button:hover,.fomo-shell #sortMenu button[aria-expanded="true"] {background:var(--hover)}
+.fomo-shell #sortMenu button>svg {width:17px;height:17px;flex:none}
+.fomo-shell #sortMenu button>span {flex:1}
+.fomo-shell #sortMenu button>svg:last-child:not(:first-child) {width:12px;height:12px;margin-left:auto}
+.fomo-shell #sortMenu small {display:block;font-size:12px;color:var(--muted);margin-top:3px;font-weight:400}
+.fomo-shell #sortMenu [data-panel] {min-height:54px}
+.fomo-shell #sortMenu .list-menu-sub {position:absolute;left:calc(100% + 5px);top:0;width:174px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #00000014}
+.fomo-shell #sortMenu .list-menu-sub button {justify-content:space-between}
+.fomo-shell #multiSelect {display:none}
+@media(max-width:520px){.fomo-shell #sortMenu .list-menu-sub {left:0;top:calc(100% + 5px);width:100%}}
+/* Structured editor styles are scoped; the main shell geometry stays unchanged. */
+.fomo-shell {
+  --bg:#fafafa; --surface:#fff; --text:#333; --muted:#767676; --subtle:#808080;
+  --line:#e7e7e7; --hover:#efefef; --green:#30cf79; --green-strong:#167a4c;
+  --green-dark:#20a962; --green-pale:#e8f8ee; --tag:#4c6fd6;
+  font:400 14px/1.8 "Segoe UI","Microsoft YaHei",sans-serif;
+}
+.fomo-shell.dark {
+  --bg:#202221; --surface:#292c2a; --text:#e1e5e2; --muted:#a1aaa5; --subtle:#909a94;
+  --line:#414643; --hover:#353b37; --green-pale:#283e32; --tag:#9db5f7;
+}
+.fomo-shell .app-shell,.fomo-shell.overview-collapsed .app-shell {
+  grid-template-columns:247px minmax(0,1fr); gap:16px; padding:0 28px 0 0;
+}
+.fomo-shell .sidebar {padding:14px 19px 12px 24px}
+.fomo-shell .sidebar {font-family:"Microsoft YaHei UI","Microsoft YaHei","Segoe UI",sans-serif}
+.fomo-shell .sidebar .main-nav,.fomo-shell .sidebar .tags,.fomo-shell .sidebar #pinnedTags {font-size:14px;line-height:1.5}
+.fomo-shell .sidebar .main-nav {gap:2px}
+.fomo-shell .sidebar .nav-item,.fomo-shell .sidebar .tag-select {font-family:inherit;font-size:14px;line-height:22px;min-height:34px;gap:14px;padding:6px 10px 6px 16px;border-radius:8px}
+.fomo-shell .sidebar .tag-select {gap:12px;padding-left:0!important}
+.fomo-shell .sidebar .tags .tag-row {margin-left:0}
+.fomo-shell .sidebar .tag-collapse {position:absolute;left:0;top:0;bottom:0;width:16px;min-height:0;opacity:0;z-index:2;background:var(--bg)}
+.fomo-shell .sidebar .tag-row:hover .tag-collapse,.fomo-shell .sidebar .tag-row:focus-within .tag-collapse {opacity:1}
+.fomo-shell .sidebar .nav-item>span:first-child,.fomo-shell .sidebar .tag-select>.hash {display:grid;place-items:center;flex:0 0 16px;width:16px;height:22px;color:inherit}
+.fomo-shell .sidebar .nav-item svg,.fomo-shell .sidebar .tag-select svg {width:16px;height:16px}
+.fomo-shell .sidebar .lucide-footprints {fill:none;stroke:currentColor;stroke-width:2}
+.fomo-shell .sidebar .tag-select>.hash {color:var(--text)}
+.fomo-shell .sidebar .tag-heading {font-family:inherit;font-size:13px;color:#999;line-height:20px;margin:26px 0 10px;min-height:20px}
+.fomo-shell .sidebar .tag-heading>div {display:flex;align-items:center;gap:2px}
+.fomo-shell .sidebar .tag-heading button {width:26px;height:26px;padding:4px;border-radius:6px}
+.fomo-shell .sidebar .tag-heading #toggleTagSearch,.fomo-shell .sidebar .tag-heading #manageTags,.fomo-shell .sidebar .tag-heading #addTag {opacity:0;pointer-events:none;transition:opacity .12s}
+.fomo-shell .sidebar .tag-heading:hover #toggleTagSearch,.fomo-shell .sidebar .tag-heading:hover #manageTags,.fomo-shell .sidebar .tag-heading:hover #addTag,.fomo-shell .sidebar .tag-heading:focus-within #toggleTagSearch,.fomo-shell .sidebar .tag-heading:focus-within #manageTags,.fomo-shell .sidebar .tag-heading:focus-within #addTag {opacity:1;pointer-events:auto}
+.fomo-shell .sidebar .tag-heading button svg {width:15px;height:15px}
+.fomo-shell .sidebar .tag-heading #addTag {color:var(--green)}
+.fomo-shell .sidebar .tag-heading #addTag svg {width:18px;height:18px}
+.fomo-shell.dark .sidebar .tag-heading #addTag {color:#3ad781}
+.fomo-shell #pinnedTagSection {margin-top:0}
+.fomo-shell .sidebar #pinnedTagSection>.tag-heading {margin-top:21px}
+.fomo-shell .sidebar .tag-select>.hash svg,.fomo-shell #pinnedTags .tag-select>svg {width:18px;height:18px}
+.fomo-shell .sidebar #pinnedTagSection+.tag-heading {margin-top:15px}
+.fomo-shell .sidebar .sidebar-bottom {font-size:13px;color:var(--muted);padding:8px 10px}
+.fomo-shell .sidebar-bottom>button>span {display:grid;place-items:center;width:16px;height:22px}
+.fomo-shell .sidebar-bottom>button {display:flex;align-items:center;gap:12px;min-height:36px}
+.fomo-shell .sidebar-bottom svg {width:16px;height:16px}
+.fomo-shell .sidebar-bottom a svg {width:18px;height:18px}
+.fomo-shell .account-row {margin:0 0 10px;padding:0;gap:9px;min-height:32px}
+.fomo-shell .sidebar .profile strong {font-size:14px;font-weight:600;color:var(--text)}
+.fomo-shell #settings {display:none}
+.fomo-shell #sidebarRefresh,.fomo-shell #sidebarLayout {display:grid;place-items:center;width:18px;height:26px}
+.fomo-shell .numbers {margin:0 10px 12px}
+.fomo-shell .numbers strong {font-size:27px;font-weight:650;line-height:1.25;color:var(--muted)}
+.fomo-shell .numbers span {font-size:13px;margin-top:4px;font-weight:400}
+.fomo-shell .activity-panel {margin:0 10px 9px}
+.fomo-shell #heatmap {grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(7,16px);gap:8px 10px}
+.fomo-shell #heatmap button {width:16px;height:16px;border-radius:3px;background:#eee}
+.fomo-shell #heatmap .today {outline:1px solid #bcbcbc;outline-offset:-1px}
+.fomo-shell #heatmap .level1 {background:#c1e8d3}
+.fomo-shell #heatmap .level2 {background:#93d8b3}
+.fomo-shell #heatmap .level3 {background:#67cd98}
+.fomo-shell #heatmap .level4 {background:#45c382}
+.fomo-shell #heatmap .level5 {background:#2aca7a}
+.fomo-shell.dark #heatmap button {background:#343c37}
+.fomo-shell.dark #heatmap .level1 {background:#365446}
+.fomo-shell.dark #heatmap .level2 {background:#3d6b53}
+.fomo-shell.dark #heatmap .level3 {background:#428460}
+.fomo-shell.dark #heatmap .level4 {background:#47a171}
+.fomo-shell.dark #heatmap .level5 {background:#50bf82}
+.fomo-shell .heat-top {margin-top:3px}
+.fomo-shell #heatMonth {grid-template-columns:repeat(10,1fr);font-size:13px}
+.fomo-shell .nav-item {min-height:36px;padding:5px 10px;border-radius:9px;gap:12px;font-size:14px;font-weight:400;color:var(--text)}
+.fomo-shell .numbers {border:0;background:transparent;border-radius:0;margin-bottom:24px;padding:0}
+.fomo-shell .numbers button+button {border-left:0}
+.fomo-shell .numbers strong {font-size:24px;font-weight:500;color:#9a9a9a}
+.fomo-shell .numbers span {font-size:12px;color:#b3b3b3}
+.fomo-shell .nav-item.active,.fomo-shell .nav-all-row>.nav-item.active {background:var(--green);color:#fff;font-weight:500}
+.fomo-shell .nav-all-row>button:last-child {opacity:0;right:4px;top:4px;color:var(--muted)}
+.fomo-shell .nav-all-row:hover>button:last-child,.fomo-shell .nav-all-row:focus-within>button:last-child {opacity:1}
+.fomo-shell .nav-all-row:has(.active)>button:last-child {color:#fff}
+.fomo-shell .quick-filters {margin:2px 0 8px 18px;border-left:1px solid var(--line);padding-left:12px}
+.fomo-shell .quick-filters button {min-height:34px;border-radius:6px;color:var(--text);font-size:13px}
+.fomo-shell .quick-filters button.active {background:var(--green-pale);color:var(--green-dark);font-weight:500}
+.fomo-shell .quick-count {display:block}
+.fomo-shell .tag-heading {margin:26px 10px 9px;font-size:13px;font-weight:400;color:var(--muted)}
+.fomo-shell .tag-select {min-height:36px;padding:6px 10px;font-size:14px;font-weight:400;color:var(--text)}
+.fomo-shell .tag-row.active {border-radius:7px;background:var(--green-pale)}
+.fomo-shell .tag-row.active .tag-select {color:var(--green-dark)}
+.fomo-shell .sidebar-bottom {font-size:13px;font-weight:400;padding:10px;color:var(--muted)}
+.fomo-shell .main {padding:12px 0 20px}
+.fomo-shell .topbar {height:36px;min-height:36px;margin-bottom:12px}
+.fomo-shell .title-row h1 {font-size:14px;font-weight:600!important}
+.fomo-shell #refresh {display:none}
+.fomo-shell #sortButton {opacity:1;color:var(--muted)}
+.fomo-shell #breadcrumbHome:not([hidden]),.fomo-shell #breadcrumbDivider:not([hidden]) {display:block}
+.fomo-shell .search-wrap {width:260px;height:34px;border-radius:8px;background:#ebebeb;gap:7px;padding:0 10px}
+.fomo-shell.dark .search-wrap {background:#303531}
+.fomo-shell .search-wrap input {font-size:14px;font-weight:400}
+.fomo-shell .search-wrap kbd {display:none}
+.fomo-shell .composer {border:1px solid var(--line);border-radius:8px;padding:16px;box-shadow:none;min-height:120px}
+.fomo-shell .composer:focus-within {border-color:var(--green);box-shadow:0 2px 11px #22b66a24}
+.fomo-shell #editor {min-height:36px;font-size:14px;font-weight:400;line-height:1.8;transition:min-height .16s ease}
+.fomo-shell .composer:focus-within #editor {min-height:44px}
+@media(prefers-reduced-motion:reduce){.fomo-shell #editor {transition:none}}
+.fomo-shell #editor * {font-size:inherit!important;font-family:inherit!important;line-height:inherit}
+.fomo-shell #editor:empty:before {color:#999;font-weight:400}
+.fomo-shell #editor::highlight(memo-editor-tags) {color:var(--tag);background-color:#f0f3ff}
+.fomo-shell.dark #editor::highlight(memo-editor-tags) {color:var(--tag);background-color:#323d54}
+.fomo-shell .composer-bottom {margin-top:9px;display:flex;align-items:center;gap:5px;min-height:28px}
+.fomo-shell .format-tools {display:flex;align-items:center;gap:5px;color:var(--muted);flex:1}
+.fomo-shell .format-tools button {display:grid;place-items:center;width:27px;min-width:27px;height:28px;min-height:28px;padding:3px;font-size:15px;line-height:1}
+.fomo-shell .format-tools button svg {width:17px;height:17px;margin:auto}
+.fomo-shell .format-tools #insertTag {order:-4;font-size:21px}
+.fomo-shell .format-tools #addImage {order:-3}
+.fomo-shell .format-tools #formatToggle {display:grid;order:-2;width:37px;min-width:37px;padding-left:10px;border-left:1px solid var(--line);margin-left:3px;box-sizing:border-box}
+.fomo-shell .format-tools [data-format=bold],.fomo-shell .format-tools [data-format=underline],.fomo-shell .format-tools [data-format=highlight] {display:none!important}
+.fomo-shell .composer:focus-within .format-tools [data-format=bold],.fomo-shell .composer:focus-within .format-tools [data-format=underline],.fomo-shell .composer:focus-within .format-tools [data-format=highlight] {display:none!important}
+.fomo-shell .format-popover[hidden] {display:none}
+.fomo-shell .format-popover {position:absolute;z-index:8;display:flex;gap:2px;padding:3px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 22px #0000001a}
+.fomo-shell .selection-toolbar {position:fixed;z-index:40;display:flex;gap:2px;padding:3px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 22px #0000001a}
+.fomo-shell .selection-toolbar[hidden] {display:none}
+.fomo-shell .selection-toolbar button {display:grid;place-items:center;width:30px;height:30px;padding:3px;border-radius:4px;font-size:14px;color:var(--text)}
+.fomo-shell .selection-toolbar button:hover {background:var(--hover)}
+.fomo-shell .selection-toolbar button[aria-pressed=true] {background:var(--green-pale);color:var(--green-dark)}
+.fomo-shell .format-popover button {display:grid;place-items:center;width:30px;height:30px;padding:3px;border-radius:4px;font-size:14px;color:var(--text)}
+.fomo-shell .format-popover button:hover {background:var(--hover)}
+.fomo-shell .format-popover button[aria-pressed=true] {background:var(--green-pale);color:var(--green-dark)}
+.fomo-shell .format-tools #formatToggle[aria-expanded=true] {background:var(--hover);color:var(--text);border-radius:5px}
+.fomo-shell .format-tools.show-format [data-format] {display:grid!important}
+.fomo-shell #linkMemo {opacity:1;margin-left:5px;width:37px;min-width:37px;padding-left:10px;border-left:1px solid var(--line);box-sizing:border-box}
+.fomo-shell #linkMemo svg {width:21px;height:21px}
+.fomo-shell .send-wrap {display:flex;align-items:center;flex-wrap:nowrap;gap:8px}
+.fomo-shell .cancel-compose {font-size:14px;color:#999;padding:4px 7px;border-radius:4px;white-space:nowrap}
+.fomo-shell .cancel-compose:hover {color:var(--text);background:var(--hover)}
+.fomo-shell #saveMemo {height:28px;min-height:28px;width:44px;min-width:44px;padding:4px 10px;border-radius:8px}
+.fomo-shell #saveMemo svg {width:16px;height:16px;fill:currentColor;stroke:none}
+.fomo-shell .send:disabled {background:#ececec;border-color:#ececec;color:#999}
+.fomo-shell.dark .send:disabled {background:#333;border-color:#333;color:#9aa39d}
+.fomo-shell #charCount {font-size:11px;font-weight:400;line-height:1}
+.fomo-shell .list-heading {display:none}
+.fomo-shell .memo-list {margin-top:10px}
+.fomo-shell .memo {padding:16px;border-radius:8px;border:0;min-height:86px}
+.fomo-shell .memo-tags {display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.fomo-shell .memo-tag {padding:0;border-radius:0;background:none;color:var(--tag);font-size:13px;line-height:1.7;font-weight:400}
+.fomo-shell.dark .memo-tag {background:none}
+.fomo-shell .memo+.memo {margin-top:10px}
+.fomo-shell .memo-head {min-height:20px;margin-bottom:10px}
+.fomo-shell .memo time,.fomo-shell .detail-meta,.fomo-shell .annotation time {font-size:12px;font-weight:400;color:#999}
+.fomo-shell .memo-content,.fomo-shell .annotation p,.fomo-shell #annotationText {font-size:14px;line-height:1.8;font-weight:400;color:var(--text)}
+.fomo-shell .memo-content b,.fomo-shell .memo-content strong,.fomo-shell #editor b,.fomo-shell #editor strong {font-weight:600}
+.fomo-shell .memo-content .tag-link {background:#f0f3ff;border-radius:6px;padding:1px 5px;color:var(--tag);font-size:12px;font-weight:400}
+.fomo-shell.dark .memo-content .tag-link {background:#323d54}
+.fomo-shell .memo-content ul,.fomo-shell .memo-content ol {margin:6px 0;padding-left:18px}
+.fomo-shell .memo-menu,.fomo-shell .shell-menu,.fomo-shell #dialog {border-radius:12px}
+.fomo-shell .empty {padding:50px 10px;text-align:center}
+.fomo-shell .empty h3 {font-size:14px;font-weight:400}
+.fomo-shell .empty p {font-size:13px;font-weight:400}
+.fomo-shell #editor.structured-editor {position:relative;white-space:pre-wrap;overflow-wrap:break-word;outline:none}
+.fomo-shell #editor.structured-editor[data-empty=true]::before {content:attr(data-placeholder);position:absolute;pointer-events:none;color:var(--muted);font-size:inherit}
+.fomo-shell #editor.structured-editor p {margin:0 0 .5em}
+.fomo-shell #editor.structured-editor .editor-tag {color:var(--tag);background:none}
+.fomo-shell.dark #editor.structured-editor .editor-tag {background:none}
+.fomo-shell #editor.structured-editor .ProseMirror-selectednode {outline:2px solid var(--green)}
+.fomo-shell #editor.structured-editor .ProseMirror-separator {display:inline!important;border:none!important;margin:0!important}
+.fomo-shell #editor.structured-editor .ProseMirror-trailingBreak {display:inline!important}
+.fomo-shell #editor.structured-editor ul,.fomo-shell #editor.structured-editor ol {padding-left:24px;margin:6px 0}
+.fomo-shell #editor.structured-editor li>p {margin-bottom:0}
+.fomo-shell #editor.structured-editor code,.fomo-shell .memo-content code {font-family:Consolas,monospace!important;background:var(--hover);border-radius:4px;padding:1px 3px}
+.fomo-shell #editor.structured-editor pre,.fomo-shell .memo-content pre {white-space:pre-wrap;padding:10px;background:var(--hover);border-radius:6px}
+.fomo-shell .memo-reference {color:var(--tag);text-decoration:none;background:none;border-radius:0;cursor:pointer;font-size:0}
+.fomo-shell .memo-reference::after {content:'Memo›';font-size:14px;font-weight:500}
+.fomo-shell .memo-reference:hover {text-decoration:underline;text-underline-offset:3px}
+.fomo-shell .memo-token {color:var(--tag);text-decoration:none;background:none;font-weight:500;cursor:pointer;white-space:nowrap}
+.fomo-shell .memo-token:hover {text-decoration:underline;text-underline-offset:3px}
+.fomo-shell .reflection-banner {display:flex;flex-wrap:wrap;justify-content:flex-start;gap:5px;padding:7px 8px;border-radius:7px}
+.fomo-shell .composer-reference {display:inline-flex;align-items:center;min-width:0;max-width:100%;gap:4px}
+.fomo-shell .reflection-banner .composer-reference button {font-size:12px;text-decoration:none;padding:1px 4px;min-height:26px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell .reflection-banner .composer-reference.is-annotation button:first-child {font-size:14px;line-height:1.75;min-height:0;padding:0;color:var(--text);font-weight:400}
+.fomo-shell .multi-select-toggle {margin-left:10px;color:var(--muted);padding:4px 8px;border-radius:5px;font-size:12px;white-space:nowrap}
+.fomo-shell .multi-select-toggle[aria-pressed=true] {color:var(--green-dark);background:var(--green-pale)}
+.fomo-shell .bulk-bar {display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);margin:10px 0 0;flex-shrink:0;font-size:12px}
+.fomo-shell .bulk-bar button {font:inherit;min-height:30px;padding:3px 6px;border-radius:5px}
+.fomo-shell .bulk-bar button:hover {background:var(--hover)}
+.fomo-shell #bulkCount {font-weight:600;margin-right:auto}
+.fomo-shell #bulkExit {color:var(--muted)}
+.fomo-shell .memo.is-selected {box-shadow:inset 0 0 0 1.5px var(--green)}
+.fomo-shell .memo-selection {display:inline-flex;align-items:center;margin-right:8px;padding:0;cursor:pointer}
+.fomo-shell .memo-selection input {accent-color:var(--green);width:16px;height:16px;margin:0;cursor:pointer}
+.fomo-shell .memo-head>.memo-selection+time {margin-right:auto}
+.fomo-shell .reference-summary {display:flex;flex-direction:column;gap:4px;margin-top:10px;flex-wrap:wrap}
+.fomo-shell .reference-summary button,.fomo-shell .reference-summary .annotation-count {display:flex;align-items:flex-start;gap:7px;max-width:100%;font-size:12px;color:#999;margin:0;padding:0;background:none;text-align:left;line-height:1.55}
+.fomo-shell .reference-summary button:hover {text-decoration:underline}
+.fomo-shell .reference-summary .ref-arrow {display:inline-flex;align-items:center;justify-content:center;flex:0 0 12px;width:12px;height:12px;border-radius:0;background:none;color:#a5a5a5;font-size:12px;line-height:1;margin-top:0}
+.fomo-shell .reference-summary .ref-arrow svg {display:block;width:12px;height:12px;fill:currentColor}
+.fomo-shell .reference-source span:last-child,.fomo-shell .reference-incoming span:last-child {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell.dark .reference-summary button {color:#8f9a93}
+.fomo-shell #dialog.reference-compose-dialog {width:min(640px,calc(100vw - 32px));padding:20px 28px 28px;border:0;border-radius:17px;overflow:visible;box-shadow:0 20px 56px #0004}
+.fomo-shell #dialog.reference-compose-dialog::backdrop {background:#0006;backdrop-filter:blur(3px)}
+.fomo-shell #dialog.reference-compose-dialog .dialog-header {justify-content:center;margin:0 0 16px;position:relative}
+.fomo-shell #dialog.reference-compose-dialog .dialog-header h2 {font-size:18px;font-weight:650}
+.fomo-shell #dialog.reference-compose-dialog #closeDialog {position:absolute;right:-3px;top:0;color:#999}
+.fomo-shell #dialog.reference-compose-dialog #dialogBody {padding:0}
+.fomo-shell #dialog.reference-compose-dialog .composer {min-height:180px;margin:0;border-color:#16d966;border-radius:13px;padding:17px 18px 10px;box-shadow:0 2px 11px #22b66a24}
+.fomo-shell #dialog.reference-compose-dialog .composer-label,.fomo-shell #dialog.reference-compose-dialog .save-status-row {display:none}
+.fomo-shell #dialog.reference-compose-dialog #editor {min-height:112px;max-height:46dvh;font-size:14px}
+.fomo-shell #dialog.reference-compose-dialog .reflection-banner {background:transparent;border:0;padding:0;margin:0 0 10px;color:var(--text)}
+.fomo-shell #dialog.reference-compose-dialog .composer-reference button:first-child {font-size:14px;min-height:auto;padding:0;color:var(--text);max-width:520px}
+.fomo-shell #dialog.reference-compose-dialog .composer-reference button[data-unlink-reference],.fomo-shell #dialog.reference-compose-dialog #cancelEdit {display:none}
+.fomo-shell .annotation-parent {display:inline-flex;align-items:center;gap:5px;margin:8px 0 12px;color:#999;font-size:14px;padding:0}
+.fomo-shell .annotation-parent .memo-token {font-size:14px}
+.fomo-shell .annotation-parent b {display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#5d8dff;color:#fff;font-size:10px;line-height:1}
+.fomo-shell .annotation-source {display:flex;align-items:center;gap:6px;width:100%;min-width:0;margin:14px 0 0;padding:0;color:#9a9a9a;font-size:12px;text-align:left;white-space:nowrap}
+.fomo-shell .annotation-source>span:last-child {min-width:0;overflow:hidden;text-overflow:ellipsis}
+.fomo-shell .annotation-source>span:first-child {display:grid;place-items:center;flex:0 0 13px;width:13px;height:13px;border-radius:50%;background:#a5a5a5;color:white;font-size:9px}
+.fomo-shell .annotation-source.is-missing {cursor:default}
+.fomo-shell .annotation-source {align-items:flex-start;line-height:1.55;white-space:normal}
+.fomo-shell .annotation-source>span:last-child {display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.fomo-shell.dark .annotation-source {color:#8f9a93}
+.fomo-shell.dark .annotation-parent b {background:#4f7be0}
+.fomo-shell mark.search-hit {background:#ffe58a;color:inherit;border-radius:2px;padding:0 1px;box-decoration-break:clone}
+.fomo-shell.dark mark.search-hit {background:#63501a;color:#ffe8a3}
+.fomo-shell .annotation-card .reference-summary:empty {display:none}
+.fomo-shell .send,.fomo-shell .primary-button {background:var(--green-strong);border-color:var(--green-strong)}
+.fomo-shell .send:hover,.fomo-shell .primary-button:hover {background:#0f5c38;border-color:#0f5c38}
+.fomo-shell .send:disabled {background:var(--hover);border-color:var(--line);color:var(--subtle)}
+.fomo-shell #editor:empty:before {color:#767676}
+.fomo-shell .empty .empty-clear {margin-top:14px;min-height:32px;padding:6px 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px}
+.fomo-shell .empty .empty-clear:hover {border-color:var(--green-strong);color:var(--green-strong)}
+.fomo-shell .primary-button {border-radius:8px}
+.fomo-shell .dialog-actions>button:not(.primary-button) {border-radius:8px}
+.fomo-shell #dialogBody input:not([type=file]):not([type=checkbox]),.fomo-shell #dialogBody select,.fomo-shell #dialogBody textarea {border-radius:8px}
+.fomo-shell .settings-actions button {border-radius:7px}
+.fomo-shell #dialog .dialog-actions button {font-size:13px}
+.fomo-shell #dialog .dialog-actions .primary-button {padding:8px 16px}
+.fomo-shell #dialog .dialog-header button:focus-visible,.fomo-shell #closeLightbox:focus-visible {outline:2px solid var(--green-strong);outline-offset:3px;border-radius:50%;color:var(--green-strong)}
+.fomo-shell .profile:focus-visible {outline:2px solid var(--green-strong);outline-offset:2px;border-radius:8px}
+.fomo-shell.dark #dialog .dialog-header button:focus-visible,.fomo-shell.dark #closeLightbox:focus-visible,.fomo-shell.dark .profile:focus-visible {outline-color:#6ee7a8;color:#6ee7a8}
+.fomo-shell #dialog:has(.history-panel) {width:min(900px,calc(100vw - 32px));max-height:90dvh;overflow:auto}
+.fomo-shell #dialog:has(.relation-picker) {width:min(560px,calc(100vw - 32px))}
+.fomo-shell #dialog:has(.note-detail) {width:min(720px,calc(100vw - 32px))}
+.fomo-shell #dialog.note-detail-dialog {width:min(560px,calc(100vw - 24px));height:100dvh;max-height:100dvh;margin:0 0 0 auto;border-radius:0;padding:20px 24px;overflow:auto;box-shadow:-18px 0 48px #0002}
+.fomo-shell #dialog.note-detail-dialog::backdrop {background:#0003}
+.fomo-shell .relation-picker {display:block}
+.fomo-shell .relation-search {position:relative;display:flex;align-items:center;margin:0 0 8px}
+.fomo-shell .relation-search>span {position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.fomo-shell .relation-search>span svg {width:14px;height:14px}
+.fomo-shell #dialogBody #relationSearch {height:38px;padding:8px 10px 8px 34px;margin:0;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
+.fomo-shell #dialogBody #relationSearch:focus-visible {outline:2px solid var(--green-strong);outline-offset:1px;border-color:var(--green-strong)}
+.fomo-shell #relationCount {margin:0 0 8px;font-size:12px;color:var(--muted)}
+.fomo-shell #relationChoices {display:grid;gap:6px;max-height:55dvh;overflow:auto;padding-right:2px}
+.fomo-shell .related-choice {display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);transition:border-color .12s,background .12s}
+.fomo-shell .related-choice:hover {border-color:var(--green-strong);background:var(--green-pale)}
+.fomo-shell .related-choice small {display:block;color:var(--muted);font-size:12px;line-height:1.5}
+.fomo-shell .related-choice span {display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:4px;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
+.fomo-shell .related-choice:disabled {opacity:.5}
+.fomo-shell .detail-empty {margin:0;padding:10px 0;color:var(--muted);font-size:13px}
+.fomo-shell .history-layout {display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px;min-height:160px}
+.fomo-shell .history-diff {margin-top:18px;border-top:1px solid var(--line);padding-top:12px;max-height:240px;overflow:auto}
+.fomo-shell .history-diff-head {margin:0 0 8px;font-size:12px;color:var(--muted)}
+.fomo-shell .history-diff .diff-add {color:#167a4c}
+.fomo-shell .history-diff .diff-del {color:#a33b3b}
+.fomo-shell .history-diff-body {font:12px/1.65 "Cascadia Mono","Consolas",monospace;overflow-wrap:anywhere}
+.fomo-shell .history-diff .diff-line {padding:1px 6px;white-space:pre-wrap;border-radius:3px}
+.fomo-shell .history-diff .diff-add {background:#e8f8ee;color:#116b40}
+.fomo-shell .history-diff .diff-del {background:#fdecec;color:#9b2c2c}
+.fomo-shell .primary-button.danger {background:#a33b3b;border-color:#a33b3b}
+.fomo-shell .primary-button.danger:hover {background:#8a2f2f;border-color:#8a2f2f}
+.fomo-shell .trash-toolbar {display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 14px;margin:0 0 12px;font-size:12px;color:var(--muted)}
+.fomo-shell .trash-toolbar button {flex-shrink:0;padding:5px 10px;border:1px solid var(--line);border-radius:5px;color:#a33b3b}
+.fomo-shell .trash-toolbar button:hover {border-color:#a33b3b}
+.fomo-shell .storage-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 14px}
+.fomo-shell .storage-grid>div {border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg)}
+.fomo-shell .storage-grid span {display:block;font-size:12px;color:var(--muted)}
+.fomo-shell .storage-grid strong {display:block;font-size:14px;font-weight:600;margin-top:2px}
+.fomo-shell .storage-grid small {display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.fomo-shell .memo-day {display:flex;align-items:center;gap:12px;margin:18px 2px 4px;color:var(--muted);font-size:12px;font-weight:600}
+.fomo-shell .memo-day:first-child {margin-top:2px}
+.fomo-shell .memo-day i {flex:1;height:1px;background:var(--line)}
+.fomo-shell .empty-actions {display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.fomo-shell #lightbox {width:min(94vw,1100px);max-width:calc(100vw - 20px);max-height:92dvh;padding:0;border:0;border-radius:12px;background:#141414;overflow:hidden;color:#eee}
+.fomo-shell #lightbox::backdrop {background:#000b;backdrop-filter:blur(4px)}
+.fomo-shell .lightbox-bar {display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:8px 10px;background:#1d1d1d;color:#ddd;font-size:12px}
+.fomo-shell .lightbox-bar button {min-width:32px;height:32px;padding:0 8px;border-radius:6px;color:#ddd;font-size:15px;flex-shrink:0}
+.fomo-shell .lightbox-bar button:hover {background:#333;color:#fff}
+.fomo-shell .lightbox-bar button:focus-visible {outline:2px solid #6ee7a8;outline-offset:2px;border-radius:6px}
+.fomo-shell .lightbox-bar button:disabled {opacity:.35}
+.fomo-shell .lightbox-bar #closeLightbox {position:static;right:auto;top:auto;background:transparent;border-radius:6px;padding:0 8px}
+.fomo-shell .lightbox-bar #closeLightbox svg {width:15px;height:15px;fill:currentColor;stroke:none}
+.fomo-shell .lightbox-spacer {flex:1;min-width:8px}
+.fomo-shell #lightboxCount {min-width:54px;text-align:center;color:#aaa;font-variant-numeric:tabular-nums}
+.fomo-shell .lightbox-stage {min-height:50dvh;max-height:calc(92dvh - 48px);overflow:auto;display:block;text-align:center;background:#0d0d0d;padding:10px}
+.fomo-shell #lightboxImage {display:block;width:100%;height:auto;max-width:none;max-height:none;object-fit:contain;transform-origin:top center;margin:0 auto}
+@media (max-width:780px) {
+ .fomo-shell .tag-select .count {opacity:1}
+}
+/* Compact 5px handle; its length is capped independently of note count. */
+.fomo-shell .main {position:relative}
+.fomo-shell #memos.memo-list {scrollbar-width:none;padding-right:0}
+.fomo-shell #memos.memo-list::-webkit-scrollbar {display:none}
+.fomo-shell .memo-scroll-thumb{position:absolute;width:5px;border-radius:100px;background:#bfc2c4;opacity:0;pointer-events:none;transition:opacity .2s;z-index:3;touch-action:none;cursor:grab}
+.fomo-shell .memo-scroll-thumb::after{content:"";position:absolute;inset:0 -4px}
+.fomo-shell .memo-scroll-thumb.visible,.fomo-shell .memo-scroll-thumb:focus-visible{opacity:1;pointer-events:auto}
+.fomo-shell .memo-scroll-thumb:hover,.fomo-shell .memo-scroll-thumb.dragging{background:#9fa3a5}
+.fomo-shell .memo-scroll-thumb.dragging{cursor:grabbing}
+.fomo-shell .memo-scroll-thumb:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.fomo-shell .memo-scroll-thumb[hidden]{display:none}
+.fomo-shell.dark .memo-scroll-thumb{background:#737976}
+.fomo-shell.dark .memo-scroll-thumb:hover,.fomo-shell.dark .memo-scroll-thumb.dragging{background:#13b66a}
+
+.fomo-shell #historyVersions {max-height:45vh;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.fomo-shell .history-version {text-align:left;white-space:pre-line;font-size:12px;padding:8px;border-radius:6px;color:var(--muted);flex-shrink:0}
+.fomo-shell .history-version[aria-pressed=true] {background:var(--green-pale);color:var(--green-dark)}
+.fomo-shell #historyPreview {margin-top:10px;max-height:45vh;overflow:auto}
+.fomo-shell #historyImages img {max-height:180px;max-width:100%;object-fit:contain}
+.fomo-shell #historyStatus,.fomo-shell #bulkStatus {font-size:12px;color:var(--muted)}
+.fomo-shell #bulkCopyText {width:100%;box-sizing:border-box;font:inherit}
+.fomo-shell .detail-tools {flex-wrap:wrap}
+.fomo-shell #tagSuggestions {max-height:320px;overflow:auto}
+.fomo-shell #tagSuggestions button {text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;min-height:32px}
+.fomo-shell #tagSuggestions button.suggestion-memo {display:block;white-space:normal;text-overflow:clip;padding:8px 9px;border-radius:4px;border-bottom:1px solid var(--line)}
+.fomo-shell #tagSuggestions button.suggestion-memo:last-child {border-bottom:0}
+.fomo-shell #tagSuggestions .suggestion-date {display:block;color:#999;font-size:11px;line-height:1.5;margin-bottom:2px}
+.fomo-shell #tagSuggestions .suggestion-title {display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;line-height:1.6;color:var(--text)}
+.fomo-shell #tagSuggestions .suggestion-title mark {background:#fff36b;color:inherit;padding:0}
+.fomo-shell.dark #tagSuggestions .suggestion-title mark {background:#6c5c1f}
+.fomo-shell #tagSuggestions button.selected {background:var(--hover);color:var(--text)}
+.fomo-shell.dark #tagSuggestions button.selected {background:#353b37;color:var(--text)}
+.fomo-shell .format-tools button[aria-pressed=true] {color:var(--green-dark);background:var(--green-pale);border-radius:4px}
+.fomo-shell .history-panel>.dialog-hint {background:none;padding:0}
+.fomo-shell.note-window {font-weight:400}
+@media (max-width:600px) {
+ .fomo-shell .history-layout {grid-template-columns:1fr}
+ .fomo-shell #historyVersions {max-height:140px}
+ .fomo-shell .multi-select-toggle {margin-left:2px;padding:4px}
+ .fomo-shell .bulk-bar {gap:4px}
+ .fomo-shell #dialog.reference-compose-dialog {padding:16px 16px 20px}
+ .fomo-shell .annotation-source {font-size:11px;gap:5px}
+}
+@media (min-width:781px) and (max-width:1050px) {
+  .fomo-shell .app-shell,.fomo-shell.overview-collapsed .app-shell {grid-template-columns:247px minmax(0,1fr);gap:16px;padding:0 28px 0 0}
+  .fomo-shell #heatmap {gap:8px 6px}
+}
+@media (max-width:780px) {
+  .fomo-shell .app-shell,.fomo-shell.overview-collapsed .app-shell {display:block;padding:0 14px}
+  .fomo-shell .main {padding-top:10px}
+  .fomo-shell .sidebar {padding:18px 12px}
+  .fomo-shell .sidebar .tag-heading #toggleTagSearch,.fomo-shell .sidebar .tag-heading #manageTags,.fomo-shell .sidebar .tag-heading #addTag {opacity:1;pointer-events:auto}
+  .fomo-shell #sidebarLayout {display:none}
+  .fomo-shell .compact-tools #compactSettings {display:block}
+  .fomo-shell .search-wrap {width:165px;max-width:44%;border-radius:9px}
+  .fomo-shell .format-tools {gap:2px;overflow-x:auto}
+  .fomo-shell .format-tools button {width:27px;min-width:27px;height:32px;min-height:32px}
+  .fomo-shell #saveMemo {height:32px;min-height:32px}
+  .fomo-shell .memo {padding:14px}
+}
+.fomo-shell .boot-status {padding:28px 4px;color:var(--muted);font-size:13px;text-align:center}
+.fomo-shell .boot-status[hidden] {display:none}
+.update-auto{display:flex!important;align-items:center;gap:8px;cursor:pointer}.update-auto input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:#24c779}#updateProgress{width:100%;height:8px;accent-color:#24c779}#updatesPanel{margin-top:24px;padding-top:16px;border-top:1px solid var(--border,#e8e8e8)}
+.backup-options{display:flex;gap:16px}.backup-options>label{flex:1;min-width:0}.backup-list{max-height:240px;overflow:auto;margin-top:12px}.backup-row{display:flex;align-items:center;gap:8px;width:100%;padding:4px 0;border-bottom:1px solid var(--line)}.backup-open{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;padding:7px 8px;border:0;background:none;color:var(--text);text-align:left;cursor:pointer}.backup-open:hover{background:var(--hover);border-radius:6px}.backup-open time,.backup-preview time{color:#888;font-size:12px}.backup-delete{align-self:center;min-width:46px;padding:5px 8px;border:1px solid transparent;border-radius:6px;background:transparent;color:#b35a5a;font:inherit;font-size:12px;cursor:pointer}.backup-delete:hover{background:#fff0f0;border-color:#eccaca}.backup-protected{flex:0 0 auto;padding:0 8px;color:var(--muted);font-size:12px;white-space:nowrap}.backup-preview{max-height:280px;overflow:auto}.backup-preview article{padding:10px 0;border-bottom:1px solid var(--line)}.backup-preview p{white-space:pre-wrap;overflow-wrap:anywhere}.restore-summary{display:flex;gap:12px;flex-wrap:wrap}.image-order{display:flex;align-items:center;justify-content:space-between;background:var(--surface);height:24px;font-size:11px}.attachment .image-order button{position:static!important;width:24px!important;height:22px!important;border-radius:3px!important;background:transparent!important;color:inherit!important}.attachment .image-order button:disabled{opacity:.25}.attachment{height:auto!important;overflow:visible!important}#tagSuggestions button.selected{background:#e9f7ef;color:#178d51}.dark #tagSuggestions button.selected{background:#194934;color:#a0e8bf}.dark .backup-delete:hover{background:#3b2929;border-color:#674141}
+
+.backup-draft-preview{white-space:pre-wrap;max-height:160px;overflow:auto;overflow-wrap:anywhere}
+
+/* Visual alignment, 0.9.22: warm paper, quieter cards, plain inline tags. */
+.fomo-shell {
+  --bg:#f6f5f1; --surface:#fff; --text:#333; --muted:#8b8b84; --subtle:#a3a39b;
+  --line:#ece9e2; --hover:#f1efe9; --green:#2eb67d; --green-strong:#2eb67d;
+  --green-dark:#249468; --green-pale:#eaf7f0; --tag:#4c6fd6;
+  font:400 14px/1.7 "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+.fomo-shell.dark {
+  --bg:#1d1f1e; --surface:#282b29; --text:#e4e7e2; --muted:#a2aba5; --subtle:#8e988f;
+  --line:#3a3f3b; --hover:#333834; --green:#3cc98a; --green-strong:#3cc98a;
+  --green-dark:#2fad76; --green-pale:#263a30; --tag:#a7bdf7;
+}
+.fomo-shell .app-shell {max-width:1440px;margin-inline:auto}
+.fomo-shell .main {padding-top:20px}
+.fomo-shell .topbar {height:34px;margin-bottom:16px}
+.fomo-shell .title-row h1 {font-size:16px;font-weight:600;letter-spacing:-.2px}
+.fomo-shell .search-wrap {height:34px;border-radius:6px;border-color:var(--line);background:var(--surface)}
+.fomo-shell .search-wrap:focus-within {border-color:var(--green);box-shadow:0 0 0 3px #2eb67d14}
+.fomo-shell .search-wrap input {font-size:13px}
+.fomo-shell .composer {min-height:112px;padding:14px 18px 10px;border-radius:9px;border-color:var(--line);box-shadow:0 1px 2px #2b261d09}
+.fomo-shell .composer:focus-within {border-color:var(--green);box-shadow:0 0 0 3px #2eb67d14,0 6px 18px #2eb67d0d}
+.fomo-shell .composer-label {margin-bottom:12px}
+.fomo-shell .composer-bottom {margin-top:12px;padding-top:8px}
+.fomo-shell #editor {font-size:14px;line-height:1.75;min-height:64px}
+.fomo-shell .inline-composer {border-color:var(--green);box-shadow:0 0 0 3px #2eb67d14,0 6px 18px #2eb67d0d}
+.fomo-shell #dialog.reference-compose-dialog .composer {border-color:var(--green);box-shadow:0 0 0 3px #2eb67d14}
+.fomo-shell .memo-list {gap:0;margin-top:10px}
+.fomo-shell .memo {padding:16px 20px;border-radius:9px;border:0;background:var(--surface);box-shadow:0 1px 2px #2b261d09}
+.fomo-shell .memo+.memo {margin-top:12px}
+.fomo-shell .memo:hover {box-shadow:0 4px 16px #2b261d0f}
+.fomo-shell.dark .memo {box-shadow:0 1px 2px #0003}
+.fomo-shell.dark .memo:hover {box-shadow:0 4px 16px #0006}
+.fomo-shell .memo-head {margin-bottom:8px}
+.fomo-shell .memo-content {font-size:14px;line-height:1.75}
+.fomo-shell .memo-content p+p {margin-top:6px}
+.fomo-shell .memo-tags {gap:8px;margin-bottom:6px}
+.fomo-shell .memo-tag,.fomo-shell .memo-content .tag-link {background:none;color:var(--tag);font-size:13px;font-weight:400;line-height:1.7;padding:0;border-radius:0}
+.fomo-shell .memo-content .tag-link:hover,.fomo-shell .memo-tag:hover {background:none;color:var(--tag);text-decoration:underline;text-underline-offset:3px}
+.fomo-shell .memo-token,.fomo-shell .memo-reference {color:var(--tag);font-weight:500}
+.fomo-shell .annotation-parent {color:var(--muted);font-size:13px;margin:7px 0 10px}
+.fomo-shell .annotation-source {color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
+.fomo-shell.dark .annotation-source {color:var(--muted)}
+.fomo-shell .memo-content .tag-link {font-size:13px}
+.fomo-shell .send,.fomo-shell .primary-button {background:var(--green-strong);border-color:var(--green-strong);color:#fff}
+.fomo-shell .send:hover,.fomo-shell .primary-button:hover {background:var(--green-dark);border-color:var(--green-dark);color:#fff}
+.fomo-shell .send {border-radius:9px}
+.fomo-shell .nav-item.active {background:var(--green);color:#fff}
+.fomo-shell.dark .nav-item.active {color:#10251b}
+.fomo-shell .tag-row.active {background:var(--green-pale)}
+.fomo-shell .tag-row.active .tag-select {color:var(--green-dark)}
+.fomo-shell .week-day .week-track i {background:#c9d8ce}
+.fomo-shell .week-day.is-today .week-track i {background:var(--green)}
+.fomo-shell .heatmap .level1 {background:#e4efe8}
+.fomo-shell .heatmap .level2 {background:#c7e2d2}
+.fomo-shell .heatmap .level3 {background:#96cda9}
+.fomo-shell .heatmap .level4 {background:#5db786}
+.fomo-shell .heatmap .level5 {background:var(--green)}
+.fomo-shell .toast {background:#2f332f;color:#fff;border-radius:7px;box-shadow:0 8px 24px #0002}
+.fomo-shell .selection-toolbar {border-radius:9px;box-shadow:0 5px 18px #2b261d18}
+@media(min-width:1600px){
+  .fomo-shell .app-shell {padding-left:36px;padding-right:36px}
+  .fomo-shell .sidebar {padding-left:8px}
+}
+@media(max-width:780px){
+  .fomo-shell .app-shell {max-width:none;padding:0 16px}
+  .fomo-shell .composer {padding:13px 15px 9px;border-radius:9px}
+  .fomo-shell .memo {padding:14px 16px}
+  .fomo-shell .memo-content {font-size:14px;line-height:1.7}
+}
+@media(max-width:430px){
+  .fomo-shell .app-shell {padding:0 13px}
+  .fomo-shell .memo {padding:13px 14px}
+  .fomo-shell .memo-tag,.fomo-shell .memo-content .tag-link {font-size:13px}
+}
+@media(max-width:780px){
+  .fomo-shell .search-wrap kbd {display:none}
+  .fomo-shell .search-wrap {gap:6px}
+}
+.fomo-shell.dark #editor:empty:before {color:#8b958e}
+.fomo-shell.dark .search-wrap input::placeholder {color:#8b958e}
+.fomo-shell.dark .composer-label {color:#a2aba5}
+@media(max-width:360px){
+  .fomo-shell .search-wrap {width:128px}
+  .fomo-shell .composer-bottom {gap:2px}
+  .fomo-shell .format-tools button {width:27px}
+  .fomo-shell #cancelCompose {font-size:13px;padding:3px 2px}
+  .fomo-shell .send {min-width:40px}
+}
+/* Tag and MEMO token treatment: pale blue inline pills, no green. */
+.fomo-shell { --tag-pale:#eef2ff; }
+.fomo-shell.dark { --tag-pale:#2b3247; }
+.fomo-shell .editor-tag,
+.fomo-shell .memo-tag,
+.fomo-shell .memo-content .tag-link,
+.fomo-shell .source-tag {
+  background:var(--tag-pale); color:var(--tag); border-radius:3px;
+  padding:0 4px; font-size:13px; line-height:1.7; font-weight:400;
+}
+.fomo-shell .memo-content .tag-link:hover,
+.fomo-shell .memo-tag:hover {background:var(--tag-pale);color:var(--tag);text-decoration:none}
+.fomo-shell .memo-token,
+.fomo-shell .memo-reference {
+  background:var(--tag-pale); color:var(--tag); border-radius:3px;
+  padding:1px 4px; font-size:14px; line-height:1.7; font-weight:500;
+}
+.fomo-shell .memo-reference {font-size:0}
+.fomo-shell .memo-reference::after {font-size:14px;font-weight:500}
+.fomo-shell .annotation-parent .memo-token {font-size:13px;padding:1px 4px}
+.fomo-shell .annotation-source {border-top:0;padding-top:0;margin-top:12px}
+.fomo-shell .annotation-source .source-tag {font-size:12px;padding:0 3px}
+.fomo-shell .memo-content .memo-token {white-space:nowrap}
+.fomo-shell.dark .editor-tag,
+.fomo-shell.dark .memo-tag,
+.fomo-shell.dark .memo-content .tag-link,
+.fomo-shell.dark .source-tag,
+.fomo-shell.dark .memo-token,
+.fomo-shell.dark .memo-reference {background:var(--tag-pale);color:var(--tag)}
+.fomo-shell #editor.structured-editor .editor-tag {
+  background:var(--tag-pale); color:var(--tag); border-radius:3px;
+  padding:0 4px; font-size:13px; line-height:1.7;
+}
+.fomo-shell.dark #editor.structured-editor .editor-tag {background:var(--tag-pale);color:var(--tag)}
+/* Native token values sampled from the running 2026 client. */
+.fomo-shell {
+  --bg:#fafafa; --surface:#fff; --text:#323232; --muted:#7f7f7f; --subtle:#9b9b9b;
+  --line:#e7e7e7; --hover:#f0f0f0; --green:#30cf79; --green-strong:#30cf79;
+  --green-dark:#20a962; --green-pale:#e8f8ee; --tag:#5783f7; --tag-pale:#eef3fe;
+}
+.fomo-shell.dark {
+  --bg:#1e1f1e; --surface:#2a2b2a; --text:#e3e5e2; --muted:#a1a6a2; --subtle:#8b918c;
+  --line:#3b3d3b; --hover:#343634; --green:#35d98a; --green-strong:#35d98a;
+  --green-dark:#27b874; --green-pale:#263a30; --tag:#a3b9ff; --tag-pale:#2b3552;
+}
+.fomo-shell .memo {border-radius:6px;box-shadow:0 1px 1px #00000005}
+.fomo-shell .memo:hover {box-shadow:0 2px 6px #0000000a}
+.fomo-shell .composer {border-radius:7px}
+.fomo-shell .editor-tag,
+.fomo-shell .memo-tag,
+.fomo-shell .memo-content .tag-link,
+.fomo-shell .source-tag {
+  background:var(--tag-pale); color:var(--tag); border-radius:3px;
+  padding:0 4px; font-size:13px; line-height:1.7;
+}
+.fomo-shell .memo-token,
+.fomo-shell .memo-reference {
+  background:var(--tag-pale); color:var(--tag); border-radius:3px;
+  padding:1px 4px; font-size:14px; line-height:1.7; font-weight:500;
+}
+.fomo-shell .annotation-source .ref-arrow {background:none;color:#a5a5a5}
+.fomo-shell .reference-summary .ref-arrow {background:none;color:#a5a5a5}
+.fomo-shell .memo-reference {font-size:0}
+.fomo-shell .memo-reference::after {font-size:14px}
+.fomo-shell.dark .memo-reference {background:var(--tag-pale);color:var(--tag)}
+.fomo-shell .annotation-source>.ref-arrow {
+  display:inline-flex; align-items:center; justify-content:center; flex:0 0 12px; width:12px; height:12px;
+  border-radius:0; background:none; color:#a5a5a5; font-size:12px;
+  line-height:1; margin-top:0; overflow:visible;
+}
+.fomo-shell.dark .annotation-source>.ref-arrow {background:none;color:#6d756f}
+.fomo-shell .annotation-parent {color:#999}
+.fomo-shell .annotation-source {color:#9a9a9a}
+.fomo-shell.dark .annotation-parent {color:#8f988f}
+.fomo-shell.dark .annotation-source {color:#8f988f}
+.fomo-shell .random-actions {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fomo-shell .random-actions button {padding:5px 9px;border:1px solid var(--line);border-radius:5px;font-size:12px;color:var(--text)}
+.fomo-shell .random-actions button:hover {border-color:var(--green);color:var(--green-dark)}
+.fomo-shell .random-actions button:disabled {opacity:.45;cursor:default}
+@media(max-width:600px){.fomo-shell .random-banner{align-items:flex-start}.fomo-shell .random-actions{width:100%;margin-top:8px}}
+.fomo-shell .search-menu {position:fixed;z-index:30;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 30px #2b261d14}
+.fomo-shell .search-menu-title {padding:7px 9px 4px;color:var(--muted);font-size:12px}
+.fomo-shell .search-menu-title.search-recent-title {margin-top:4px;border-top:1px solid var(--line);padding-top:10px}
+.fomo-shell .search-quick-list,.fomo-shell .search-recent-list {display:grid}
+.fomo-shell .search-menu button {display:block;width:100%;text-align:left;padding:8px 9px;border-radius:5px;color:var(--text);font-size:13px}
+.fomo-shell .search-menu button:hover {background:var(--hover)}
+.fomo-shell .search-recent-list {grid-template-columns:minmax(0,1fr) auto}
+.fomo-shell .search-recent-list .search-history-clear {color:var(--muted);font-size:12px;width:auto;padding:8px 9px;text-decoration:underline}
+.fomo-shell.dark .search-menu {box-shadow:0 10px 30px #0005}
+/* Native focus expansion: compact while idle, taller once the caret is inside. */
+.fomo-shell .composer {min-height:112px;transition:min-height .18s ease}
+.fomo-shell #editor {min-height:44px;transition:min-height .18s ease}
+.fomo-shell .composer.is-focused {min-height:160px}
+.fomo-shell .composer.is-focused #editor {min-height:80px}
+.fomo-shell .composer {align-content:normal}
+/* Native sidebar glyphs are larger and filled, not thin 16px outlines. */
+.fomo-shell .sidebar .nav-item>span:first-child,
+.fomo-shell .sidebar .tag-select>.hash {
+  flex:0 0 20px;width:20px;height:24px;
+}
+.fomo-shell .sidebar .nav-item svg,
+.fomo-shell .sidebar .tag-select>.hash svg {
+  width:19px;height:19px;fill:currentColor;stroke:none;
+}
+.fomo-shell .sidebar .nav-item svg.lucide-footprints {
+  fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;
+}
+.fomo-shell .sidebar .tag-select>.hash {font-size:17px;line-height:1;font-weight:500}
+.fomo-shell .sidebar .tag-collapse {
+  left:-2px;width:20px;min-height:0;display:grid;place-items:center;
+  font-size:18px;line-height:1;color:#999;background:var(--bg);padding:0;
+}
+.fomo-shell .sidebar .tag-collapse:hover {color:var(--text)}
+.fomo-shell .sidebar .tag-row.child:before {left:-7px}
+/* Native sidebar proportions after direct screenshot comparison. */
+.fomo-shell .sidebar .nav-item>span:first-child,
+.fomo-shell .sidebar .tag-select>.hash {flex:0 0 18px;width:18px;height:24px}
+.fomo-shell .sidebar .nav-item svg,
+.fomo-shell .sidebar .tag-select>.hash svg {width:17px;height:17px;fill:currentColor;stroke:none}
+.fomo-shell .sidebar .tag-select>.hash {font-size:16px}
+.fomo-shell .sidebar .tag-select .count {opacity:1;color:#999;font-size:12px}
+.fomo-shell .sidebar .tag-heading #manageTags,.fomo-shell .sidebar .tag-heading #addTag {opacity:0;pointer-events:none;transition:opacity .12s}
+.fomo-shell .sidebar .tag-heading #toggleTagSearch,.fomo-shell .sidebar .tag-heading #tagSort {opacity:1;pointer-events:auto}
+.fomo-shell .sidebar .tag-heading:hover #manageTags,.fomo-shell .sidebar .tag-heading:hover #addTag,.fomo-shell .sidebar .tag-heading:focus-within #manageTags,.fomo-shell .sidebar .tag-heading:focus-within #addTag {opacity:1;pointer-events:auto}
+.fomo-shell .sidebar .tag-heading #tagSort {width:auto;min-width:28px;height:24px;padding:2px 1px;border-radius:4px;color:#999;font-size:12px;line-height:1}
+.fomo-shell .sidebar .tag-heading #tagSort:hover {background:var(--hover);color:var(--text)}
+/* Sidebar tokens: 36px rows, 16px icons, 12px gap, 10px row inset. */
+.fomo-shell .sidebar {padding:14px 12px 12px}
+.fomo-shell .sidebar .nav-item {
+  min-height:36px;height:36px;padding:0 4px 0 10px;gap:12px;
+  border-radius:8px;font-size:14px;line-height:20px;
+}
+.fomo-shell .sidebar .nav-item>span:first-child {
+  flex:0 0 16px;width:16px;height:20px;
+}
+.fomo-shell .sidebar .nav-item svg {width:16px;height:16px}
+.fomo-shell .sidebar .nav-item.active {font-weight:600}
+.fomo-shell .sidebar .nav-item:active {transform:scale(.96)}
+.fomo-shell .sidebar .tag-select {
+  min-height:34px;gap:12px;padding:0 10px;border-radius:8px;
+  font-size:14px;line-height:20px;
+}
+.fomo-shell .sidebar .tag-select>.hash {flex:0 0 16px;width:16px;height:20px;font-size:16px}
+.fomo-shell .sidebar .tag-select .count {min-width:40px;text-align:right;padding-right:0}
+.fomo-shell .sidebar .tag-row:hover {background:var(--hover)}
+.fomo-shell .sidebar .tag-row.active {border-radius:8px}
+.fomo-shell .sidebar .tag-heading {font-size:12px;margin:26px 10px 9px}
+.fomo-shell .sidebar .tag-heading button {width:24px;height:24px;padding:4px}
+.fomo-shell .sidebar .topbar {height:36px;min-height:36px}
+.fomo-shell .sidebar .tag-select>.hash svg {width:16px;height:16px}
+.fomo-shell .topbar {height:36px;min-height:36px}
+/* Native tag header shows search + sort; gear/add only on hover and do not reserve space. */
+.fomo-shell .sidebar .tag-heading #manageTags,
+.fomo-shell .sidebar .tag-heading #addTag {display:none}
+.fomo-shell .sidebar .tag-heading:hover #manageTags,
+.fomo-shell .sidebar .tag-heading:hover #addTag,
+.fomo-shell .sidebar .tag-heading:focus-within #manageTags,
+.fomo-shell .sidebar .tag-heading:focus-within #addTag {display:grid}
+.fomo-shell .sidebar .tag-select {padding-left:6px!important;padding-right:10px!important}
+/* Topbar search: 32px high, 244px wide, soft grey field like 5.26.93. */
+@media (min-width:781px) {
+.fomo-shell .topbar .search-wrap {width:244px;height:32px;border-radius:8px;background:#f1f1f1;border-color:transparent}
+.fomo-shell .topbar .search-wrap:focus-within {background:var(--surface);border-color:var(--green)}
+.fomo-shell .topbar .search-wrap input {font-size:13px}
+}
+/* Native memo cards: 12px radius, 16px inset, 12px gap, no outline. */
+.fomo-shell .memo-list {gap:12px}
+.fomo-shell .memo {padding:16px;border:0;border-radius:12px;min-height:0;box-shadow:none}
+.fomo-shell .memo:hover {border:0;box-shadow:none}
+.fomo-shell .memo+.memo {margin-top:0}
+.fomo-shell .memo-head {min-height:18px;margin-bottom:8px}
+.fomo-shell .memo time {font-size:11px;font-weight:400;color:#999}
+.fomo-shell .memo-tags {gap:6px;margin:0 0 8px}
+.fomo-shell .memo-tag {font-size:12px;line-height:1.7;padding:1px 5px;border-radius:6px}
+.fomo-shell .memo-content {font-size:14px;line-height:1.8;letter-spacing:.1px}
+.fomo-shell .memo-menu-button {opacity:1}
+/* Composer: 102px idle silhouette; still expands to 160px on click. */
+.fomo-shell .composer {min-height:102px;padding:10px 16px 6px;border-radius:8px}
+.fomo-shell #editor {min-height:36px}
+.fomo-shell .composer.is-focused {min-height:160px}
+.fomo-shell .composer.is-focused #editor {min-height:80px}
+.fomo-shell .composer-bottom {margin-top:8px;padding-top:4px}
+.fomo-shell .send {border-radius:50%;width:34px;height:34px;padding:0;display:grid;place-items:center}
+/* Review is a centered one-card ritual, not an endless list. */
+body[data-view=review] #specialPanel {width:min(520px,calc(100vw - 32px));margin:0 auto}
+body[data-view=review] .review-banner {border:0;box-shadow:none;background:transparent;padding:0 0 14px;align-items:center}
+body[data-view=review] .review-banner h2 {font-size:14px;font-weight:500}
+body[data-view=review] .review-banner p {display:none}
+body[data-view=review] #reviewSettings {font-size:12px;padding:5px 8px}
+body[data-view=review] #memos {display:flex;flex-direction:column;align-items:center;gap:0;padding:36px 0;border-radius:12px;background:radial-gradient(circle at 20% 0%,#e6ddd1 0,#d9dfd9 42%,#cfd7d2 100%)}
+body[data-view=review] #memos .memo {display:none;width:min(520px,calc(100vw - 64px));min-height:444px;padding:34px 38px;border:0;border-radius:12px;box-shadow:0 14px 40px #2b261d1f}
+body[data-view=review] #memos .memo:not(.is-reviewed) {display:block}
+body[data-view=review] #memos .memo:not(.is-reviewed) ~ .memo:not(.is-reviewed) {display:none}
+body[data-view=review] #memos .memo.is-reviewed {display:none}
+body[data-view=review] #memos:not(:has(.memo:not(.is-reviewed))) .memo.is-reviewed:last-of-type {display:block}
+body[data-view=review] #memos .memo-content {font-size:15px;line-height:1.85}
+body[data-view=review] #memos .load-more {display:none}
+/* Random walk: a room for one card, controls float at the bottom. */
+body[data-view=random] .main {position:relative}
+body[data-view=random] #memos {display:flex;justify-content:center;min-height:520px;padding:36px 0 130px;background:radial-gradient(circle at 50% 0%,#f2efe8 0,#eeece6 52%,#e9e7e1 100%);border-radius:12px}
+body[data-view=random] #memos .memo {width:min(520px,calc(100vw - 64px));min-height:300px;padding:32px 36px;border:0;border-radius:12px;box-shadow:0 12px 36px #2b261d17}
+body[data-view=random] #memos .memo-menu-button {display:none}
+body[data-view=random] .random-banner {position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:min(520px,calc(100vw - 32px));z-index:9;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 8px 28px #2b261d18}
+body[data-view=random] .random-banner h2 {font-size:14px}
+body[data-view=random] .random-banner p {display:none}
+body[data-view=random] .random-actions {margin-left:auto}
+/* Detail is a 1100px two-column sheet: note on the left, relations on the right. */
+.fomo-shell #dialog.note-detail-dialog {
+  width:min(1100px,calc(100vw - 32px));height:min(90dvh,900px);max-height:90dvh;
+  margin:auto;padding:0;border:0;border-radius:13px;overflow:hidden;
+  display:flex;flex-direction:column;box-shadow:0 24px 70px #0003;
+}
+.fomo-shell #dialog.note-detail-dialog .dialog-header {flex:0 0 auto;margin:0;padding:20px 30px 14px;border-bottom:1px solid var(--line)}
+.fomo-shell #dialog.note-detail-dialog #dialogBody {flex:1;min-height:0;padding:0;overflow:hidden}
+.fomo-shell .note-detail {display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);gap:28px;height:100%;padding:22px 30px 30px;overflow:hidden}
+.fomo-shell .detail-primary {min-width:0;overflow:auto;padding-right:20px;border-right:1px solid var(--line)}
+.fomo-shell .detail-relations {min-width:0;overflow:auto}
+.fomo-shell .detail-relations h3 {font-size:14px;font-weight:500;color:var(--text-subtle);margin:0 0 12px}
+.fomo-shell .detail-section-row {display:flex;align-items:center;gap:8px;min-height:32px;margin:0 0 12px 2px}
+.fomo-shell .detail-section-row .detail-section-label {margin:0;font-size:14px;line-height:1.4}
+.fomo-shell .detail-random-walk {display:inline-flex;align-items:center;gap:4px;min-height:28px;padding:3px 6px;border:0;border-radius:5px;background:transparent;color:var(--green);font-size:12px;font-weight:400;white-space:nowrap}
+.fomo-shell .detail-random-walk:hover {background:var(--hover)}
+.fomo-shell .detail-random-walk:focus-visible {outline:2px solid var(--green);outline-offset:1px}
+.fomo-shell .detail-random-walk svg {width:14px;height:14px;fill:currentColor;stroke:none}
+.fomo-shell .detail-tools {display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 6px}
+.fomo-shell .detail-tools button {font-size:12px;padding:6px 9px}
+.fomo-shell .note-detail .memo-content {font-size:14px;line-height:1.8}
+@media (max-width:900px) {
+  .fomo-shell #dialog.note-detail-dialog {width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+  .fomo-shell .note-detail {display:block;height:auto;overflow:auto;padding:16px}
+  .fomo-shell .detail-primary {overflow:visible;padding-right:0;border-right:0}
+  .fomo-shell .detail-relations {overflow:visible;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+}
+/* Dark parity for the new card, review, random and detail surfaces. */
+.fomo-shell.dark {--bg:#121212;--surface:#202020;--line:#343434;--hover:#2a2a2a;--text:#ededed;--muted:#a0a0a0;--subtle:#7c7c7c}
+body.fomo-shell.dark[data-view=review] #memos {background:radial-gradient(circle at 20% 0%,#242220 0,#1d201e 45%,#151716 100%)}
+body.fomo-shell.dark[data-view=random] #memos {background:radial-gradient(circle at 50% 0%,#22211e 0,#1b1b19 52%,#151514 100%)}
+.fomo-shell.dark .note-detail-dialog {box-shadow:0 24px 70px #0008}
+.fomo-shell.dark #dialog.note-detail-dialog .dialog-header {border-bottom-color:var(--line)}
+.fomo-shell.dark .detail-primary {border-right-color:var(--line)}
+.fomo-shell.dark .review-banner, .fomo-shell.dark .random-banner {background:var(--surface)}
+@media (max-width:520px) {
+  .fomo-shell #dialog.note-detail-dialog .dialog-header {padding:16px 18px 12px}
+  .fomo-shell .note-detail {padding:14px}
+  body.fomo-shell[data-view=review] #memos {padding:20px 0;background:transparent}
+  body.fomo-shell[data-view=review] #memos .memo {width:100%;min-height:0;padding:24px 20px}
+  body.fomo-shell[data-view=random] #memos {padding:16px 0 120px}
+  body.fomo-shell[data-view=random] #memos .memo {width:100%;padding:24px 20px}
+  body.fomo-shell[data-view=random] .random-banner {bottom:10px}
+}
+.fomo-shell .detail-relations h3.detail-links-title {margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.fomo-shell.dark .detail-relations h3.detail-links-title {border-top-color:var(--line)}
+/* Random walk: dotted canvas, connected note nodes, draggable world. */
+body[data-view=random] #memos {display:block;min-height:0;padding:0;background:transparent}
+.fomo-shell .rw-tree {position:relative;height:min(560px,calc(100dvh - 190px));min-height:430px;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#faf9f5;cursor:grab;touch-action:none}
+.fomo-shell .rw-tree.dragging {cursor:grabbing}
+.fomo-shell .rw-grid {position:absolute;inset:0;background-image:radial-gradient(circle,#00000012 1px,transparent 1px);background-size:30px 30px;pointer-events:none}
+.fomo-shell .rw-world {position:absolute;inset:0;transform-origin:0 0;z-index:2}
+.fomo-shell .rw-lines {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.fomo-shell .rw-lines line {stroke:#d3d3cc;stroke-width:1;vector-effect:non-scaling-stroke}
+.fomo-shell .rw-node {position:absolute;width:260px;box-sizing:border-box;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 8px 24px #2b261d10}
+.fomo-shell .rw-current {width:320px;padding:0;border:0;background:transparent;box-shadow:none}
+.fomo-shell .rw-current .memo {width:100%;margin:0;padding:20px;box-shadow:0 12px 36px #2b261d1a}
+.fomo-shell .rw-neighbor {display:block;padding:14px 16px;cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.fomo-shell .rw-neighbor:hover {transform:translateY(-2px);border-color:#d0d0c9;box-shadow:0 12px 28px #2b261d18}
+.fomo-shell .rw-node-meta {font-size:11px;color:var(--text-subtle);margin-bottom:8px;font-variant-numeric:tabular-nums}
+.fomo-shell .rw-node-text {display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;line-height:1.65;color:var(--text)}
+.fomo-shell .rw-node-tags {display:flex;flex-wrap:wrap;gap:4px;margin-top:9px;font-size:12px;color:var(--tag)}
+.fomo-shell .rw-tip {position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:3;padding:5px 9px;border-radius:6px;background:#ffffffcc;color:#999;font-size:12px;pointer-events:none}
+body.fomo-shell.dark[data-view=random] .rw-tree {background:#161615;border-color:#30302f}
+body.fomo-shell.dark[data-view=random] .rw-grid {background-image:radial-gradient(circle,#ffffff16 1px,transparent 1px)}
+body.fomo-shell.dark[data-view=random] .rw-lines line {stroke:#3a3a38}
+body.fomo-shell.dark[data-view=random] .rw-tip {background:#202020cc;color:#888}
+@media (max-width:700px) {
+  .fomo-shell .rw-tree {height:calc(100dvh - 250px);min-height:380px}
+  .fomo-shell .rw-current {width:280px}
+  .fomo-shell .rw-current .memo {padding:16px}
+  .fomo-shell .rw-node {width:220px}
+  .fomo-shell .rw-tip {display:none}
+}
+.fomo-shell .rw-node {z-index:2}
+body[data-view=random] #memos .rw-current .memo {width:100%;min-height:0;padding:20px}
+.fomo-shell .rw-current {width:300px}
+.fomo-shell .rw-neighbor {width:240px;min-height:112px}
+@media (max-width:700px) {.fomo-shell .rw-current {width:260px}.fomo-shell .rw-neighbor {width:210px}}
+/* Native card media is a compact 100px grid, not large tiles. */
+.fomo-shell .memo-images {display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;max-width:100%}
+.fomo-shell .memo-images button,
+.fomo-shell .memo-images[data-count="1"] button,
+.fomo-shell .memo-images[data-count="2"] button {display:block;width:100px;height:100px;min-width:100px;aspect-ratio:auto;flex:0 0 100px;background:var(--hover);border-radius:8px;overflow:hidden}
+.fomo-shell .memo-images img,
+.fomo-shell .memo-images[data-count="1"] img {display:block;width:100px;height:100px;max-width:none;max-height:none;object-fit:cover;border-radius:8px}
+/* Circular native send control. */
+.fomo-shell #composer .send-wrap {flex:0 0 auto}
+.fomo-shell #composer .send {width:34px;height:34px;min-width:34px;min-height:34px;padding:0;border-radius:50%;display:grid;place-items:center}
+@media (max-width:700px) {
+  .fomo-shell .memo-images button,.fomo-shell .memo-images[data-count="1"] button {width:88px;height:88px;min-width:88px;flex-basis:88px}
+  .fomo-shell .memo-images img,.fomo-shell .memo-images[data-count="1"] img {width:88px;height:88px}
+}
+.fomo-shell .rw-world {transform-origin:50% 50%}
+.fomo-shell .rw-zoom {position:absolute;right:12px;bottom:12px;z-index:4;display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 4px 14px #2b261d10}
+.fomo-shell .rw-zoom button {min-width:25px;height:25px;padding:0 6px;border-radius:5px;font-size:13px;color:var(--text)}
+.fomo-shell .rw-zoom button:hover {background:var(--hover)}
+.fomo-shell .rw-zoom span {min-width:38px;text-align:center;font-size:11px;color:var(--text-subtle);font-variant-numeric:tabular-nums}
+body.fomo-shell.dark[data-view=random] .rw-zoom {background:#202020;border-color:#343434}
+@media (max-width:700px) {.fomo-shell .rw-zoom {display:none}.fomo-shell .rw-tip {display:none}}
+.fomo-shell .detail-tools button {display:inline-flex;align-items:center;gap:6px;color:var(--text-subtle)}
+.fomo-shell .detail-tools button:hover {color:var(--text);border-color:#d0d0c9}
+.fomo-shell .detail-tool-icon {display:grid;place-items:center;width:14px;height:14px;flex:0 0 14px}
+.fomo-shell .detail-tool-icon svg {width:14px;height:14px;fill:currentColor;stroke:none}
+/* Dark top search was being overridden by the desktop search token. */
+body.fomo-shell.dark .topbar .search-wrap {background:#2b2b2b;border-color:transparent}
+body.fomo-shell.dark .topbar .search-wrap:focus-within {background:#202020;border-color:var(--green)}
+body.fomo-shell.dark .search-wrap input::placeholder {color:#8d8d8d}
+@media (max-width:520px) {
+  .fomo-shell #dialog.note-detail-dialog {width:100vw!important;max-width:100vw!important;margin:0!important;border-radius:0!important}
+  .fomo-shell #dialog.note-detail-dialog .dialog-header {padding:15px 16px 11px}
+  .fomo-shell .note-detail {padding:12px 14px 22px}
+  .fomo-shell .detail-tools {gap:5px;margin-top:13px}
+  .fomo-shell .detail-tools button {font-size:11px;padding:5px 7px;gap:4px}
+  .fomo-shell .detail-relations {margin-top:14px;padding-top:12px}
+}
+.fomo-shell .memo-menu .menu-svg {width:16px;height:16px;flex:0 0 16px;fill:currentColor;stroke:none;stroke-width:0}
+.fomo-shell .memo-menu .more-chevron {width:12px;height:12px;flex:0 0 12px}
+.fomo-shell .detail-tool-icon svg {width:14px;height:14px;fill:currentColor;stroke:none;stroke-width:0}
+/* Native 967px window: idle composer is about 128px, not 102px. */
+.fomo-shell .composer {min-height:128px;padding:12px 16px 8px;border-radius:12px}
+.fomo-shell #editor {min-height:56px}
+.fomo-shell .composer-bottom {margin-top:10px;padding-top:4px}
+.fomo-shell .composer.is-focused {min-height:160px}
+.fomo-shell .composer.is-focused #editor {min-height:80px}
+/* 0.9.50 baseline: restore card gaps without bringing back later layout changes. */
+.fomo-shell #memos.memo-list {display:grid;gap:12px;grid-auto-rows:max-content;align-items:start;align-content:start}
+/* Native review: a 600px ritual card stage. */
+body[data-view=review] #reviewStage {width:min(600px,calc(100vw - 24px));height:min(600px,calc(100dvh - 84px));min-height:0;margin:0 auto;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#afbdbd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E"),linear-gradient(145deg,#dfd5c6,#c8d5cd);box-shadow:0 12px 34px #0001}
+body[data-view=review] #reviewStage #specialPanel {width:auto;margin:0;padding:18px 24px 8px;flex:0 0 auto;align-self:stretch}
+body[data-view=review] #reviewStage .review-banner {width:auto;margin:0;padding:0;background:transparent;border:0;box-shadow:none}
+body[data-view=review] #reviewStage #memos {flex:1;min-height:0;width:100%;padding:8px 40px 32px;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:0}
+body[data-view=review] #reviewStage #memos .memo {display:none;width:min(520px,100%);min-height:444px;padding:32px 36px;border-radius:12px;box-shadow:0 10px 26px #00000018}
+body[data-view=review] #reviewStage #memos .memo:not(.is-reviewed) {display:block}
+body[data-view=review] #reviewStage #memos .memo:not(.is-reviewed) ~ .memo:not(.is-reviewed) {display:none}
+body[data-view=review] #reviewStage #memos .memo.is-reviewed {display:none}
+body[data-view=review] #reviewStage #memos:not(:has(.memo:not(.is-reviewed))) .memo.is-reviewed:last-of-type {display:block}
+/* Random walk is a full-screen room, not a main-column card. */
+body[data-view=random] .sidebar {display:none}
+body[data-view=random] .main {position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;padding:18px 24px 16px;background:var(--bg);overflow:hidden}
+body[data-view=random] .topbar {flex:0 0 auto}
+body[data-view=random] #memos {flex:1;min-height:0;padding:0;background:transparent}
+body[data-view=random] .rw-tree {height:100%;min-height:0}
+/* Tag header controls reveal on hover, like the live native sidebar. */
+.fomo-shell .sidebar .tag-heading #toggleTagSearch,
+.fomo-shell .sidebar .tag-heading #tagSort,
+.fomo-shell .sidebar .tag-heading #manageTags,
+.fomo-shell .sidebar .tag-heading #addTag {opacity:0;pointer-events:none}
+.fomo-shell .sidebar .tag-heading:hover #toggleTagSearch,
+.fomo-shell .sidebar .tag-heading:hover #tagSort,
+.fomo-shell .sidebar .tag-heading:hover #manageTags,
+.fomo-shell .sidebar .tag-heading:hover #addTag,
+.fomo-shell .sidebar .tag-heading:focus-within #toggleTagSearch,
+.fomo-shell .sidebar .tag-heading:focus-within #tagSort,
+.fomo-shell .sidebar .tag-heading:focus-within #manageTags,
+.fomo-shell .sidebar .tag-heading:focus-within #addTag {opacity:1;pointer-events:auto}
+@media (max-width:520px) {
+ body[data-view=review] #reviewStage {width:100%;height:calc(100dvh - 76px);border-radius:10px}
+ body[data-view=review] #reviewStage #memos {padding:8px 14px 20px}
+ body[data-view=review] #reviewStage #memos .memo {width:100%;min-height:0;padding:22px 18px}
+ body[data-view=random] .main {padding:10px 12px 8px}
+}
+/* Related-notes detail: current note on the left, backlinks/references on the right. */
+.fomo-shell #dialog.note-relation-dialog {width:min(966px,calc(100vw - 32px));height:min(780px,90dvh);max-height:90dvh;margin:auto;padding:0;border:0;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px #0003}
+.fomo-shell #dialog.note-relation-dialog .dialog-header {position:relative;justify-content:center;margin:0;padding:20px 26px 14px;border-bottom:0}
+.fomo-shell #dialog.note-relation-dialog .dialog-header h2 {font-size:16px;font-weight:500;text-align:center}
+.fomo-shell #dialog.note-relation-dialog #closeDialog {position:absolute;right:18px;top:16px}
+.fomo-shell #dialog.note-relation-dialog #dialogBody {height:calc(100% - 58px);padding:4px 26px 26px;overflow:auto}
+.fomo-shell .relation-detail {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.fomo-shell .relation-label {font-size:12px;color:var(--text-subtle);line-height:18px;margin:0 0 12px 2px}
+.fomo-shell .relation-card {position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:14px;box-shadow:0 2px 8px #2b261d08}
+.fomo-shell .relation-card-head {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.fomo-shell .relation-card-head time {font-size:11px;color:#999;font-variant-numeric:tabular-nums}
+.fomo-shell .relation-more {min-width:26px;height:24px;padding:0;color:var(--text-subtle);font-size:18px;line-height:1;border-radius:5px}
+.fomo-shell .relation-more:hover {background:var(--hover);color:var(--text)}
+.fomo-shell .relation-tags {display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
+.fomo-shell .relation-tags span {color:var(--tag);background:var(--tag-pale,#eef3fe);border-radius:5px;padding:1px 5px;font-size:12px}
+.fomo-shell .relation-body {font-size:14px;line-height:1.8;color:var(--text);overflow-wrap:anywhere}
+.fomo-shell .relation-body p {margin:0 0 .5em}
+.fomo-shell .relation-card .memo-images {display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.fomo-shell .relation-card .memo-images img {width:100px;height:100px;object-fit:cover;border-radius:7px}
+.fomo-shell .relation-source {display:flex;align-items:flex-start;gap:5px;margin-top:10px;color:#999;font-size:11px;line-height:1.5}
+.fomo-shell .relation-source .ref-arrow {display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;flex:0 0 12px;border-radius:0;background:none;color:#a5a5a5;font-size:12px}
+.fomo-shell.dark #dialog.note-relation-dialog {box-shadow:0 24px 70px #0008}
+.fomo-shell.dark .relation-card {box-shadow:none}
+@media (max-width:760px) {
+ .fomo-shell #dialog.note-relation-dialog {width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+ .fomo-shell #dialog.note-relation-dialog #dialogBody {height:calc(100% - 56px);padding:4px 14px 22px}
+ .fomo-shell .relation-detail {display:block}
+ .fomo-shell .relation-column+.relation-column {margin-top:18px}
+}
+/* Restore the always-visible tag search/sort controls; only management buttons wait for hover. */
+.fomo-shell .sidebar .tag-heading #toggleTagSearch,
+.fomo-shell .sidebar .tag-heading #tagSort {opacity:1;pointer-events:auto}
+.fomo-shell .sidebar .tag-heading #manageTags,
+.fomo-shell .sidebar .tag-heading #addTag {opacity:0;pointer-events:none}
+.fomo-shell .sidebar .tag-heading:hover #manageTags,
+.fomo-shell .sidebar .tag-heading:hover #addTag,
+.fomo-shell .sidebar .tag-heading:focus-within #manageTags,
+.fomo-shell .sidebar .tag-heading:focus-within #addTag {opacity:1;pointer-events:auto}
+/* Settings uses a full native modal, not the compact form dialog. */
+.fomo-shell #dialog:has(.settings-tabs) {width:min(934px,calc(100vw - 32px));height:min(776px,90dvh);max-height:90dvh;margin:auto;padding:0;border:0;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px #0003}
+.fomo-shell #dialog:has(.settings-tabs) .dialog-header {position:relative;flex:0 0 auto;justify-content:center;margin:0;padding:20px 28px 14px;border-bottom:1px solid var(--line)}
+.fomo-shell #dialog:has(.settings-tabs) .dialog-header h2 {font-size:16px;font-weight:500;text-align:center}
+.fomo-shell #dialog:has(.settings-tabs) #closeDialog {position:absolute;right:18px;top:13px}
+.fomo-shell #dialog:has(.settings-tabs) #dialogBody {flex:1;min-height:0;padding:0 26px 24px;overflow:auto}
+.fomo-shell .settings-tabs {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:64px;margin:0 -26px 0;border-bottom:1px solid var(--line)}
+.fomo-shell .settings-tabs button {padding:0;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--muted);font-size:14px;font-weight:400}
+.fomo-shell .settings-tabs button[aria-selected=true] {color:var(--text);border-bottom-color:var(--text);font-weight:500}
+.fomo-shell #settingsAppearance label {display:block;margin:18px 0 8px;color:var(--muted);font-size:12px}
+.fomo-shell #settingsAppearance input,
+.fomo-shell #settingsAppearance select {width:100%;height:34px;margin:0;padding:0 11px;border:1px solid #ededeb;border-radius:8px;background:#f8f8f6;color:var(--text);font-size:14px}
+.fomo-shell #settingsAppearance .dialog-hint {margin:16px 0 0;padding:11px 13px;border-radius:3px;background:#effaf4;color:#4fae7b;font-size:12px;line-height:1.5}
+.fomo-shell #settingsAppearance .dialog-actions {justify-content:flex-end;margin-top:18px}
+.fomo-shell #settingsAppearance .primary-button {min-height:32px;padding:7px 15px;border-radius:4px;background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+.fomo-shell.dark #settingsAppearance input,.fomo-shell.dark #settingsAppearance select {background:#252525;border-color:#363636}
+.fomo-shell.dark #settingsAppearance .dialog-hint {background:#1d2b24;color:#6fe0a2}
+@media (max-width:760px) {
+ .fomo-shell #dialog:has(.settings-tabs) {width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+ .fomo-shell #dialog:has(.settings-tabs) #dialogBody {padding:0 16px 20px}
+ .fomo-shell .settings-tabs {margin:0 -16px;height:56px}
+}
+/* Native settings panel is 776px tall, not 90vh. */
+.fomo-shell #dialog:has(.settings-tabs) {height:min(776px,calc(100dvh - 16px));max-height:calc(100dvh - 16px)}
+/* Native settings panel is 776px tall, not 90vh. */
+.fomo-shell #dialog:has(.settings-tabs) {height:min(776px,calc(100dvh - 16px));max-height:calc(100dvh - 16px)}
+/* The global card grid override also caught the random canvas; keep it block-full-width. */
+body.fomo-shell[data-view=random] #memos.memo-list {display:block;width:100%;flex:1;min-height:0}
+body.fomo-shell[data-view=random] #memos .rw-tree {width:100%;height:100%}
+/* Native list starts with a deeper gap below the composer. */
+body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos.memo-list {margin-top:34px}
+@media (min-width:781px) {
+  .fomo-shell .app-shell,
+  .fomo-shell.overview-collapsed .app-shell {grid-template-columns:228px minmax(0,1fr);gap:0;padding-right:26px}
+}
+.fomo-shell #dialog.note-relation-dialog {height:min(780px,calc(100dvh - 16px));max-height:calc(100dvh - 16px)}
+.fomo-shell #memos.memo-list>.memo {min-width:0;width:100%;box-sizing:border-box}
+.fomo-shell #memos.memo-list>.memo .annotation-source {min-width:0}
+/* Native 1046 window reference: idle composer ~102px, cards begin ~8px later. */
+.fomo-shell .composer {min-height:102px;padding:10px 16px 6px;border-radius:12px}
+.fomo-shell #editor {min-height:36px}
+.fomo-shell .composer-bottom {margin-top:8px;padding-top:4px}
+.fomo-shell .composer.is-focused {min-height:160px}
+.fomo-shell .composer.is-focused #editor {min-height:80px}
+body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos.memo-list {margin-top:10px}
+/* Random walk, matched to the reference layout: graph canvas, signal grid and 340/260px cards. */
+body.fomo-shell[data-view=random] #specialPanel {flex:0 0 auto;width:100%;margin:0 0 12px}
+body.fomo-shell[data-view=random] .random-banner {position:static;width:auto;margin:0;padding:0 2px 10px;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none}
+body.fomo-shell[data-view=random] .random-banner h2 {font-size:14px;font-weight:500}
+body.fomo-shell[data-view=random] .random-banner p {display:block;margin:5px 0 0;color:var(--muted);font-size:12px}
+body.fomo-shell[data-view=random] .random-actions {gap:4px}
+body.fomo-shell[data-view=random] .random-actions button {min-height:28px;padding:4px 8px;font-size:12px}
+body.fomo-shell[data-view=random] .rw-tree {position:relative;width:100%;height:100%;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fafafa;color:var(--text);cursor:grab;touch-action:none;user-select:none;--rw-grid-tile:30px;--rw-grid-pan-x:-15px;--rw-grid-pan-y:-15px}
+body.fomo-shell[data-view=random] .rw-tree::after {content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath stroke='%23000' stroke-opacity='.1' stroke-width='.5' d='M12 15h6M15 12v6'/%3E%3C/svg%3E");background-size:var(--rw-grid-tile) var(--rw-grid-tile);background-position:var(--rw-grid-pan-x) var(--rw-grid-pan-y)}
+body.fomo-shell[data-view=random] .rw-tree.dragging {cursor:grabbing}
+body.fomo-shell[data-view=random] .rw-grid {display:none}
+body.fomo-shell[data-view=random] .rw-world {position:absolute;top:0;left:0;transform-origin:0 0;z-index:2}
+body.fomo-shell[data-view=random] .rw-lines {position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1}
+body.fomo-shell[data-view=random] .rw-lines path {fill:none;stroke:#d9d9d9;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;opacity:1;vector-effect:non-scaling-stroke}
+body.fomo-shell[data-view=random] .rw-lines path.hover-line,
+body.fomo-shell[data-view=random] .rw-lines path.on-focus-path {stroke:#b8b8b8;stroke-width:1.25;stroke-opacity:1;opacity:1}
+body.fomo-shell[data-view=random] .rw-node {position:absolute;top:0;left:0;display:block;width:260px;min-height:0;margin:0;padding:14px 16px;border:1px solid #0000000f;border-radius:12px;background:var(--surface);color:var(--text);box-shadow:none;cursor:pointer;user-select:text;will-change:auto;z-index:2;text-align:left;transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):not(.on-path) {background:#f4f4f4}
+body.fomo-shell[data-view=random] .rw-node.focused {width:340px;padding:16px;border-color:#00000033;background:var(--surface);box-shadow:0 8px 24px #00000014;z-index:10}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):hover {background:var(--surface);box-shadow:0 0 0 1px #0000000f}
+body.fomo-shell[data-view=random] .rw-node:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+body.fomo-shell[data-view=random] .rw-node-body {max-height:none;overflow:visible}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-body {max-height:min(400px,calc(100dvh - 260px));overflow:auto;scrollbar-width:thin;scrollbar-color:transparent transparent;padding-right:8px;margin-right:-8px}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-body:hover {scrollbar-color:var(--scrollbarThumb,#bdbdbd) transparent}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-body::-webkit-scrollbar {width:5px;background:transparent}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-body::-webkit-scrollbar-thumb {background:transparent;border-radius:3px}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-body:hover::-webkit-scrollbar-thumb {background:var(--scrollbarThumb,#bdbdbd)}
+body.fomo-shell[data-view=random] .rw-node-date {margin:0 0 10px;color:#999;font-size:12px;line-height:16px;font-variant-numeric:tabular-nums}
+body.fomo-shell[data-view=random] .rw-node:not(.focused) .rw-node-date {color:#888;opacity:.78}
+body.fomo-shell[data-view=random] .rw-node-content {display:block;max-height:8.5em;overflow:hidden;color:var(--text-subtle,#5f5f5f);font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):not(.on-path) .rw-node-content {color:#5f5f5f}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):not(.on-path) .rw-node-content .tag {opacity:.72}
+body.fomo-shell[data-view=random] .rw-node.on-path .rw-node-content {color:var(--text)}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):not(.on-path):hover .rw-node-content {color:var(--text)}
+body.fomo-shell[data-view=random] .rw-node:not(.focused):not(.on-path):hover .rw-node-content .tag {opacity:1}
+body.fomo-shell[data-view=random] .rw-node-content p {margin:0 0 .35em;line-height:inherit;min-height:0}
+body.fomo-shell[data-view=random] .rw-node-content p:last-child {margin-bottom:0}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-content {display:block;overflow:visible;color:var(--text);font-size:14px;line-height:1.8}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-content p {margin:0 0 .5em}
+body.fomo-shell[data-view=random] .rw-node-content .tag {pointer-events:auto}
+body.fomo-shell[data-view=random] .rw-node-images {display:flex;gap:4px;margin-top:8px}
+body.fomo-shell[data-view=random] .rw-node-images.is-focused {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body.fomo-shell[data-view=random] .rw-node-images button {display:block;width:48px;height:48px;min-width:48px;padding:0;border:0;border-radius:6px;overflow:hidden;background:var(--hover)}
+body.fomo-shell[data-view=random] .rw-node-images.is-focused button {width:100%;height:120px;min-width:0}
+body.fomo-shell[data-view=random] .rw-node-images img {display:block;width:100%;height:100%;object-fit:cover}
+body.fomo-shell[data-view=random] .rw-node-audios {margin-top:10px}
+body.fomo-shell[data-view=random] .rw-node-audios audio {display:block;width:100%;margin-bottom:10px}
+body.fomo-shell[data-view=random] .rw-node-audios audio:last-child {margin-bottom:0}
+body.fomo-shell[data-view=random] .rw-node-footer {display:flex;align-items:center;gap:6px;height:18px;margin-top:8px;font-size:11px}
+body.fomo-shell[data-view=random] .rw-node-sim-label {color:var(--green);opacity:.84}
+body.fomo-shell[data-view=random] .rw-node-expand-label {display:none;align-items:center;gap:4px;color:var(--text-subtle);white-space:nowrap}
+body.fomo-shell[data-view=random] .rw-node-expand-label svg {width:12px;height:12px;fill:currentColor;stroke:none}
+body.fomo-shell[data-view=random] .rw-node:hover .rw-node-sim-label {display:none}
+body.fomo-shell[data-view=random] .rw-node:hover .rw-node-expand-label {display:flex}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-node-footer {display:none}
+body.fomo-shell[data-view=random] .rw-toolbar {display:none;align-items:center;gap:4px;margin-top:12px;padding-top:0}
+body.fomo-shell[data-view=random] .rw-node.focused .rw-toolbar {display:flex}
+body.fomo-shell[data-view=random] .rw-toolbar button {display:flex;align-items:center;gap:4px;min-height:28px;padding:5px 8px;border:0;border-radius:6px;background:none;color:var(--text-subtle);font-size:12px;line-height:16px;white-space:nowrap}
+body.fomo-shell[data-view=random] .rw-toolbar button:hover {background:#00000008;color:var(--text)}
+body.fomo-shell[data-view=random] .rw-toolbar button.danger:hover {color:#df6666}
+body.fomo-shell[data-view=random] .rw-toolbar svg {width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2}
+body.fomo-shell[data-view=random] .rw-node-similarity {position:relative;margin-left:auto;color:var(--green);opacity:.84;font-size:12px;line-height:28px;white-space:nowrap;cursor:help}
+body.fomo-shell[data-view=random] .rw-node-similarity:hover {opacity:1}
+body.fomo-shell[data-view=random] .rw-sim-tip {display:none;position:absolute;right:0;bottom:calc(100% + 8px);width:210px;padding:8px 10px;border-radius:7px;background:#2e2e2d;color:#fff;font-size:11px;line-height:1.55;text-align:left;white-space:normal;box-shadow:0 8px 24px #0002;z-index:30}
+body.fomo-shell[data-view=random] .rw-node-similarity:hover .rw-sim-tip,
+body.fomo-shell[data-view=random] .rw-node-similarity:focus .rw-sim-tip {display:block}
+body.fomo-shell[data-view=random] .rw-bottom-bar {position:absolute;bottom:20px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;pointer-events:none}
+body.fomo-shell[data-view=random] .rw-controls {display:flex;align-items:center;gap:2px;padding:2px;border:1px solid #0000000f;border-radius:12px;background:var(--surface);box-shadow:0 14px 36px #00000024;overflow:hidden;pointer-events:auto}
+body.fomo-shell[data-view=random] .rw-ctrl-btn {width:32px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:var(--text-subtle);font-size:14px}
+body.fomo-shell[data-view=random] .rw-ctrl-btn:hover {background:#00000008;color:var(--text)}
+body.fomo-shell[data-view=random] .rw-ctrl-level {min-width:40px;height:32px;padding:0 4px;border:0;background:none;color:var(--text-subtle);font-size:12px;line-height:16px;font-variant-numeric:tabular-nums}
+body.fomo-shell[data-view=random] .rw-ai-disclaimer {pointer-events:auto;padding:4px 8px;border-radius:8px;background:#fafafa;color:var(--text-subtle);font-size:12px;line-height:12px;white-space:nowrap}
+body.fomo-shell[data-view=random] .random-locked {display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;height:100%;padding:32px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#fafafa}
+body.fomo-shell[data-view=random] .random-locked-icon {display:grid;place-items:center;width:44px;height:44px;margin-bottom:14px;border-radius:50%;background:var(--hover);color:var(--muted)}
+body.fomo-shell[data-view=random] .random-locked-icon svg {width:20px;height:20px}
+body.fomo-shell[data-view=random] .random-locked h3 {margin:0;font-size:15px;font-weight:500}
+body.fomo-shell[data-view=random] .random-locked p {max-width:360px;margin:8px 0 18px;color:var(--muted);font-size:12px;line-height:1.7}
+body.fomo-shell[data-view=random] .random-locked button {min-height:30px;padding:5px 12px;border-radius:6px}
+body.fomo-shell[data-view=random] #memos .rw-node {width:260px;min-height:0;margin:0;padding:14px 16px;border-radius:12px;box-shadow:none}
+body.fomo-shell[data-view=random] #memos .rw-node.focused {width:340px;min-height:0;margin:0;padding:20px 22px;box-shadow:0 12px 30px #2b261d14}
+body.fomo-shell.dark[data-view=random] .rw-tree {background:#161616}
+body.fomo-shell.dark[data-view=random] .rw-tree::after {background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath stroke='%23fff' stroke-opacity='.12' stroke-width='.5' d='M12 15h6M15 12v6'/%3E%3C/svg%3E")}
+body.fomo-shell.dark[data-view=random] .rw-node {background:#242424;border-color:#ffffff12;color:#e9e9e9}
+body.fomo-shell.dark[data-view=random] .rw-node.focused {background:#202020;border-color:#ffffff33}
+body.fomo-shell.dark[data-view=random] .rw-node-content {color:#aaa}
+body.fomo-shell.dark[data-view=random] .rw-node.focused .rw-node-content {color:#ededed}
+body.fomo-shell.dark[data-view=random] .rw-lines path {stroke:#3e3e3d}
+body.fomo-shell.dark[data-view=random] .rw-lines path.hover-line,
+body.fomo-shell.dark[data-view=random] .rw-lines path.on-focus-path {stroke:#555}
+body.fomo-shell.dark[data-view=random] .rw-node:not(.focused):not(.on-path) {background:#242424}
+body.fomo-shell.dark[data-view=random] .rw-node.on-path {background:#202020}
+body.fomo-shell.dark[data-view=random] .rw-ai-disclaimer {background:#121212;color:#999}
+@media (max-width:768px) {
+ body.fomo-shell[data-view=random] .rw-node {width:180px;padding:12px}
+ body.fomo-shell[data-view=random] .rw-node.focused {width:260px;padding:16px}
+ body.fomo-shell[data-view=random] #memos .rw-node {width:180px;padding:12px}
+ body.fomo-shell[data-view=random] #memos .rw-node.focused {width:260px;padding:16px}
+ body.fomo-shell[data-view=random] .rw-node-content {font-size:12px;-webkit-line-clamp:4}
+ body.fomo-shell[data-view=random] .rw-node.focused .rw-node-content {font-size:13px}
+ body.fomo-shell[data-view=random] .rw-toolbar button {font-size:10px;padding:3px 4px}
+ body.fomo-shell[data-view=random] .rw-toolbar button svg {display:none}
+ body.fomo-shell[data-view=random] .rw-ai-disclaimer {display:none}
+ body.fomo-shell[data-view=random] .rw-bottom-bar {left:12px;right:12px;bottom:12px}
+}
+/* The native account row has no refresh/layout buttons. */
+.fomo-shell #sidebarRefresh {display:none}
+@media (min-width:781px) { .fomo-shell .topbar .search-wrap {width:260px} }
+.fomo-shell .topbar {margin-bottom:5px}
+
+.fomo-shell .app-shell{position:relative}
+@media(min-width:781px){
+ body.fomo-shell .app-shell{grid-template-columns:var(--writeboom-sidebar-width,280px) minmax(0,1fr) 276px}
+ body.fomo-shell.overview-collapsed .app-shell{grid-template-columns:var(--writeboom-sidebar-width,280px) minmax(0,1fr)}
+}
+@media(min-width:781px) and (max-width:1190px){body.fomo-shell .app-shell{grid-template-columns:var(--writeboom-sidebar-width,280px) minmax(0,1fr)}}
+.fomo-shell .sidebar-resizer{position:absolute;top:88px;bottom:auto;height:calc(100dvh - 88px);left:calc(var(--writeboom-sidebar-width,280px) - 4px);width:8px;z-index:20;cursor:col-resize;touch-action:none}
+.fomo-shell .sidebar-resizer::after{content:"";position:absolute;top:16px;bottom:16px;left:50%;width:1px;transform:translateX(-50%);background:var(--line);opacity:0;transition:opacity 150ms cubic-bezier(.2,0,0,1)}
+.fomo-shell .sidebar-resizer:hover::after,.fomo-shell .sidebar-resizer.is-resizing::after{opacity:1;background:var(--text)}
+.fomo-shell .sidebar-resizer:focus-visible{outline:2px solid var(--tag);outline-offset:-1px;border-radius:4px}
+body.fomo-shell.sidebar-collapsed .sidebar-resizer{display:none}
+@media(max-width:780px){.fomo-shell .sidebar-resizer{display:none}}

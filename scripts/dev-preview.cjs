@@ -1,0 +1,11 @@
+﻿'use strict';
+const { spawn } = require('node:child_process');
+const path = require('node:path');
+const electron = require('electron');
+const root = path.resolve(__dirname, '..');
+const env = { ...process.env, WRITEOOM_DEV_PREVIEW: '1' };
+delete env.ELECTRON_RUN_AS_NODE;
+const child = spawn(electron, ['.'], { cwd: root, stdio: 'inherit', env });
+child.on('error', error => { console.error('无法启动 Electron：' + error.message); process.exitCode = 1; });
+child.on('exit', code => { process.exitCode = code ?? 0; });
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal));

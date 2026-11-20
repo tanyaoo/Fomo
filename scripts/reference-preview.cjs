@@ -1,0 +1,31 @@
+'use strict';
+// Independent synthetic visual fixture; never reads a real user profile.
+const assert=require('node:assert/strict');
+module.exports=async({window,getStore,capture,evaluate,until})=>{
+  const points=['把一个问题拆开，先找到可以着手的小事。','让记录服务于思考，而不是只增加收藏的数量。','保持自己的节奏，每一天留下一点观察。','把目标写清楚，也给过程留出调整的余地。','复杂的事情，先从一个简单的动作开始。','复盘时关注原因，也关注当时的环境。','记录一次变化，看看哪些判断值得保留。','遇到不确定的问题，可以先提出一个假设。','留出时间，重新阅读以前的想法。','用自己的话表达，比完整摘抄更有帮助。','给重要的选择留下依据，方便以后回看。','今天只需要完成一个足够清楚的下一步。','好的习惯，让行动变得更自然。','不急着找到所有答案，先把问题留住。'];
+  const base=await getStore().readState(),date='2026-10-21T08:00:00.000Z';
+  const common={created:date,updated:date,starred:false,deleted:false,images:[]};
+  await getStore().save(base,{...base,memos:base.memos.map(m=>({...m,deleted:true}))});
+  await getStore().save(base,{...base,theme:'light',memos:[{...common,id:'reference-one',content:'#重要想法\n'+points.map(s=>'- '+s).join('\n'),html:'<p>#重要想法</p><ul>'+points.map(s=>'<li>'+s+'</li>').join('')+'</ul>'},{...common,id:'reference-two',created:'2026-10-20T08:00:00.000Z',content:'#工作/计划\n为今天留出一段安静的时间，整理还没有想清楚的问题。\n\n在输入框记录一个念头，再回到正在做的事情。',html:'<p>#工作/计划</p><p>为今天留出一段安静的时间，整理还没有想清楚的问题。</p><p>在输入框记录一个念头，再回到正在做的事情。</p>'}]});
+  window.setContentSize(1110,800);
+  await evaluate('document.querySelector("#clearSearch").click(); document.querySelector(".workspace-brand").click(); document.querySelector("#clearFilters")?.click(); document.querySelector("#cancelReflection")?.click(); document.querySelector("#cancelEdit")?.click(); document.querySelector("#editor").memoEditor.setText(""); document.querySelector("#editor").dispatchEvent(new Event("input",{bubbles:true})); document.querySelector("#refresh").click()');
+  await until('!document.querySelector(".inline-edit-card")');
+  await until('document.querySelectorAll(".memo").length===2');
+  await evaluate('document.querySelector(".workspace-brand").click(); if(!document.querySelector("#quickFilters").hidden)document.querySelector("#toggleQuickFilters").click(); if(!MemoShell.pinned("重要想法"))MemoShell.togglePin("重要想法"); document.querySelector("#editor").focus()');
+  assert.equal(await evaluate('getComputedStyle(document.querySelector(".memo-content")).fontWeight'),'400');
+  assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
+  await until('document.querySelector("#toast").hidden');
+  await capture('reference-reference');
+  await evaluate('document.querySelector("#editor").blur()');
+  await capture('reference-reference-idle');
+  window.setContentSize(930,944);
+  await until('innerWidth===930');
+  assert.equal(await evaluate('getComputedStyle(document.querySelector(".main-nav .nav-item")).fontSize'),'14px');
+  assert.equal(await evaluate('Math.round(document.querySelector(".main-nav .nav-item").getBoundingClientRect().height)'),36);
+  const sidebarWidth=await evaluate('Math.round(document.querySelector("#sidebar").getBoundingClientRect().width)');assert.ok(sidebarWidth>=216&&sidebarWidth<=312);assert.equal(await evaluate('!!document.querySelector("#sidebarResizer")'),true);
+  assert.equal(await evaluate('getComputedStyle(document.querySelector(".main-nav .nav-item.active")).backgroundColor'),'rgb(220, 238, 224)');
+  assert.equal(await evaluate('!!document.querySelector("#tags .hash svg")'),true);
+  await capture('sidebar-reference');
+  window.setContentSize(1110,800);
+  console.log('PASS: screenshot hierarchy, regular body weight, focused composer and matched reference viewport');
+};

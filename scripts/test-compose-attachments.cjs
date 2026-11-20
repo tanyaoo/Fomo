@@ -1,0 +1,56 @@
+'use strict';
+const path=require('node:path'),fs=require('node:fs/promises'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..');
+if(!process.versions.electron){
+ let output='';const child=require('node:child_process').spawn(require('electron'),['--headless','--no-sandbox','--disable-gpu',__filename],{stdio:['ignore','pipe','inherit'],windowsHide:true});
+ child.stdout.on('data',chunk=>{output+=chunk;process.stdout.write(chunk);});
+ const timer=setTimeout(()=>{child.kill();process.exitCode=1;},90000);
+ child.on('error',error=>{clearTimeout(timer);console.error(error);process.exitCode=1;});
+ child.on('exit',code=>{clearTimeout(timer);process.exitCode=code===0&&output.includes('PASS: compose attachments')?0:1;});
+}else{
+ const {app}=require('electron');
+ app.on('window-all-closed',()=>{});
+ const profile=require('node:fs').mkdtempSync(path.join(root,'work/compose-profile-'));app.setPath('userData',profile);
+ app.whenReady().then(async()=>{
+   const directory=await fs.mkdtemp(path.join(root,'work/compose-attachments-'));
+   const {FileStore}=require('../desktop/file-store.cjs'),store=new FileStore(directory);
+   await store.init();
+   const {ComposeWindow}=require('../desktop/compose-window.cjs');
+   const compose=new ComposeWindow({root,getStore:()=>store,boundsFile:path.join(directory,'window.json')});
+   const tooLarge='data:image/gif;base64,'+Buffer.alloc(8*1024*1024+1).toString('base64');
+   await assert.rejects(compose.save({content:'未提交',html:'',images:[tooLarge]}),/8 MB/);
+   const many='data:image/gif;base64,'+Buffer.alloc(7*1024*1024).toString('base64');
+   await assert.rejects(compose.save({content:'未提交',html:'',images:Array(5).fill(many)}),/32 MB/);
+   assert.equal((await store.readState()).memos.length,0);
+   await compose.open();const win=compose.window,ev=code=>win.webContents.executeJavaScript(code);
+   const until=async code=>{for(let i=0;i<180;i++){if(await ev(code))return;await new Promise(r=>setTimeout(r,40));}throw Error('compose timeout: '+code);};
+   await until(`!!document.querySelector('#composeEditor').memoEditor`);
+   await ev(`document.querySelector('#composeEditor').memoEditor.setText('托盘草稿');window.__Reader=FileReader;window.FileReader=class extends window.__Reader{readAsDataURL(file){if(file.name==='slow.gif'){window.__read={reader:this,file};this.dispatchEvent(new ProgressEvent('progress',{lengthComputable:true,loaded:50,total:100}));return;}if(file.name==='fail.gif'){queueMicrotask(()=>this.dispatchEvent(new ProgressEvent('error')));return;}super.readAsDataURL(file);}};void 0`);
+   const choose=(name,size,count=1)=>ev(`(()=>{const data=new DataTransfer();for(let i=0;i<${count};i++){const bytes=Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='),c=>c.charCodeAt(0)),file=new File([bytes],${JSON.stringify(name)},{type:'image/gif'});${size?`Object.defineProperty(file,'size',{value:${size}});`:''}data.items.add(file);}document.querySelector('#composeImageInput').files=data.files;document.querySelector('#composeImageInput').dispatchEvent(new Event('change'));})()`);
+   await choose('ok.gif');await until(`document.querySelectorAll('#composeImages img').length===1 && !document.querySelector('#send').disabled`);
+   assert.ok(await ev(`document.querySelector('#composeImages').getBoundingClientRect().bottom<=document.querySelector('footer').getBoundingClientRect().top && document.querySelector('#composeEditor').getBoundingClientRect().bottom<=document.querySelector('#composeImages').getBoundingClientRect().top`),'attachments and text stay clear of the toolbar');
+   await choose('big.gif',9*1024*1024);await until(`!document.querySelector('#send').disabled`);
+   await choose('batch.gif',33*1024*1024);assert.ok(await ev(`document.querySelector('#status').textContent.includes('32 MB')`));
+   await choose('fail.gif');await until(`!document.querySelector('#send').disabled && document.querySelector('#status').textContent.includes('未添加')`);
+   assert.equal(await ev(`document.querySelectorAll('#composeImages img').length`),1);
+   assert.equal(await ev(`document.querySelector('#composeEditor').memoEditor.getText()`),'托盘草稿');
+   await choose('slow.gif');assert.equal(await ev(`document.querySelector('#send').disabled`),true);
+   assert.ok(await ev(`document.querySelector('#status').textContent.includes('50%')`));
+   await ev(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',ctrlKey:true,bubbles:true}))`);
+   assert.equal((await store.readState()).memos.length,0,'shortcut cannot save an incomplete import');
+   await ev(`window.__Reader.prototype.readAsDataURL.call(window.__read.reader,window.__read.file)`);
+   await until(`document.querySelectorAll('#composeImages img').length===2 && !document.querySelector('#send').disabled`);
+   await choose('more.gif',0,8);await until(`document.querySelectorAll('#composeImages img').length===10 && !document.querySelector('#send').disabled`);
+   const io=store.io;store.io={...io,rename:async()=>{throw Error('isolated save failure');}};
+   await ev(`document.querySelector('#send').click()`);await until(`document.querySelector('#status').textContent.includes('保存失败')`);
+   assert.equal(await ev(`document.querySelectorAll('#composeImages img').length`),10);
+   assert.equal(await ev(`document.querySelector('#composeEditor').memoEditor.getText()`),'托盘草稿');store.io=io;
+   await ev(`document.querySelector('#send').click()`);
+   for(let i=0;i<180&&!(await store.readState()).memos.length;i++)await new Promise(r=>setTimeout(r,40));
+   const memo=(await store.readState()).memos[0];assert.equal(memo.images.length,10,'no silent truncation after nine images');assert.equal(memo.content,'托盘草稿');
+   await compose.open();await compose.window.webContents.executeJavaScript(`window.__Reader=FileReader;window.FileReader=class extends window.__Reader{readAsDataURL(file){window.__slow=this;}};void 0`);
+   const current=compose.window;await current.webContents.executeJavaScript(`(()=>{const data=new DataTransfer();data.items.add(new File(['x'],'close.gif',{type:'image/gif'}));document.querySelector('#composeImageInput').files=data.files;document.querySelector('#composeImageInput').dispatchEvent(new Event('change'));document.querySelector('#closeCompose').click();})()`);
+   for(let i=0;i<100&&!current.isDestroyed();i++)await new Promise(r=>setTimeout(r,40));assert.ok(current.isDestroyed());assert.equal((await store.readState()).memos.length,1);
+   console.log('PASS: compose attachments — limits, progress, save lock, read failure, retry, ten images and close cancellation');app.exit(0);
+ }).catch(error=>{console.error(error);app.exit(1);});
+}

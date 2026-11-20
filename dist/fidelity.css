@@ -1,0 +1,919 @@
+/* Fomo fidelity layer. One final source of truth after legacy styles. */
+:root {
+  --fl-bg:#f9f9f9;
+  --fl-surface:#fff;
+  --fl-text:#2e2e2e;
+  --fl-text-strong:#121212;
+  --fl-subtle:#949494;
+  --fl-line:rgba(0,0,0,.10);
+  --fl-line-soft:rgba(0,0,0,.05);
+  --fl-hover:rgba(0,0,0,.05);
+  --fl-editor-border:#e8e8e8;
+  --fl-editor-hover-border:#d3ecdd;
+  --fl-focus-shadow:#ddd;
+  --fl-focus-shadow-dark:rgba(0,0,0,.20);
+  --fl-green:#30cf79;
+  --fl-green-dark:#208950;
+  --fl-green-soft:#e6f9ef;
+  --fl-blue:#6890f8;
+  --fl-radius-sm:3px;
+  --fl-radius-md:8px;
+  --fl-radius-lg:12px;
+  --fl-radius-sheet:18px;
+  --fl-shadow-card:0 0 4px rgba(0,0,0,.05);
+  --fl-shadow-menu:0 14px 36px rgba(0,0,0,.14);
+  --fl-shadow-sheet:0 8px 24px rgba(0,0,0,.20),0 24px 48px rgba(0,0,0,.30);
+  --fl-font-ui:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --fl-font-memo:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --fl-font-number:"WriteBoom Numbers","Arial Narrow","Segoe UI",sans-serif;
+}
+
+body.fomo-shell {
+  --bg:var(--fl-bg);
+  --surface:var(--fl-surface);
+  --text:var(--fl-text);
+  --muted:var(--fl-subtle);
+  --line:var(--fl-line);
+  --hover:var(--fl-hover);
+  --green:var(--fl-green);
+  --green-dark:var(--fl-green-dark);
+  --green-pale:var(--fl-green-soft);
+  --tag:var(--fl-blue);
+  font-family:var(--fl-font-ui);
+  font-size:14px;
+  font-weight:400;
+  line-height:1.65;
+  letter-spacing:0;
+  background:var(--fl-bg);
+  color:var(--fl-text);
+}
+
+.fomo-shell button,.fomo-shell input,.fomo-shell select,.fomo-shell textarea {font-family:inherit;font-weight:400}
+.fomo-shell .numbers strong {font-family:var(--fl-font-number);font-variant-numeric:tabular-nums}
+.fomo-shell time,.fomo-shell #charCount,.fomo-shell kbd {font-family:var(--fl-font-ui);font-variant-numeric:tabular-nums;font-weight:400}
+.fomo-shell .numbers strong {font-size:26px;font-weight:500;line-height:27px;color:var(--fl-subtle)}
+.fomo-shell .numbers span {font-size:12px;font-weight:400;color:var(--fl-subtle)}
+.fomo-shell .profile strong,.fomo-shell .title-row h1 {font-size:14px;font-weight:600!important;color:var(--fl-text-strong)}
+.fomo-shell .nav-item,.fomo-shell .tag-select {font-size:14px;font-weight:400;line-height:20px}
+.fomo-shell .nav-item.active {font-weight:500}
+.fomo-shell .tag-heading {font-size:13px;font-weight:400;color:var(--fl-subtle)}
+
+.fomo-shell svg {stroke-width:1.7}
+.fomo-shell .nav-item>span:first-child {display:grid;place-items:center;width:18px;height:20px;flex:0 0 18px}
+.fomo-shell .nav-item>span:first-child svg {width:16px;height:16px}
+.fomo-shell .format-tools svg {width:16px;height:16px}
+.fomo-shell .menu-svg {width:17px;height:17px;stroke-width:1.7}
+
+.fomo-shell .search-wrap {height:36px;border:0;border-radius:var(--fl-radius-lg);background:#ebebeb;padding:0 11px}
+.fomo-shell .search-wrap:focus-within {box-shadow:inset 0 0 0 1px var(--fl-line-soft),0 1px 3px rgba(0,0,0,.03);background:var(--fl-surface)}
+.fomo-shell .search-wrap input {font-size:14px;font-weight:400}
+.fomo-shell .topbar .search-wrap {transition:width 160ms ease,background-color 140ms ease}
+.fomo-shell .topbar .search-wrap:focus-within,.fomo-shell .topbar .search-wrap.is-searching {width:400px;max-width:calc(100% - 140px)}
+.fomo-shell .search-menu {overflow:auto;scrollbar-width:thin;border-radius:12px;box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .search-menu button {min-height:34px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fomo-shell .search-menu-title {display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fomo-shell .search-menu-title #clearSearchHistory {display:grid;place-items:center;width:24px;height:24px;min-height:24px;padding:4px;color:var(--muted)}
+.fomo-shell .search-menu-title #clearSearchHistory svg {width:14px;height:14px}
+.fomo-shell .search-quick-list {display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+.fomo-shell .search-modes {display:none;flex:0 0 auto;align-items:center;padding:2px;gap:0;border-radius:6px;background:var(--fl-bg);border:1px solid var(--fl-line-soft)}
+.fomo-shell .search-wrap:focus-within .search-modes,.fomo-shell .search-wrap.is-searching .search-modes {display:flex}
+.fomo-shell .search-wrap .search-modes button {min-width:48px;min-height:22px;height:22px;padding:0 6px;font-size:12px;line-height:22px;border-radius:4px;white-space:nowrap}
+.fomo-shell .search-modes #submitSearch {background:var(--fl-surface);box-shadow:0 1px 3px rgba(0,0,0,.08);color:var(--fl-text)}
+.fomo-shell .search-modes button:disabled {color:var(--fl-subtle);cursor:default;opacity:1}
+.fomo-shell .search-wrap input {min-width:0;flex:1}
+.fomo-shell .search-wrap input:focus::placeholder {color:transparent}
+.fomo-shell .search-menu:has(.search-history-empty) :is(.search-recent-title,.search-recent-list) {display:none}
+.fomo-shell .search-wrap #clearSearch {flex:0 0 22px}
+@media (max-width:780px) {.fomo-shell .search-wrap .search-modes {display:none}}
+.fomo-shell .search-history-empty {padding:8px 9px;margin:0;font-size:12px;color:var(--muted)}
+.fomo-shell .search-results-status {flex:0 0 auto;margin:12px 0 6px;font-size:12px;line-height:20px;color:var(--muted)}
+.fomo-shell .filter-bar {display:flex;align-items:center;gap:16px;min-height:32px;border:0;background:none;padding:0;margin:8px 0 12px;flex-shrink:0}
+.fomo-shell .filter-bar .querybar-left {flex:0 0 auto;min-width:0}
+.fomo-shell .filter-bar .querybar-count {display:block;color:#949494;font-size:14px;font-weight:400;line-height:18px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fomo-shell .filter-bar .querybar-right {display:flex;flex:1;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.fomo-shell .filter-bar .search-filter-chips {display:flex;flex:1;align-items:center;justify-content:flex-end;gap:8px;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.fomo-shell .filter-bar .search-filter-chips::-webkit-scrollbar {display:none}
+.fomo-shell .filter-bar .querybar-chip {display:inline-flex;flex-shrink:0;align-items:center;gap:4px;height:24px;padding:4px;border:0;border-radius:3px;background:rgba(0,0,0,.05);color:#6890f8;font-size:14px;font-weight:400;line-height:16px;white-space:nowrap;transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell .filter-bar .querybar-chip:hover {background:rgba(0,0,0,.08)}
+.fomo-shell .filter-bar .querybar-chip-label {max-width:220px;overflow:hidden;text-overflow:ellipsis;color:#949494}
+.fomo-shell .filter-bar .querybar-chip-close {display:inline-flex;flex:0 0 16px;align-items:center;justify-content:center;width:16px;height:16px;color:#949494;cursor:pointer}
+.fomo-shell .filter-bar .querybar-chip-close:hover {color:#2e2e2e}
+.fomo-shell .filter-bar .querybar-chip-close svg {width:16px;height:16px}
+.fomo-shell .filter-bar .querybar-filter-btn {display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;gap:4px;height:24px;padding:4px 8px;border:0;border-radius:3px;background:transparent;color:#949494;font-size:14px;font-weight:400;line-height:16px;white-space:nowrap;transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1)}
+.fomo-shell .filter-bar .querybar-filter-btn:hover {color:#2e2e2e;background:rgba(0,0,0,.05)}
+.fomo-shell .filter-bar .querybar-filter-btn.is-icon-only {padding:4px}
+.fomo-shell .filter-bar .querybar-filter-btn svg {width:16px;height:16px}
+.fomo-shell #clearFilters {min-height:26px;padding:3px 0;white-space:nowrap;color:var(--muted)}
+.fomo-shell .search-results-status {color:var(--reading-meta,var(--muted));font-variant-numeric:tabular-nums}
+.fomo-shell .filter-bar :is(.querybar-chip,.querybar-filter-btn,#clearFilters):focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell.dark .filter-bar .querybar-count,.fomo-shell.dark .filter-bar .querybar-chip-label,.fomo-shell.dark .filter-bar .querybar-chip-close,.fomo-shell.dark .filter-bar .querybar-filter-btn {color:#949494}
+.fomo-shell.dark .filter-bar .querybar-chip {background:rgba(255,255,255,.10)}
+.fomo-shell.dark .filter-bar .querybar-chip:hover {background:rgba(255,255,255,.14)}
+.fomo-shell.dark .filter-bar .querybar-chip-close:hover,.fomo-shell.dark .filter-bar .querybar-filter-btn:hover {color:#d4d4d4}
+.fomo-shell.dark .filter-bar .querybar-filter-btn:hover {background:rgba(255,255,255,.05)}
+.fomo-shell .memo-content mark.search-hit {background:#fff0b3;color:inherit;padding:0;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.fomo-shell.dark .memo-content mark.search-hit {background:#65551e;color:inherit}
+@media(max-width:600px){.fomo-shell .filter-bar {gap:8px}.fomo-shell .filter-bar .querybar-chip-label {max-width:120px}}
+@media(prefers-reduced-motion:reduce){.fomo-shell .topbar .search-wrap {transition:none}}
+
+.fomo-shell .composer {min-height:100px;padding:16px 16px 8px;border:1px solid var(--fl-editor-border);border-radius:var(--fl-radius-lg);box-shadow:none;transition:min-height 180ms cubic-bezier(.2,0,0,1),border-color .2s ease,box-shadow .2s ease}
+.fomo-shell .composer:not(.is-expanded) {min-height:100px}
+.fomo-shell .composer.is-expanded {min-height:166px}
+.fomo-shell .composer:hover {border-color:var(--fl-editor-hover-border)}
+.fomo-shell .composer.is-focused {border-color:var(--fl-green);box-shadow:0 2px 10px var(--fl-focus-shadow)}
+.fomo-shell.dark .composer:hover {border-color:var(--fl-green)}
+.fomo-shell.dark .composer.is-focused {box-shadow:0 2px 16px var(--fl-focus-shadow-dark)}
+.fomo-shell #editor {min-height:36px;max-height:none;overflow:visible;font-size:var(--memo-font-size,14px);font-weight:400;line-height:var(--memo-line-height,1.8)}
+.fomo-shell .composer:not(.is-expanded) #editor {min-height:36px}
+.fomo-shell .composer.is-expanded #editor {min-height:92px}
+.fomo-shell #editor:empty:before {font-size:14px;font-weight:400;color:var(--fl-subtle)}
+.fomo-shell .composer-bottom {min-height:32px;margin-top:8px;padding-top:0;border-top:0;align-items:center}
+.fomo-shell .format-tools {height:32px;gap:2px;color:var(--fl-subtle)}
+.fomo-shell .format-tools button {width:30px;min-width:30px;height:30px;min-height:30px;padding:3px;border-radius:var(--fl-radius-sm);font-size:14px;line-height:1}
+.fomo-shell .format-tools #insertTag {font-size:21px;font-weight:400}
+.fomo-shell #tagSuggestions {margin:0;padding:4px;box-sizing:border-box;overscroll-behavior:contain;scroll-padding:4px;z-index:45}
+.fomo-shell #tagSuggestions button {display:block;width:100%;min-width:0;min-height:36px;padding:8px 10px;border-radius:5px;font-size:13px;line-height:20px;white-space:normal;overflow-wrap:anywhere;text-overflow:clip;color:var(--text)}
+.fomo-shell #tagSuggestions button.suggestion-memo {padding:9px 10px;border:0;border-radius:5px}
+.fomo-shell #tagSuggestions .suggestion-date {font-size:12px;line-height:18px;color:var(--reading-meta,var(--muted));margin-bottom:3px}
+.fomo-shell #tagSuggestions .suggestion-title {font-size:13px;line-height:21px;overflow-wrap:anywhere}
+.fomo-shell #tagSuggestions button:is(:hover,.selected,[aria-selected=true]) {background:var(--hover);color:var(--text)}
+.fomo-shell #tagSuggestions button[aria-selected=true] {box-shadow:inset 2px 0 var(--green)}
+.fomo-shell #tagSuggestions .suggestion-title mark {background:var(--reading-tag-hover,#e1e9ff);color:inherit;border-radius:2px}
+.fomo-shell #tagSuggestions[data-kind=tag] {min-width:160px;padding:6px}
+/* Reference candidates share measured geometry and theme colors in both editors. */
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) {
+ --reference-bg:#fff;--reference-border:rgba(0,0,0,.08);--reference-shadow:0 14px 36px rgba(0,0,0,.14);
+ --reference-selection:rgba(0,0,0,.08);--reference-text:#2e2e2e;--reference-highlight:#dcd1ba;--reference-highlight-text:#323232;
+ box-sizing:border-box;padding:4px;border:1px solid var(--reference-border);border-radius:12px;
+ background:var(--reference-bg);box-shadow:var(--reference-shadow);overflow-x:hidden;overflow-y:auto;
+ max-height:min(450px,calc(100vh - 60px));overscroll-behavior:contain;scroll-padding:4px;
+ scrollbar-width:thin;scrollbar-color:transparent transparent;
+}
+body.dark :is(#tagSuggestions[data-kind=reference],#tagMenu[aria-label="引用建议"]) {
+ --reference-bg:#2e2e2e;--reference-border:rgba(255,255,255,.12);--reference-shadow:0 18px 42px rgba(0,0,0,.36);
+ --reference-selection:rgba(255,255,255,.13);--reference-text:#d4d4d4;--reference-highlight:#80796c;--reference-highlight-text:#d9d9d9;
+}
+body.compose-window.dark #tagMenu[aria-label="引用建议"] {background:var(--reference-bg)}
+body.compose-window.dark #tagMenu[aria-label="引用建议"] button:is(:hover,.selected,[aria-selected=true]) {background:var(--reference-selection);color:var(--reference-text)}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) button {
+ display:block;padding:8px 12px;border:0;border-radius:8px;box-shadow:none;color:var(--reference-text);
+ transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1);
+}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) button:is(:hover,.selected,[aria-selected=true]) {
+ background:var(--reference-selection);color:var(--reference-text);box-shadow:none;
+}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) :is(.suggestion-date,.reference-date) {
+ font-size:var(--memo-tag-font-size,12px);line-height:1.5;margin-bottom:6px;color:#949494;
+}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) :is(.suggestion-title,.reference-label) {
+ font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8);color:var(--reference-text);word-break:break-all;
+}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]) :is(.suggestion-title,.reference-label) mark {
+ background:var(--reference-highlight);color:var(--reference-highlight-text);font-weight:700;border-radius:0;padding:0;
+}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]):hover {scrollbar-color:rgba(128,128,128,.28) transparent}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"])::-webkit-scrollbar {width:5px!important;background:transparent}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"])::-webkit-scrollbar-thumb {background:transparent;border-radius:999px}
+:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]):hover::-webkit-scrollbar-thumb {background:rgba(128,128,128,.28)}
+@media(max-width:500px){body.compose-window #tagMenu[aria-label="引用建议"]{width:min(380px,90vw)}}
+@media(max-height:500px){:is(.fomo-shell #tagSuggestions[data-kind=reference],body.compose-window #tagMenu[aria-label="引用建议"]){max-height:60vh}}
+.fomo-shell #tagSuggestions[data-kind=tag] button {display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;min-height:34px;padding:0 10px;border-radius:6px;font-size:14px;line-height:20px}
+.fomo-shell #tagSuggestions[data-kind=tag] button[aria-selected=true] {box-shadow:none;color:var(--fl-text-strong)}
+.fomo-shell #tagSuggestions .tag-match {color:var(--fl-blue)}
+.fomo-shell #tagSuggestions .tag-new {flex-shrink:0;padding:1px 6px;border-radius:3px;background:var(--hover);color:var(--muted);font-size:11px}
+.fomo-shell #tagSuggestions.tag-suggestions--animate {animation:tag-popup-in 180ms cubic-bezier(.2,0,0,1)}
+@keyframes tag-popup-in {from{opacity:0;transform:translateY(-2px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.fomo-shell #tagSuggestions.tag-suggestions--animate{animation:none}}
+.tag-inline-hint {font:inherit;letter-spacing:inherit;line-height:inherit;color:var(--muted,#949494);pointer-events:none;vertical-align:baseline}
+@media(max-height:400px){.fomo-shell #tagSuggestions[data-kind=tag]{max-height:60vh!important}}
+.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button {box-sizing:border-box;display:grid;place-items:center;flex-shrink:0;transition:background-color 100ms ease,color 100ms ease}
+.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button svg {display:block;width:16px;height:16px;margin:0}
+.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button:hover {background:var(--hover);color:var(--text)}
+.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button:focus-visible {outline:2px solid var(--green);outline-offset:1px;background:var(--hover);color:var(--text)}
+.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button[aria-pressed=true] {background:var(--hover);color:var(--text);border-radius:4px;box-shadow:inset 0 -2px var(--green)}
+.fomo-shell :is(.format-popover,.selection-toolbar) {gap:2px;padding:4px;border-radius:8px}
+.fomo-shell :is(.format-popover,.selection-toolbar) button {width:30px;height:30px;min-width:30px;min-height:30px;line-height:1;border:0}
+.fomo-shell .format-tools #linkMemo {border-left:1px solid var(--line);margin-left:5px;padding-left:9px;width:37px;min-width:37px;border-radius:0}
+@media(prefers-reduced-motion:reduce){.fomo-shell :is(.format-tools,.format-popover,.selection-toolbar) button {transition:none}}
+.fomo-shell .send-wrap {height:32px;align-items:center;gap:8px}
+.fomo-shell #charCount {font-size:12px;line-height:16px}
+.fomo-shell .cancel-compose,.fomo-shell #cancelEdit {font-size:14px;line-height:20px;color:var(--fl-subtle);padding:4px 7px}
+.fomo-shell #composer #saveMemo {width:44px;min-width:44px;height:28px;min-height:28px;padding:4px 10px;border:0;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.fomo-shell #saveMemoLabel {display:none}
+.fomo-shell #saveMemo svg {width:16px;height:16px}
+.fomo-shell .composer .bi-send-fill {transform:rotate(45deg);transform-origin:center}
+.fomo-shell .composer:not(.is-expanded):not(.has-draft):not(.is-focused) .format-tools {opacity:.35}
+.fomo-shell .composer .format-tools {transition:opacity 140ms ease}
+.fomo-shell .composer .format-tools:focus-within {opacity:1}
+
+.fomo-shell #memos.memo-list {gap:10px}
+.fomo-shell #memos.memo-list>.memo {margin:0;border:0;border-radius:var(--fl-radius-lg);padding:15px;background:var(--fl-surface);box-shadow:var(--fl-shadow-card)}
+.fomo-shell #memos.memo-list>.memo:hover {box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.fomo-shell .memo-head {min-height:20px;margin-bottom:9px}
+.fomo-shell .memo time {font-size:12px;font-weight:400;line-height:16px;color:var(--fl-subtle)}
+.fomo-shell .memo-content,.fomo-shell .annotation p,.fomo-shell #annotationText {font-size:14px;font-weight:400;line-height:1.8;color:var(--fl-text)}
+.fomo-shell .memo-content b,.fomo-shell .memo-content strong,.fomo-shell #editor b,.fomo-shell #editor strong {font-weight:600}
+.fomo-shell .memo-content .tag-link,.fomo-shell .memo-tag {font-size:12px;font-weight:400;line-height:16px;padding:3px 5px;border-radius:var(--fl-radius-md);background:#f0f4ff;color:var(--fl-blue)}
+.fomo-shell .memo-menu-button {font-family:var(--fl-font-number);font-weight:500;color:var(--fl-subtle)}
+
+.fomo-shell .memo-menu,.fomo-shell .shell-menu,.fomo-shell .tag-suggestions,.fomo-shell .format-popover,.fomo-shell .selection-toolbar {border:.5px solid rgba(0,0,0,.08);border-radius:var(--fl-radius-lg);background:var(--fl-surface);box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .memo-menu {width:240px;padding:4px}
+.fomo-shell .memo-menu>button {min-height:38px;padding:8px 12px;gap:12px;border-radius:var(--fl-radius-md);font-size:14px;font-weight:400;line-height:20px}
+.fomo-shell .memo-menu>button:hover,.fomo-shell .memo-menu>button:focus-visible {background:var(--fl-hover)}
+.fomo-shell .memo-menu hr {margin:4px -4px;border-color:var(--fl-line)}
+.fomo-shell .memo-menu .menu-meta {gap:7px;padding:12px 12px 8px;font-size:12px;line-height:16px}
+.fomo-shell .memo-menu .memo-more-menu {width:200px;padding:4px;border:.5px solid rgba(0,0,0,.08);border-radius:var(--fl-radius-lg);box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .memo-menu .memo-more-menu button {min-height:36px;padding:7px 10px;border-radius:var(--fl-radius-md);font-size:14px}
+
+.fomo-shell #dialog {border:0;border-radius:var(--fl-radius-sheet);box-shadow:var(--fl-shadow-sheet)}
+.fomo-shell #dialog::backdrop {background:rgba(0,0,0,.4);backdrop-filter:blur(6px) saturate(140%)}
+.fomo-shell #dialog .dialog-header {min-height:60px}
+.fomo-shell #dialog .dialog-header h2 {font-size:16px;font-weight:600;line-height:22px}
+.fomo-shell #dialog .dialog-header button {width:36px;height:36px;border-radius:var(--fl-radius-md)}
+.fomo-shell #dialog #closeDialog {border:0;background:transparent;color:var(--fl-subtle)}
+.fomo-shell #dialog #closeDialog:hover {background:var(--fl-hover);color:var(--fl-text-strong)}
+
+/* Shared icon treatment: filled library paths carry their own optical weight. */
+.fomo-shell svg.bi {fill:currentColor;stroke:none;flex-shrink:0}
+.fomo-shell .menu-svg {width:16px;height:16px}
+.fomo-shell .memo-menu .more-chevron {width:12px;height:12px;margin-left:auto}
+.fomo-shell .reference-summary .ref-arrow,.fomo-shell .annotation-source .ref-arrow {background:transparent;color:var(--muted);border-radius:0}
+.fomo-shell .reference-summary .ref-arrow svg,.fomo-shell .annotation-source .ref-arrow svg {width:12px;height:12px}
+.fomo-shell .annotation-parent .memo-token {display:inline-flex;align-items:center;font-size:14px;color:var(--tag)}
+.fomo-shell .annotation-parent .memo-token svg {width:14px;height:14px}
+.fomo-shell .memo-content .memo-token,.fomo-shell .relation-body .memo-token {display:inline-flex;vertical-align:-2px;align-items:center;justify-content:center;width:16px;height:16px;padding:0;background:transparent;border-radius:50%;line-height:1;font-size:0}
+.fomo-shell .memo-content .memo-token svg,.fomo-shell .relation-body .memo-token svg {width:14px;height:14px}
+.fomo-shell .memo-content .memo-token:hover,.fomo-shell .relation-body .memo-token:hover {opacity:.8;text-decoration:none}
+.fomo-shell .annotation-source,.fomo-shell .reference-summary button {max-width:100%;min-width:0;line-height:18px;text-align:left}
+.fomo-shell .annotation-source>span:last-child,.fomo-shell .reference-summary button>span:last-child {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* One detail sheet for direct references, related notes and backlinks. */
+/* Native dialog lifecycle takes precedence over each panel's flex/grid layout. */
+.fomo-shell #dialog:not([open]) {display:none!important}
+.fomo-shell #dialog.note-detail-dialog {
+  width:720px;max-width:calc(100vw - 16px);height:90dvh;max-height:90dvh;
+  margin:auto;padding:0;border:0;border-radius:13px;overflow:hidden;
+  background:var(--bg);box-shadow:var(--fl-shadow-sheet);display:flex;flex-direction:column
+}
+.fomo-shell #dialog.note-detail-dialog.has-relations {width:1080px}
+.fomo-shell #dialog.note-detail-dialog .dialog-header {position:relative;flex:0 0 60px;min-height:60px;margin:0;padding:0 24px;justify-content:center;border-bottom:0}
+.fomo-shell #dialog.note-detail-dialog .dialog-header button:focus-visible {border-radius:8px;outline:1px solid var(--tag);outline-offset:0;color:var(--text)}
+.fomo-shell #dialog.note-detail-dialog #closeDialog {position:absolute;top:12px;right:12px;display:grid;place-items:center}
+.fomo-shell #dialog.note-detail-dialog #detailBack {position:absolute;top:12px;left:12px;display:grid;place-items:center;color:var(--muted)}
+.fomo-shell #dialog.note-detail-dialog #dialogBody {flex:1;min-height:0;padding:0;overflow:hidden}
+.fomo-shell #dialog.note-detail-dialog .note-detail {display:grid;grid-template-columns:minmax(0,1fr);column-gap:0;height:100%;padding:8px 30px 24px;overflow:hidden}
+.fomo-shell #dialog.note-detail-dialog.has-relations .note-detail {grid-template-columns:420px minmax(0,1fr)}
+.fomo-shell #dialog.note-detail-dialog .detail-relations[hidden] {display:none}
+.fomo-shell .note-detail .detail-primary {display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;padding:0;border:0}
+.fomo-shell .note-detail .detail-primary-scroll {flex:1;min-width:0;min-height:0;overflow:auto;padding:0 0 12px;border:0;scrollbar-width:thin}
+.fomo-shell .note-detail .detail-section-label {font-size:12px;line-height:24px;font-weight:400;color:var(--muted);margin:0 16px 12px}
+.fomo-shell .detail-current-card {position:relative;min-width:0;background:var(--surface);border-radius:12px;padding:16px;overflow-wrap:anywhere}
+.fomo-shell .detail-card-head {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.fomo-shell .detail-card-head .detail-meta {margin:0;min-width:0;font-size:12px;line-height:20px}
+.fomo-shell .detail-card-head #detailActionsToggle {display:grid;place-items:center;width:28px;height:24px;min-height:24px;flex:0 0 28px;padding:0;border:0;border-radius:6px;color:var(--muted);font-size:18px;line-height:20px}
+.fomo-shell .detail-card-head #detailActionsToggle:hover {background:var(--hover);color:var(--text)}
+.fomo-shell .detail-current-card .memo-content p {margin:0 0 .5em}
+.fomo-shell .detail-current-card #annotationList:empty {display:none}
+.fomo-shell .detail-current-card .detail-annotation-count {margin-top:12px;padding:0;color:var(--muted);font-size:12px}
+.fomo-shell .detail-current-card .detail-annotation-count:hover {color:var(--tag)}
+.fomo-shell .note-detail .detail-meta {font-size:12px;line-height:18px;margin-bottom:16px;color:var(--muted)}
+.fomo-shell .note-detail .memo-content {font-size:14px;line-height:1.8;max-width:100%;overflow-wrap:anywhere}
+.fomo-shell #dialog.note-detail-dialog .memo-content p,.fomo-shell #dialog.note-detail-dialog .relation-body p {color:inherit;font-size:inherit}
+.fomo-shell .note-detail .detail-images:empty {display:none}
+.fomo-shell .note-detail .detail-images {display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,110px));gap:10px}
+.fomo-shell .note-detail .detail-images button {min-width:0;border-radius:8px;overflow:hidden;padding:0}
+.fomo-shell .note-detail .detail-images img {display:block;width:110px;height:110px;object-fit:cover;background:var(--surface)}
+.fomo-shell .note-detail .detail-tools {display:flex;gap:6px;margin:24px 0 0;padding:12px 0 0;border-bottom:0;border-top:.5px solid var(--line)}
+.fomo-shell .note-detail .detail-tools button {display:flex;align-items:center;gap:6px;border:0;border-radius:8px;min-height:32px;padding:6px 8px;color:var(--muted);font-size:12px;line-height:18px}
+.fomo-shell .note-detail .detail-tools button:hover {color:var(--text);background:var(--hover)}
+.fomo-shell .detail-tools .detail-tool-icon svg {width:14px;height:14px}
+.fomo-shell .note-detail .detail-relations {display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;border:0;padding:0}
+.fomo-shell .detail-tabs {display:flex;gap:20px;flex:0 0 36px;min-height:36px;padding:0 16px;border:0;margin-bottom:0}
+.fomo-shell .detail-tabs button {position:relative;min-width:0;padding:0 2px;color:var(--muted);font-size:14px;white-space:nowrap}
+.fomo-shell .detail-tabs button[aria-selected=true] {color:var(--text);font-weight:500}
+.fomo-shell .detail-tabs button[aria-selected=true]:after {content:'';position:absolute;bottom:5px;left:0;right:0;height:1px;background:var(--line);border-radius:2px}
+.fomo-shell .detail-tabs small {font-size:12px;margin-left:3px;color:var(--muted);font-weight:400}
+.fomo-shell .detail-relations>[role=tabpanel] {flex:1;min-height:0;overflow:auto;padding:0 0 12px;scrollbar-width:thin}
+.fomo-shell .detail-relations h3 {font-size:12px;font-weight:400;line-height:18px;margin:4px 0 12px;color:var(--muted)}
+.fomo-shell .detail-relations .relation-card {border:0;background:var(--surface);padding:15px;margin-bottom:10px;border-radius:12px;box-shadow:var(--fl-shadow-card)}
+.fomo-shell .detail-relations .relation-card-head {gap:10px;margin-bottom:10px}
+.fomo-shell .detail-relations .relation-card-head time {font-size:12px;color:var(--muted)}
+.fomo-shell .detail-relations .relation-more {display:grid;place-items:center;min-width:28px;min-height:28px;border-radius:8px;color:var(--muted)}
+.fomo-shell .detail-relations .relation-more svg {width:14px;height:14px}
+.fomo-shell .detail-relations .relation-body {font-size:14px;line-height:1.8;color:var(--text)}
+.fomo-shell .detail-relations .relation-body.is-collapsed {max-height:240px;overflow:hidden;mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)}
+.fomo-shell .detail-relations .relation-expand {display:block;margin-top:8px;padding:0;border:0;background:none;color:var(--tag);font:inherit;font-size:12px;line-height:20px;cursor:pointer}
+.fomo-shell .detail-relations .relation-expand[hidden] {display:none}
+.fomo-shell .detail-relations .relation-parent {display:flex;align-items:center;gap:5px;padding:0;margin:0 0 10px;border:0;background:none;font-family:var(--memo-font-family,var(--fl-font-memo));font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8);color:var(--text)}
+.fomo-shell .detail-relations .relation-parent svg {width:14px;height:14px;color:var(--tag)}
+.fomo-shell .detail-relations .relation-tags {gap:4px;margin:0 0 8px}
+.fomo-shell .detail-relations .relation-tags span {font-size:12px;padding:1px 5px;background:var(--tag-pale,#f0f4ff);color:var(--tag);border-radius:6px}
+.fomo-shell .detail-relations .relation-card .memo-images {gap:8px}
+.fomo-shell .detail-relations .relation-card .memo-images img {width:88px;height:88px;object-fit:cover}
+.fomo-shell .detail-provenance button {display:flex;align-items:center;gap:6px;max-width:100%;margin:0 0 16px;padding:0;color:var(--tag);font-size:12px}
+.fomo-shell .detail-provenance button span {white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fomo-shell .detail-provenance svg {width:14px;height:14px;flex-shrink:0}
+.fomo-shell .detail-empty {font-size:13px;line-height:22px;color:var(--muted);padding:18px 0}
+.fomo-shell .note-detail .detail-actions-menu {position:fixed;inset:auto;margin:0;width:240px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto;padding:4px;display:block;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .detail-actions-menu:not(:popover-open) {display:none!important}
+.fomo-shell .detail-relations .detail-empty {margin:0;padding:18px 16px;border-radius:12px;background:var(--surface)}
+.fomo-shell .note-detail .detail-actions-menu>button {display:flex;align-items:center;width:100%;min-height:38px;padding:8px 12px;text-align:left;font-size:14px;line-height:20px;color:var(--text);border:0;border-radius:7px}
+.fomo-shell .note-detail .detail-actions-menu>button:hover,.fomo-shell .note-detail .detail-actions-menu>button:focus-visible {background:var(--hover)}
+
+.fomo-shell #dialog.reference-compose-dialog {width:min(640px,calc(100vw - 48px));max-width:min(640px,calc(100vw - 48px));height:fit-content;max-height:min(88dvh,560px);min-height:0;padding:0 30px 30px;margin:auto;border-radius:18px;background:var(--bg);overflow:auto}
+.fomo-shell #dialog.reference-compose-dialog .dialog-header {height:60px;min-height:60px;margin:0;justify-content:center;padding:0}
+.fomo-shell #dialog.reference-compose-dialog #closeDialog {position:absolute;top:12px;right:-16px;display:grid;place-items:center}
+.fomo-shell #dialog.reference-compose-dialog #composer {min-height:180px;padding:16px 16px 8px;border:1px solid transparent;border-radius:12px;box-shadow:0 0 0 1px var(--fl-editor-border),0 2px 10px hsla(0,0%,91%,.2);display:flex;flex-direction:column}
+.fomo-shell #dialog.reference-compose-dialog #composer:hover {border-color:transparent;box-shadow:0 0 0 1px var(--fl-editor-hover-border),0 2px 10px hsla(0,0%,91%,.2)}
+.fomo-shell #dialog.reference-compose-dialog #composer:focus-within {border-color:transparent;box-shadow:0 0 0 1px var(--green),0 2px 10px var(--fl-focus-shadow)}
+.fomo-shell.dark #dialog.reference-compose-dialog #composer:focus-within {box-shadow:0 0 0 1px var(--green),0 2px 10px var(--fl-focus-shadow-dark)}
+.fomo-shell #dialog.reference-compose-dialog #editor {flex:1;min-height:104px;max-height:300px;overflow-y:auto;line-height:1.8}
+.fomo-shell #dialog.reference-compose-dialog #reflectionBanner {flex:0 0 auto;margin:0 0 12px;padding:0;background:transparent;border:0;min-height:20px}
+.fomo-shell #dialog.reference-compose-dialog #reflectionBanner button {font-size:13px;line-height:20px;padding:0;min-height:20px;color:var(--text)}
+.fomo-shell #dialog.reference-compose-dialog .composer-bottom {flex:0 0 40px;margin:8px 0 0;padding:0}
+.fomo-shell #dialog.reference-compose-dialog #saveMemo {width:44px;min-width:44px;height:28px;min-height:28px;border-radius:8px;padding:4px 10px}
+.fomo-shell #dialog.reference-compose-dialog #attachments:not(:empty) {margin:12px 0}
+.fomo-shell.dark .detail-relations .relation-tags span {background:#262e40}
+@media(max-width:768px) {
+  .fomo-shell #dialog.note-detail-dialog {width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+  .fomo-shell #dialog.note-detail-dialog #dialogBody {overflow:auto}
+  .fomo-shell #dialog.note-detail-dialog .note-detail {display:block;height:auto;overflow:visible;padding:8px 16px 24px}
+  .fomo-shell .note-detail .detail-primary {padding:0 0 20px}
+  .fomo-shell .note-detail .detail-relations {border:0}
+  .fomo-shell .detail-relations>[role=tabpanel] {max-height:none;overflow:visible}
+  .fomo-shell #dialog.reference-compose-dialog {padding:0 16px 16px}
+  .fomo-shell #dialog.reference-compose-dialog #closeDialog {right:-6px}
+}
+@media(max-width:500px) {
+  .fomo-shell #dialog.reference-compose-dialog {width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;padding:0 10px 16px;border-radius:0;margin:0}
+  .fomo-shell #dialog.reference-compose-dialog #closeDialog {right:6px}
+  .fomo-shell #dialog.reference-compose-dialog #editor {max-height:calc(100dvh - 220px)}
+}
+
+/* Daily review follows the horizontal sheet instead of the old single-card stage. */
+body.fomo-shell[data-view=review] #reviewStage {
+  width:100%;height:min(650px,calc(100dvh - 86px));margin:0;border-radius:var(--fl-radius-lg);
+  overflow:hidden;display:flex;flex-direction:column;background:transparent;box-shadow:none
+}
+body.fomo-shell[data-view=review] #reviewStage #specialPanel {width:auto;margin:0;padding:16px 12px 12px;flex:0 0 auto}
+body.fomo-shell[data-view=review] #reviewStage .review-banner {width:auto;margin:0;padding:0 4px;background:transparent;border:0;box-shadow:none}
+body.fomo-shell[data-view=review] #reviewStage .review-banner h2 {font-size:14px;font-weight:500;line-height:20px;margin:0}
+body.fomo-shell[data-view=review] #reviewStage .review-banner p {display:none}
+body.fomo-shell[data-view=review] #reviewStage #memos {
+  flex:1;min-height:0;width:100%;padding:4px 24px 18px;display:flex;align-items:stretch;justify-content:flex-start;
+  flex-direction:row;flex-wrap:nowrap;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;background:transparent
+}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo,
+body.fomo-shell[data-view=review] #reviewStage #memos .memo.is-reviewed,
+body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed),
+body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed)~.memo:not(.is-reviewed) {
+  display:block;flex:0 0 452px;width:452px;min-height:0;height:100%;padding:22px 24px;border-radius:var(--fl-radius-lg);
+  scroll-snap-align:center;overflow:auto;box-shadow:var(--fl-shadow-card)
+}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo.is-reviewed {opacity:.62}
+body.fomo-shell[data-view=review] #reviewStage #memos .review-actions {margin-top:18px;padding-top:12px}
+body.fomo-shell[data-view=review] #reviewStage #memos .review-actions button {min-height:34px;border-radius:var(--fl-radius-md);font-size:13px}
+body.fomo-shell[data-view=review] #reviewNavigation {display:flex;flex:none;align-items:center;justify-content:center;gap:18px;padding:8px 0 16px;color:var(--reading-meta,var(--muted));font-size:13px;font-variant-numeric:tabular-nums}
+body.fomo-shell[data-view=review] #reviewNavigation[hidden] {display:none}
+body.fomo-shell[data-view=review] #reviewNavigation button {display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--text);font-size:24px;line-height:1;cursor:pointer}
+body.fomo-shell[data-view=review] #reviewNavigation button:hover:not(:disabled) {background:var(--hover)}
+body.fomo-shell[data-view=review] #reviewNavigation button:disabled {opacity:.35;cursor:default}
+body.fomo-shell[data-view=review] #reviewNavigation button:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+
+.fomo-shell.dark {
+  --fl-bg:#121212;--fl-surface:#202020;--fl-text:#d4d4d4;--fl-text-strong:#fff;--fl-subtle:#949494;
+  --fl-line:rgba(255,255,255,.10);--fl-line-soft:rgba(255,255,255,.05);--fl-hover:rgba(255,255,255,.05);
+  --fl-green:#397354;--fl-green-dark:#8fe5b7;--fl-green-soft:#0c361f;--fl-blue:#4071e2;
+  --bg:var(--fl-bg);--surface:var(--fl-surface);--text:var(--fl-text);--muted:var(--fl-subtle);--line:var(--fl-line);--hover:var(--fl-hover);--green:var(--fl-green);--green-dark:var(--fl-green-dark);--green-pale:var(--fl-green-soft);--tag:var(--fl-blue)
+}
+.fomo-shell.dark .search-wrap {background:#2e2e2e}
+.fomo-shell.dark .memo-menu,.fomo-shell.dark .shell-menu,.fomo-shell.dark .tag-suggestions {border-color:var(--fl-line);box-shadow:0 14px 36px rgba(0,0,0,.45)}
+
+@media(max-width:780px) {
+  .fomo-shell .format-tools button {width:40px;min-width:40px;height:40px;min-height:40px}
+  .fomo-shell #saveMemo {width:44px;min-width:44px;height:36px;min-height:36px}
+  .fomo-shell .composer.is-expanded {min-height:166px}
+  body.fomo-shell[data-view=review] #reviewStage {height:calc(100dvh - 76px)}
+  body.fomo-shell[data-view=review] #reviewStage #memos {padding:4px 14px 18px}
+  body.fomo-shell[data-view=review] #reviewStage #memos .memo,
+  body.fomo-shell[data-view=review] #reviewStage #memos .memo.is-reviewed,
+  body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed),
+  body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed)~.memo:not(.is-reviewed) {flex-basis:calc(100vw - 52px);width:calc(100vw - 52px)}
+}
+
+/* Source summaries use the same compact, single-line treatment in relation cards. */
+.fomo-shell .detail-relations .relation-source {display:flex;align-items:center;gap:6px;min-width:0;width:100%;margin-top:12px;padding:0;text-align:left;font-family:inherit;font-size:12px;line-height:18px;color:var(--muted)}
+.fomo-shell .detail-relations .relation-source>span:last-child {min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fomo-shell .detail-relations .relation-source .ref-arrow {display:grid;place-items:center;flex:0 0 12px;width:12px;height:12px}
+.fomo-shell .detail-relations .relation-source svg {width:12px;height:12px}
+.fomo-shell :is(.reference-source,.relation-source,.detail-provenance button):not(:disabled):hover {color:var(--tag)}
+.fomo-shell :is(.reference-source,.relation-source):disabled {cursor:default;opacity:1}
+
+.fomo-shell #dialog.note-detail-dialog #relatedChoices {max-height:none;overflow:visible}
+
+.fomo-shell .draft-recovery-notice {margin:0 0 12px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:13px}
+.fomo-shell .draft-recovery-notice p {margin:0 0 10px}
+.fomo-shell .draft-recovery-notice>div {display:flex;gap:16px}
+.fomo-shell .draft-recovery-notice button {padding:0;color:var(--green-dark)}
+
+/* Version selection and the document preview scroll independently. */
+.fomo-shell #dialog:has(.history-panel) {width:min(1100px,calc(100vw - 32px));height:min(760px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);padding:0;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.fomo-shell #dialog:has(.history-panel) .dialog-header {position:relative;flex:0 0 60px;min-height:60px;justify-content:flex-start;margin:0;padding:0 30px;border:0}
+.fomo-shell #dialog:has(.history-panel) #closeDialog {position:absolute;right:12px;top:12px}
+.fomo-shell #dialog:has(.history-panel) #closeDialog:focus {outline:none;background:var(--fl-hover);color:var(--fl-text-strong)}
+.fomo-shell #dialog .history-back {display:grid;place-items:center;width:28px;height:28px;min-width:28px;margin-right:8px;padding:0;border:0;background:transparent;color:var(--text);font-size:25px;line-height:1}
+.fomo-shell #dialog .history-back[hidden] {display:none}
+.fomo-shell #dialog:has(.history-panel) #dialogBody {flex:1;min-height:0;overflow:hidden;padding:0}
+.fomo-shell .history-panel {position:relative;display:flex;flex-direction:column;height:100%;min-height:0}
+.fomo-shell .history-summary {display:none}
+.fomo-shell .history-layout {display:flex;gap:20px;flex:1;min-height:0;overflow:hidden;padding:0 30px 20px;box-sizing:border-box}
+.fomo-shell .history-sidebar {display:flex;flex-direction:column;flex:0 0 360px;min-height:0;min-width:0;padding:0;border:0;border-radius:10px;background:var(--surface);overflow:hidden}
+.fomo-shell #historyVersions {display:flex;flex-direction:column;gap:6px;min-height:0;max-height:none;overflow:auto}
+.fomo-shell #dialog .history-version {display:flex;flex:0 0 auto;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:15px;min-height:50px;border:0;border-radius:0;text-align:left;white-space:normal;color:var(--text);background:transparent}
+.fomo-shell #dialog .history-version:hover {background:var(--hover)}
+.fomo-shell #dialog .history-version[aria-pressed=true] {background:var(--hover);color:var(--text)}
+.fomo-shell .history-version time,.fomo-shell .history-version>span {display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fomo-shell .history-version time {flex:0 0 auto;font-size:14px;font-weight:500;line-height:20px;color:var(--text);font-variant-numeric:tabular-nums}
+.fomo-shell .history-version>span {flex:1;text-align:right;font-size:12px;line-height:20px;color:var(--muted)}
+.fomo-shell .history-version[data-kind=draft]>span {color:var(--tag)}
+.fomo-shell .history-retention,.fomo-shell .history-empty {margin:14px 8px 4px;font-size:12px;line-height:1.8;color:var(--muted)}
+.fomo-shell .history-retention {display:none}
+.fomo-shell .history-tip {margin:auto 0 0;padding:20px 15px;font-size:12px;font-weight:400;line-height:20px;color:var(--muted)}
+.fomo-shell .history-tip a {color:var(--tag);text-decoration:none}
+.fomo-shell #historyOlder {display:block;margin:4px 8px 8px;padding:0;border:0;background:none;color:var(--tag);font:inherit;line-height:1.8;text-align:left}
+.fomo-shell #historyOlder:hover,.fomo-shell #historyOlder:focus-visible {color:var(--green);text-decoration:underline}
+.fomo-shell .history-restore-confirm {position:absolute;inset:0;z-index:6;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.18)}
+.fomo-shell .history-restore-confirm[hidden] {display:none}
+.fomo-shell .history-restore-card {width:min(360px,100%);padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .history-restore-card h3 {margin:0 0 8px;font-size:15px;font-weight:600;line-height:22px}
+.fomo-shell .history-restore-card p {margin:0 0 18px;font-size:13px;line-height:1.7;color:var(--muted)}
+.fomo-shell .history-restore-card>div {display:flex;justify-content:flex-end;gap:8px}
+.fomo-shell .history-restore-card button {min-height:32px;padding:5px 12px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);font:inherit;line-height:20px}
+.fomo-shell .history-restore-card button:hover,.fomo-shell .history-restore-card button:focus-visible {background:var(--hover)}
+.fomo-shell .history-restore-card .primary-button {border-color:var(--green);background:var(--green);color:#fff}
+.fomo-shell .history-document {display:flex;flex:1;flex-direction:column;min-width:0;min-height:0;overflow:hidden;padding:15px;border-radius:10px;background:var(--surface)}
+.fomo-shell .history-document-head {display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:12px;color:var(--muted)}
+.fomo-shell #historyLabel {font-size:12px;line-height:20px;color:var(--muted);font-variant-numeric:tabular-nums}
+.fomo-shell #loadHistory {padding:0;border:0;background:none;color:var(--tag);font:inherit;font-size:12px;line-height:20px;cursor:pointer}
+.fomo-shell #loadHistory:disabled {opacity:.4;cursor:not-allowed}
+.fomo-shell .history-restore-tip {margin:0 0 10px;font-size:12px;line-height:20px;color:var(--muted)}
+.fomo-shell #historyCompare {flex:0 0 auto;padding:0;font-size:12px;line-height:20px;color:var(--tag)}
+.fomo-shell .history-preview-card {flex:1;min-height:0;overflow:auto;padding:0;background:transparent;border-radius:0;overflow-wrap:anywhere}
+.fomo-shell #historyPreview {font-size:14px;line-height:1.8;letter-spacing:.1px;word-break:break-word;color:var(--reading-text)}
+.fomo-shell #historyStatus {margin:8px 0 0;font-size:12px;line-height:20px;color:var(--muted)}
+.fomo-shell #historyPreview p {margin:0 0 .5em;font-size:inherit;color:inherit}
+.fomo-shell #historyPreview p:last-child {margin-bottom:0}
+.fomo-shell #historyPreview {margin:0;max-height:none;overflow:visible}
+.fomo-shell #historyReferences:empty,.fomo-shell #historyImages:empty {display:none}
+.fomo-shell #historyReferences {margin:12px 0 0;font-size:12px;color:var(--muted)}
+.fomo-shell .history-diff {margin-top:12px;border:0;border-radius:12px;background:var(--surface);padding:16px;max-height:none;overflow:visible}
+.fomo-shell .history-diff-caption {font-size:11px;line-height:1.8;color:var(--muted);margin:0 0 12px}
+.fomo-shell .history-diff .detail-empty {margin:0;padding:0;font-size:12px;color:var(--muted)}
+.fomo-shell.dark .history-diff .diff-add {background:#183b2a;color:#8cdeb1}
+.fomo-shell.dark .history-diff .diff-del {background:#422326;color:#edaaaa}
+.fomo-shell .history-footer {display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 24px;border-top:1px solid var(--line);flex:0 0 auto}
+.fomo-shell .history-footer>div {min-width:0}
+.fomo-shell .history-footer p {margin:0;font-size:12px;line-height:1.8;color:var(--text)}
+.fomo-shell .history-footer small {display:block;font-size:11px;line-height:1.8;color:var(--muted)}
+.fomo-shell #historyStatus:not(:empty) {display:block;margin-top:6px;font-size:12px;color:var(--tag)}
+.fomo-shell .history-footer .primary-button {flex:0 0 auto;min-height:36px;padding:7px 16px;border-radius:6px}
+.fomo-shell .history-footer .primary-button:disabled {background:var(--hover);border-color:transparent;color:var(--muted);cursor:default}
+@media(max-width:600px){
+ .fomo-shell #dialog:has(.history-panel) {width:calc(100vw - 16px);height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);border-radius:12px}
+ .fomo-shell .history-summary {padding:0 16px 12px;gap:4px}
+ .fomo-shell .history-summary>span:last-child {display:none}
+.fomo-shell .history-layout {display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
+.fomo-shell .history-sidebar {flex:0 0 auto;max-height:150px;min-height:0;border:0}
+ .fomo-shell #historyVersions {flex-direction:row;overflow:auto}
+.fomo-shell #dialog .history-version {width:230px;min-height:50px;flex:0 0 230px;padding:10px 12px}
+ .fomo-shell .history-retention {display:none}
+ .fomo-shell .history-empty {margin:4px 0;font-size:11px;line-height:1.5}
+.fomo-shell .history-document {flex:1;padding:14px 12px 18px}
+ .fomo-shell .history-document-head {flex-wrap:wrap;gap:4px}
+ .fomo-shell .history-footer {padding:12px;gap:10px;align-items:flex-start;flex-wrap:wrap}
+ .fomo-shell .history-footer .primary-button {margin-left:auto}
+}
+@media(max-width:419px){
+ .fomo-shell .history-layout {display:flex;flex-direction:row;padding:0 16px 16px}
+ .fomo-shell .history-sidebar {flex:1;max-height:none}
+ .fomo-shell #historyVersions {flex-direction:column;overflow:auto}
+ .fomo-shell #dialog .history-version {width:100%;flex:0 0 auto;padding:15px}
+ .fomo-shell .history-document {display:none}
+ .fomo-shell .history-panel.history-mobile-detail .history-sidebar {display:none}
+ .fomo-shell .history-panel.history-mobile-detail .history-document {display:flex}
+}
+
+/* Reading preferences are shared by composers, detail sheets and native windows. */
+.fomo-shell #editor,.fomo-shell #dialog.reference-compose-dialog #editor,
+.fomo-shell .memo-content,.fomo-shell .note-detail .memo-content,
+body.fomo-shell[data-view=review] #memos .memo-content,
+.fomo-shell .detail-relations .relation-body {
+  font-family:var(--memo-font-family,var(--fl-font-memo));font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8)
+}
+.fomo-shell #editor.structured-editor .editor-tag {font-size:inherit;line-height:inherit;font-family:inherit;background:transparent;padding:0;border-radius:0}
+.fomo-shell.dark #editor.structured-editor .editor-tag {background:transparent}
+.fomo-shell .note-editor.structured-editor .editor-tag,.fomo-shell.dark .note-editor.structured-editor .editor-tag {font-family:inherit;font-size:inherit;line-height:inherit;background:transparent;padding:0;border-radius:0}
+.fomo-shell #editor:empty:before {font-size:inherit;font-family:inherit;line-height:inherit}
+.fomo-shell.heatmap-hidden .activity-panel {display:none}
+
+/* The settings sheet has independent category navigation and content scrolling. */
+.fomo-shell #dialog:has(.settings-layout) {width:min(880px,calc(100vw - 32px));height:min(800px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);background:var(--bg)}
+.fomo-shell #dialog:has(.settings-layout) .dialog-header {min-height:54px;padding:12px 24px;justify-content:flex-start;background:var(--bg)}
+.fomo-shell #dialog:has(.settings-layout) #dialogBody {padding:0;overflow:hidden}
+.fomo-shell .settings-layout {display:grid;grid-template-columns:190px minmax(0,1fr);height:100%;min-height:0}
+.fomo-shell .settings-tabs {display:flex;flex-direction:column;align-items:stretch;gap:6px;height:auto;margin:0;padding:18px 12px;border:0;border-right:1px solid var(--line);background:var(--hover)}
+.fomo-shell #dialog .settings-tabs button {display:flex;flex:0 0 auto;align-items:center;gap:10px;min-height:38px;padding:8px 12px;text-align:left;border:0;border-radius:7px;color:var(--text);font-weight:400}
+.fomo-shell .settings-tabs button svg {width:16px;height:16px;flex:0 0 16px}
+.fomo-shell .settings-tabs button:hover {background:var(--hover)}
+.fomo-shell #dialog .settings-tabs button[aria-selected=true] {background:var(--green);color:#fff;border:0;font-weight:600}
+.fomo-shell .settings-content {padding:22px 24px 28px;min-width:0;min-height:0;overflow:auto;scrollbar-gutter:stable}
+.fomo-shell #dialog .settings-content>section>h3 {margin:0 0 24px;font-size:17px;font-weight:600;color:var(--text)}
+.fomo-shell .settings-caption {margin:0 0 12px 12px;font-size:12px;color:var(--muted)}
+.fomo-shell .settings-group {background:var(--surface);padding:4px 16px;border-radius:12px}
+.fomo-shell .settings-row {display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:54px;padding:8px 0}
+.fomo-shell .settings-row:not(:last-child) {border-bottom:1px solid var(--line-soft)}
+.fomo-shell #settingsAppearance .settings-row label,.fomo-shell #dialog .settings-row label {margin:0;display:block;flex:0 0 auto;white-space:nowrap;color:var(--text);font-size:14px}
+.fomo-shell #dialog .settings-row :is(input:not([type=checkbox]),select) {width:min(180px,50%);height:34px;padding:4px 8px;margin:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);font:inherit}
+.fomo-shell #dialog .settings-row input[type=checkbox] {appearance:none;display:block;position:relative;width:38px;min-width:38px;height:24px;padding:0;margin:0;border:0;border-radius:14px;background:var(--line);cursor:pointer}
+.fomo-shell .settings-row input[type=checkbox]::after {content:'';display:block;position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002;transition:transform 140ms ease}
+.fomo-shell #dialog .settings-row input[type=checkbox]:checked {background:var(--green)}
+.fomo-shell .settings-row input[type=checkbox]:checked::after {transform:translateX(14px)}
+.fomo-shell #settingsAppearance .dialog-hint,.fomo-shell #settingsReading .dialog-hint {margin:16px 0;padding:0;background:none;color:var(--muted);font-size:12px;line-height:1.7}
+.fomo-shell .settings-content .dialog-actions {justify-content:flex-end;margin-top:18px}
+.fomo-shell .settings-reading-preview {margin-top:18px;padding:18px 16px;background:var(--surface);border-radius:10px;overflow-wrap:anywhere}
+@media(max-width:600px){
+  .fomo-shell #dialog:has(.settings-layout) {width:calc(100vw - 16px);height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);border-radius:12px}
+  .fomo-shell .settings-layout {grid-template-columns:118px minmax(0,1fr)}
+  .fomo-shell .settings-tabs {padding:14px 6px}
+  .fomo-shell #dialog .settings-tabs button {gap:5px;padding:8px 6px;font-size:12px}
+  .fomo-shell .settings-tabs button svg {width:14px;height:14px;flex-basis:14px}
+  .fomo-shell .settings-content {padding:18px 12px}
+  .fomo-shell .settings-group {padding:4px 10px}
+  .fomo-shell .settings-row {gap:8px;flex-wrap:wrap}
+  .fomo-shell #dialog .settings-row :is(input:not([type=checkbox]),select) {width:100%;max-width:100%}
+  .fomo-shell .settings-content .settings-actions {flex-wrap:wrap}
+}
+
+/* Secondary pages share the same heading, spacing and supporting text rhythm. */
+.fomo-shell #dialog:has(.settings-layout) .dialog-header {position:relative;flex:0 0 60px;min-height:60px;padding:0 24px;margin:0;box-sizing:border-box;align-items:center}
+.fomo-shell #dialog:has(.settings-layout) #closeDialog {position:absolute;right:12px;top:12px}
+.fomo-shell .settings-tabs {background:var(--bg)}
+.fomo-shell .settings-content {padding:24px}
+.fomo-shell #dialog .settings-content>section>h3 {margin:0 0 20px;font-size:16px;line-height:24px}
+.fomo-shell #dialog .settings-content h3 {font-size:16px;line-height:24px;font-weight:600;color:var(--text)}
+.fomo-shell #dialog .settings-content h3:not(:first-child) {margin:28px 0 12px}
+.fomo-shell #dialog .settings-content :is(#automaticBackups,#storageUsage,#updatesPanel) {margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.fomo-shell #dialog .settings-content :is(#automaticBackups,#storageUsage,#updatesPanel)>h3:first-child {margin:0 0 12px}
+.fomo-shell #dialog .settings-caption {margin:0 0 10px 0;color:var(--reading-meta,var(--muted));line-height:20px}
+.fomo-shell #dialog .settings-content p {line-height:1.8;color:var(--reading-meta,var(--muted));overflow-wrap:anywhere}
+.fomo-shell #dialog .settings-content .dialog-hint {padding:0;background:none;margin:12px 0 16px;font-size:12px;line-height:1.8}
+.fomo-shell #dialog .settings-content .settings-actions {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.fomo-shell #dialog .obsidian-comparison pre {max-height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border:1px solid var(--line);border-radius:6px;color:var(--text);background:var(--surface);font:inherit}
+.fomo-shell #dialog .settings-content :is(.settings-actions,.dialog-actions)>button {min-height:36px;padding:7px 12px;border-radius:6px;font-size:13px;line-height:20px}
+.fomo-shell #dialog .settings-content :is(.settings-actions,.dialog-actions)>button:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell #dialog .settings-content .storage-grid {gap:10px}
+.fomo-shell #dialog .settings-content .storage-grid>div {min-width:0;border-radius:8px;padding:12px;background:var(--surface)}
+.fomo-shell #dialog .settings-content .storage-cleanup {display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0 4px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.fomo-shell #dialog .settings-content .storage-cleanup>div {min-width:0;display:flex;flex-direction:column;gap:2px}
+.fomo-shell #dialog .settings-content .storage-cleanup strong {font-size:13px;line-height:20px;font-weight:600;color:var(--text)}
+.fomo-shell #dialog .settings-content .storage-cleanup small {font-size:12px;line-height:18px;color:var(--reading-meta,var(--muted));overflow-wrap:anywhere}
+.fomo-shell #dialog .settings-content .storage-cleanup button {flex:0 0 auto;min-height:34px;padding:6px 12px;border-radius:6px;font-size:12px}
+.fomo-shell #dialog .settings-content .storage-cleanup button:disabled {opacity:.55;cursor:not-allowed}
+.fomo-shell #dialog .settings-content .storage-actions {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fomo-shell #dialog .attachment-detail-list {max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.fomo-shell #dialog .attachment-detail-toolbar {display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px}
+.fomo-shell #dialog .attachment-detail-select {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 8px;font-size:12px;color:var(--reading-meta,var(--muted))}
+.fomo-shell #dialog .attachment-detail-select label,.fomo-shell #dialog .attachment-detail-check {display:flex;align-items:center;gap:8px}
+.fomo-shell #dialog .attachment-detail-select input,.fomo-shell #dialog .attachment-detail-check input {accent-color:var(--green);margin:0}
+.fomo-shell #dialog .attachment-detail-check {flex:0 0 20px;min-height:24px;justify-content:center;padding-top:1px}
+.fomo-shell #dialog .attachment-detail-toolbar>input {flex:1 1 220px;min-width:160px;height:34px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:12px}
+.fomo-shell #dialog .attachment-detail-filters {display:flex;gap:4px;padding:3px;border-radius:7px;background:var(--surface)}
+.fomo-shell #dialog .attachment-detail-filters button {min-height:28px;padding:4px 8px;border:0;border-radius:5px;font-size:12px;color:var(--reading-meta,var(--muted));background:transparent}
+.fomo-shell #dialog .attachment-detail-filters button[aria-selected=true] {color:var(--text);background:var(--bg);box-shadow:0 1px 2px #00000012}
+.fomo-shell #dialog .attachment-detail-row {display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.fomo-shell #dialog .attachment-detail-row:last-child {border-bottom:0}
+.fomo-shell #dialog .attachment-detail-row>div {min-width:0}
+.fomo-shell #dialog .attachment-detail-row>div:not(.attachment-detail-check) {flex:1}
+.fomo-shell #dialog .attachment-detail-row strong {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:20px}
+.fomo-shell #dialog .attachment-detail-row small,.fomo-shell #dialog .attachment-detail-row p {display:block;margin:0;color:var(--reading-meta,var(--muted));font-size:12px;line-height:18px;overflow-wrap:anywhere}
+.fomo-shell #dialog .attachment-detail-state {flex:0 0 auto;padding:2px 7px;border-radius:10px;font-size:11px;line-height:18px;color:var(--reading-meta,var(--muted));background:var(--bg)}
+.fomo-shell #dialog .attachment-detail-state.is-orphan {color:#b36a00;background:#fff5df}
+.fomo-shell #dialog .settings-content .data-path {font-size:12px;line-height:20px;min-width:0}
+.fomo-shell #dialog .history-version time {font-size:14px;line-height:20px;color:var(--text)}
+.fomo-shell #dialog :is(.history-summary,.history-retention,.history-empty,.history-version>span,.history-document-head .detail-meta,.history-footer small,.history-diff-caption) {font-size:12px;line-height:20px;color:var(--reading-meta,var(--muted))}
+.fomo-shell #dialog .history-empty {padding:12px;margin:12px 0 0;background:var(--surface);border-radius:8px}
+.fomo-shell #dialog .history-version[aria-pressed=true] {border-color:transparent;box-shadow:none}
+.fomo-shell #dialog .history-version:focus-visible {outline:2px solid var(--green);outline-offset:-2px}
+.fomo-shell #dialog .history-preview-card {padding:16px}
+.fomo-shell .empty {display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;padding:48px 24px;box-sizing:border-box}
+.fomo-shell .empty>svg {width:28px;height:28px;margin:0 0 16px;color:var(--reading-meta,var(--muted))}
+.fomo-shell .empty h3 {margin:0;font-size:14px;font-weight:500;line-height:24px;color:var(--text)}
+.fomo-shell .empty p {max-width:360px;margin:8px 0 0;font-size:13px;line-height:22px;color:var(--reading-meta,var(--muted))}
+.fomo-shell .empty .empty-actions {margin-top:20px}
+.fomo-shell .empty .empty-actions .empty-clear {margin-top:0}
+.fomo-shell .trash-toolbar {border:0;border-radius:8px;padding:12px 16px;line-height:20px}
+.fomo-shell .trash-toolbar button {min-height:32px;font-size:12px;border-radius:6px}
+@media(max-width:600px){
+  .fomo-shell .settings-content {padding:18px 12px}
+  .fomo-shell #dialog .settings-content :is(#automaticBackups,#storageUsage,#updatesPanel) {margin-top:24px;padding-top:20px}
+  .fomo-shell .empty {min-height:220px;padding:32px 16px}
+  .fomo-shell .trash-toolbar {align-items:flex-start;flex-wrap:wrap;padding:12px}
+}
+
+/* Reference context stays readable in composers and nested detail cards. */
+.fomo-shell #reflectionBanner .composer-reference {display:flex;align-items:center;gap:8px;min-width:0;max-width:100%}
+.fomo-shell #reflectionBanner [data-view-reference] {display:flex;align-items:center;gap:6px;min-width:0;max-width:100%;text-align:left}
+.fomo-shell #reflectionBanner [data-view-reference]>span:first-child {flex-shrink:0}
+.fomo-shell #reflectionBanner .ref-arrow {display:grid;place-items:center;flex:0 0 14px;color:var(--tag)}
+.fomo-shell #reflectionBanner .ref-arrow svg {width:14px;height:14px}
+.fomo-shell #reflectionBanner .composer-source-summary {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12px}
+.fomo-shell #reflectionBanner [data-view-reference]:hover .composer-source-summary {color:var(--tag)}
+.fomo-shell #reflectionBanner [data-view-reference]:disabled {opacity:1;cursor:default}
+.fomo-shell #detailReferenceSources:empty,.fomo-shell .relation-references:empty {display:none}
+.fomo-shell #detailReferenceSources .relation-source {display:flex;align-items:center;gap:6px;width:100%;margin-top:12px;padding:0;text-align:left;color:var(--muted);font-family:inherit;font-size:12px;line-height:18px}
+.fomo-shell #detailReferenceSources .relation-source>span:last-child {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell #detailReferenceSources .ref-arrow {display:grid;place-items:center;flex:0 0 12px}
+.fomo-shell #detailReferenceSources svg {width:12px;height:12px}
+.fomo-shell #detailReferenceSources .relation-source:not(:disabled):hover {color:var(--tag)}
+.fomo-shell .detail-relations .relation-card {padding:16px;margin-bottom:12px;box-shadow:0 1px 4px #00000008}
+.fomo-shell .detail-relations h3 {margin:20px 4px 10px;font-size:12px;line-height:20px;color:var(--reading-meta,var(--muted));scroll-margin-top:8px}
+.fomo-shell .detail-relations h3:first-child {margin-top:4px}
+.fomo-shell .memo-detail-header {display:flex;align-items:center;gap:10px;min-width:0;min-height:32px;margin:0 16px 12px;padding:4px 0;color:var(--reading-meta,var(--muted));font-size:12px;line-height:20px}
+.fomo-shell .memo-detail-header h3.relation-count {flex:0 0 auto;margin:0;font-size:12px;font-weight:400;line-height:20px;color:var(--reading-meta,var(--muted));white-space:nowrap}
+.fomo-shell .memo-detail-header .relation-hint {margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reading-meta,var(--muted));font-size:12px;font-weight:400;line-height:20px}
+.fomo-shell .memo-detail-header .detail-relation-actions {display:flex;align-items:center;gap:2px;margin-left:auto}
+.fomo-shell .memo-detail-header .detail-relation-actions>button {display:grid;place-items:center;width:28px;height:28px;min-height:28px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted)}
+.fomo-shell .memo-detail-header .detail-relation-actions>button:hover,.fomo-shell .memo-detail-header .detail-relation-actions>button:focus-visible {background:var(--hover);color:var(--text)}
+.fomo-shell .memo-detail-header .detail-relation-actions svg {width:16px;height:16px}
+.fomo-shell .detail-related-menu {position:fixed;inset:auto;margin:0;width:190px;max-width:calc(100vw - 16px);padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--fl-shadow-menu);color:var(--text)}
+.fomo-shell .detail-related-menu:not(:popover-open) {display:none!important}
+.fomo-shell .detail-related-menu button {display:flex;align-items:center;gap:8px;width:100%;min-height:36px;padding:7px 10px;border:0;border-radius:7px;background:transparent;color:var(--text);font-size:14px;line-height:20px;text-align:left}
+.fomo-shell .detail-related-menu button:hover,.fomo-shell .detail-related-menu button:focus-visible {background:var(--hover)}
+.fomo-shell .detail-related-menu .menu-check {display:inline-grid;place-items:center;flex:0 0 14px;width:14px;color:var(--green);font-size:12px}
+.fomo-shell .detail-relations .relation-card-head {min-height:24px;margin-bottom:10px}
+.fomo-shell .detail-relations .relation-more {min-width:28px;min-height:28px;border-radius:6px}
+.fomo-shell .detail-relations .relation-more:hover {background:var(--hover);color:var(--text)}
+.fomo-shell :is(.relation-more,.relation-parent,.relation-source,.detail-provenance button,.detail-annotation-count):focus-visible {outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+.fomo-shell :is(#detailReferenceSources,.relation-references):not(:empty) {margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.fomo-shell :is(#detailReferenceSources,.relation-references) .relation-source {margin-top:8px;align-items:flex-start;line-height:20px}
+.fomo-shell :is(#detailReferenceSources,.relation-references) .relation-source:first-child {margin-top:0}
+.fomo-shell :is(#detailReferenceSources,.relation-references) .relation-source .ref-arrow {margin-top:3px}
+.fomo-shell :is(#detailReferenceSources,.relation-references) .relation-source>span:last-child {display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;overflow-wrap:anywhere;line-height:20px}
+.fomo-shell .detail-current-card .detail-annotation-count {display:inline-flex;align-items:center;min-height:28px;margin-top:12px;padding:0 4px;color:var(--reading-tag,var(--tag));font-size:12px;line-height:20px;border-radius:4px}
+.fomo-shell .detail-current-card .detail-annotation-count:hover {background:var(--hover)}
+.fomo-shell .relation-card.is-missing {box-shadow:none;background:var(--hover)}
+.fomo-shell .detail-relations .relation-card.is-missing .detail-empty {padding:0;background:none}
+.fomo-shell .bulk-bar #bulkCount {font-weight:600;white-space:nowrap}
+.fomo-shell .bulk-bar .bulk-scope {flex-basis:100%;order:2;color:var(--muted);font-size:11px;line-height:1.6}
+.fomo-shell .bulk-bar #bulkExit {margin-left:auto}
+.fomo-shell .bulk-tag-preview {margin-top:14px;max-height:180px;overflow:auto;font-size:13px;line-height:1.8;color:var(--muted)}
+.fomo-shell .bulk-tag-preview:empty {display:none}
+.fomo-shell .bulk-tag-preview p {margin:4px 0;overflow-wrap:anywhere}
+.fomo-shell .memo-selection input {accent-color:var(--green);width:16px;height:16px;cursor:pointer}
+.fomo-shell .lightbox-stage {position:relative;height:calc(82dvh - 64px);min-height:220px;max-height:calc(92dvh - 96px);overflow:auto;overscroll-behavior:contain;touch-action:none;cursor:grab;user-select:none}
+.fomo-shell .lightbox-stage.is-dragging {cursor:grabbing}
+.fomo-shell #lightboxImage {height:auto;flex-shrink:0;user-select:none;-webkit-user-drag:none}
+.fomo-shell #lightboxImage[hidden] {display:none}
+.fomo-shell #lightboxStatus {margin:32px 16px;color:#aaa;font-size:13px}
+.fomo-shell #lightboxStatus:empty {display:none}
+.fomo-shell #lightboxScale {min-width:40px;font-size:12px;text-align:center;color:#aaa;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.fomo-shell .lightbox-bar {gap:2px;padding:6px}.fomo-shell .lightbox-bar button {min-width:28px;padding:0 5px}.fomo-shell #lightboxCount {min-width:36px}.fomo-shell #lightboxScale {min-width:36px}}
+.fomo-shell #dialogDiscardPrompt {position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:#0005;border-radius:inherit}
+.fomo-shell #dialogDiscardPrompt section {width:min(360px,100%);padding:24px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);box-shadow:0 12px 40px #0003}
+.fomo-shell #dialogDiscardPrompt h3 {margin:0 0 12px;font-size:16px;font-weight:600}
+.fomo-shell #dialogDiscardPrompt p {margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+.fomo-shell #dialogDiscardPrompt section>div {display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.fomo-shell #dialogDiscardPrompt button {padding:8px 12px;border:1px solid var(--line);border-radius:7px;font-size:13px}
+.fomo-shell #dialogDiscardPrompt button:focus-visible {outline:2px solid var(--green-dark);outline-offset:2px}
+.fomo-shell #toast {display:flex;align-items:center;gap:12px;max-width:min(560px,calc(100vw - 32px));padding:10px 12px 10px 16px;font-size:13px;line-height:1.6;border:1px solid #ffffff24;border-radius:10px}
+.fomo-shell #toast[hidden] {display:none}
+.fomo-shell #toast .toast-message {min-width:0;overflow-wrap:anywhere}
+.fomo-shell #toast button {flex-shrink:0;min-height:28px;margin:0;padding:2px 6px;color:inherit}
+.fomo-shell #toast #undoAction {font-weight:600;text-underline-offset:3px}
+.fomo-shell #toast #undoAction:disabled {opacity:.65;cursor:wait;text-decoration:none}
+.fomo-shell #toast #dismissToast {display:grid;place-items:center;width:24px;min-width:24px;padding:3px;opacity:.75;text-decoration:none}
+.fomo-shell #toast #dismissToast svg {width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.fomo-shell #toast button:focus-visible {outline:2px solid #8aefb8;outline-offset:1px;border-radius:4px}
+.fomo-shell #toast[data-kind=error] {border-color:#ed9393}
+.fomo-shell .save-status-row {align-items:center;gap:8px;flex-wrap:wrap}
+.fomo-shell #retrySaveMemo {font-size:12px;color:var(--green-dark);text-decoration:underline;text-underline-offset:3px}
+.fomo-shell #retrySaveMemo[hidden] {display:none}
+body.fomo-shell[data-view=review] #reviewStage .review-scope {margin-top:6px;color:var(--muted);font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.fomo-shell .review-toolbar-actions {display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.fomo-shell .review-toolbar-actions button,.fomo-shell .random-actions button {min-height:30px;padding:4px 8px;border-radius:6px}
+.fomo-shell .random-actions {display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.fomo-shell #randomProgress {flex-basis:100%;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums;text-align:right}
+.fomo-shell .random-actions button:disabled {opacity:.4;cursor:default}
+.fomo-shell .discovery-empty p {max-width:340px;margin-left:auto;margin-right:auto;line-height:1.8}
+body.fomo-shell[data-view=review] .review-banner {gap:12px;flex-wrap:wrap}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo.is-reviewed {opacity:1}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo {padding:20px;scrollbar-width:none}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo::-webkit-scrollbar{display:none}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo-content {font-family:var(--memo-font-family,var(--fl-font-memo));font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8)}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo-content .tag-link{font-family:inherit;font-size:calc(var(--memo-font-size,14px) - 1px);line-height:inherit;padding:2px 4px;border-radius:8px;background:var(--reading-tag-bg);color:var(--reading-tag)}
+body.fomo-shell[data-view=review] #reviewStage #memos .review-actions {display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line)}
+body.fomo-shell[data-view=review] #reviewStage #memos .review-actions button {padding:6px 10px;line-height:20px}
+body.fomo-shell[data-view=review] #reviewStage #memos .review-actions button:disabled {opacity:1;color:var(--reading-meta,var(--muted));background:var(--hover);cursor:default}
+body.fomo-shell[data-view=review] #reviewStage :is(.review-actions,.review-toolbar-actions) button:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+body.fomo-shell[data-view=review] #reviewProgress {display:inline-block;margin-left:8px;font-size:12px;line-height:20px;font-weight:400;color:var(--reading-meta,var(--muted));font-variant-numeric:tabular-nums}
+body.fomo-shell[data-view=review] #reviewMeter {display:none}
+body.fomo-shell[data-view=review] #reviewMeter::-webkit-progress-bar {background:var(--line)}
+body.fomo-shell[data-view=review] #reviewMeter::-webkit-progress-value {background:var(--green)}
+body.fomo-shell[data-view=review] #reviewCompletion {margin-top:6px;font-size:13px;line-height:20px;color:var(--green-dark)}
+@media(max-width:600px){.fomo-shell .review-toolbar-actions {width:100%}.fomo-shell .random-actions {gap:3px}.fomo-shell .random-actions button {padding:4px 6px;font-size:12px}}
+.fomo-shell .tag-change-preview,.fomo-shell #mergeTagPreview {margin:12px 0;padding:12px;background:var(--hover);border-radius:8px;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.fomo-shell #dialogBody .tag-change-summary {margin:0 0 8px;font-size:12px}
+.fomo-shell .tag-change-paths {margin:0;padding:0;list-style:none;max-height:170px;overflow:auto}
+.fomo-shell .tag-change-paths li {display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr);gap:8px;padding:3px 0}
+.fomo-shell .tag-change-paths li>span {min-width:0;overflow-wrap:anywhere}
+.fomo-shell .tag-change-paths li>span:nth-child(2) {color:var(--muted)}
+.fomo-shell #dialogBody .tag-change-error,.fomo-shell #editTagError,.fomo-shell #moveTagError {color:#bd4a4a}
+.fomo-shell #dialogBody .tag-merge-consent {display:flex;align-items:flex-start;gap:6px;color:var(--text);line-height:1.7}
+.fomo-shell #dialogBody .tag-merge-consent[hidden] {display:none}
+.fomo-shell #dialogBody .tag-merge-consent input {flex:0 0 auto;width:auto;margin:4px 0 0}
+/* The existing parent opacity (.35) already supplies the native idle toolbar tone. */
+.fomo-shell .composer:not(.is-focused) .send {opacity:.55;transition:opacity 120ms ease}
+.fomo-shell .composer.is-focused .send {opacity:1}
+/* Explicit focus state: no parent idle opacity should survive expansion. */
+.fomo-shell .composer.is-focused .format-tools,
+.fomo-shell .composer.is-expanded .format-tools {opacity:1}
+/* Focused editor: icons should read as active, not merely un-dimmed. */
+.fomo-shell .composer.is-focused .format-tools,
+.fomo-shell .composer.is-expanded .format-tools {color:#666}
+.fomo-shell .composer.is-focused .format-tools button,
+.fomo-shell .composer.is-expanded .format-tools button {color:#666}
+/* Native note menu: 234px wide, 13px radius, slightly softer inset. */
+.fomo-shell .memo-menu {width:234px;padding:5px;border-radius:13px}
+.fomo-shell .memo-menu hr {margin:4px -5px}
+.fomo-shell .memo-menu .menu-meta {padding-left:11px;padding-right:11px}
+
+/* Settings shell: full-height navigation, page heading and compact preference rows. */
+.fomo-shell #dialog:has(.settings-layout) {position:fixed;border:0;border-radius:16px;isolation:isolate}
+.fomo-shell #dialog:has(.settings-layout) .dialog-header {position:absolute;inset:0 0 auto;z-index:3;height:60px;min-height:0;padding:0;pointer-events:none;border:0;background:transparent}
+.fomo-shell #dialog:has(.settings-layout) #dialogTitle {position:absolute;left:24px;top:20px;margin:0;font-size:13px;line-height:20px;font-weight:400;color:var(--muted)}
+.fomo-shell #dialog:has(.settings-layout) #closeDialog {top:14px;right:14px;width:32px;height:32px;pointer-events:auto;border-radius:6px}
+.fomo-shell #dialog:has(.settings-layout) #closeDialog:hover {background:var(--hover)}
+.fomo-shell #dialog:has(.settings-layout) #dialogBody {height:100%;flex:1 1 100%;min-height:0}
+.fomo-shell .settings-layout {grid-template-columns:200px minmax(0,1fr)}
+.fomo-shell .settings-tabs {padding:60px 12px 16px;gap:2px;background:var(--hover);overflow-y:auto}
+.fomo-shell #dialog .settings-tabs button {min-height:36px;padding:8px 12px;gap:10px}
+.fomo-shell #dialog .settings-tabs #tabShortcuts,.fomo-shell #dialog .settings-tabs #tabStorage {margin-top:22px}
+.fomo-shell .settings-tabs button:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell .settings-content {padding:0 24px 24px;overscroll-behavior:contain;scrollbar-gutter:stable}
+.fomo-shell #dialog .settings-content>section>h3:first-child {position:sticky;top:0;z-index:2;margin:0 0 16px;padding:20px 40px 12px 0;background:var(--bg);font-size:17px;line-height:24px;font-weight:600}
+.fomo-shell #dialog .settings-caption {margin:0 16px 12px;font-size:12px;line-height:20px}
+.fomo-shell .settings-group {padding:0 16px;border-radius:12px}
+.fomo-shell .settings-row {min-height:48px;padding:8px 0;box-sizing:border-box}
+.fomo-shell .settings-row:not(:last-child) {border-bottom:0}
+.fomo-shell #dialog .settings-row label {flex:1 1 auto;min-width:0;white-space:normal;line-height:22px}
+.fomo-shell #dialog #dialogBody .settings-row select {width:auto;max-width:50%;height:32px;padding:4px 22px 4px 8px;border:0;border-radius:5px;background-color:transparent;color:var(--muted);text-align:right;cursor:pointer}
+.fomo-shell #dialog #dialogBody .settings-row select:hover {background-color:var(--hover);color:var(--text)}
+.fomo-shell #dialog .settings-row :is(select,input):focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell #dialog .settings-row select option {background:var(--surface);color:var(--text)}
+@media(max-width:600px){
+ .fomo-shell .settings-layout {grid-template-columns:118px minmax(0,1fr)}
+ .fomo-shell .settings-tabs {padding:60px 6px 12px}
+ .fomo-shell #dialog:has(.settings-layout) #dialogTitle {left:12px}
+ .fomo-shell .settings-content {padding:0 12px 18px}
+ .fomo-shell #dialog .settings-tabs button {gap:5px;padding:8px 6px}
+ .fomo-shell #dialog #dialogBody .settings-row select {max-width:100%;width:auto}
+ .fomo-shell #dialog .settings-caption {margin-left:10px}
+}
+
+.fomo-shell #dialog .settings-group+.settings-caption {margin-top:28px}
+
+.fomo-shell .settings-row-note {display:block;margin-top:3px;color:var(--muted);font-size:12px;line-height:18px}
+.fomo-shell #dialog .settings-row input[type=checkbox]:disabled {opacity:.45;cursor:not-allowed}
+
+/* Preference value menus share the reference's compact, checked option presentation. */
+.fomo-shell .settings-select {display:inline-flex;flex:0 1 auto;min-width:0;max-width:60%}
+.fomo-shell #dialog #dialogBody select.settings-native-select {position:absolute;width:1px;height:1px;padding:0;border:0;clip-path:inset(50%);overflow:hidden;pointer-events:none}
+.fomo-shell #dialog .settings-select-trigger {display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:32px;max-width:100%;padding:4px 8px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:inherit;font-size:14px;line-height:24px}
+.fomo-shell .settings-select-trigger>span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fomo-shell #dialog .settings-select-trigger:hover {background:var(--hover);color:var(--text)}
+.fomo-shell .settings-select-trigger svg {width:14px;height:14px;flex-shrink:0}
+.fomo-shell #dialog .settings-select-trigger:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell .settings-select-menu {position:fixed;inset:auto;margin:0;padding:4px;box-sizing:border-box;overflow-y:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:0 10px 32px #0002;font-family:var(--fl-font-ui,inherit)}
+.fomo-shell #dialog .settings-select-menu>button {display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:40px;padding:8px 10px;border:0;border-radius:7px;background:transparent;color:var(--text);text-align:left;font-size:14px;line-height:24px}
+.fomo-shell #dialog .settings-select-menu>button:is(:hover,.is-current) {background:var(--hover)}
+.fomo-shell .settings-select-menu>button svg {width:16px;height:16px;visibility:hidden;flex-shrink:0}
+.fomo-shell .settings-select-menu>button[aria-selected=true] svg {visibility:visible}
+.fomo-shell .settings-select-trigger:disabled {opacity:.5;cursor:not-allowed}
+
+.fomo-shell #dialog .settings-row[hidden] {display:none}
+.fomo-shell #dialog .review-settings-intro {padding:16px}
+.fomo-shell #dialog .review-settings-intro p {margin:4px 0 0}
+.fomo-shell #dialog .settings-tabs #tabReview {margin-top:22px}
+
+.fomo-shell #dialog .settings-tabs #tabTransfer {margin-top:22px}
+.fomo-shell #dialog .settings-tabs #tabStorage {margin-top:2px}
+.fomo-shell #dialog .settings-tabs button{margin-top:0!important}
+.fomo-shell .settings-segment {display:flex;margin-bottom:16px;padding:2px;background:var(--hover);border-radius:8px}
+.fomo-shell #dialog .settings-segment>button {flex:1;min-height:30px;border:0;border-radius:6px;color:var(--muted);font-size:13px}
+.fomo-shell #dialog .settings-segment>button[aria-selected=true] {background:var(--surface);color:var(--text);box-shadow:0 1px 3px #0001}
+.fomo-shell #dialog .settings-segment>button:focus-visible {outline:2px solid var(--green);outline-offset:2px}
+.fomo-shell .transfer-upload {padding:16px;text-align:center}
+.fomo-shell #dialog .transfer-upload-trigger {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:180px;padding:20px;border:1px dashed var(--line);border-radius:8px;color:var(--text);background:transparent}
+.fomo-shell .transfer-upload-trigger svg {width:30px;height:30px;color:var(--tag)}
+.fomo-shell .transfer-upload-trigger strong {font-size:16px;font-weight:500}
+.fomo-shell .transfer-upload-trigger span {font-size:12px;color:var(--muted)}
+.fomo-shell #dialog .transfer-upload-trigger:hover {background:var(--hover)}
+.fomo-shell #dialog .transfer-text-action {flex-shrink:0;padding:6px 0;color:var(--green);font-size:13px}
+.fomo-shell .transfer-upload>.transfer-text-action {margin-top:10px}
+.fomo-shell .transfer-upload>.transfer-text-action+.transfer-text-action {margin-left:16px}
+.fomo-shell.dark #dialog .transfer-text-action {color:#9bd4ad}
+body.fomo-shell.dark[data-view=random] .random-locked {background:var(--surface);color:var(--text)}
+body.fomo-shell.dark[data-view=random] .rw-node-content .tag {color:#a4d9b3;background:#294b37;opacity:1}
+@media(max-width:480px){.fomo-shell .composer .format-tools{gap:0;overflow:visible;min-width:0}.fomo-shell .composer .format-tools button{width:25px;min-width:25px}.fomo-shell .composer .format-tools #linkMemo{width:29px;min-width:29px;margin-left:1px;padding-left:4px}.fomo-shell .composer .format-tools #formatToggle{width:29px;min-width:29px;margin-left:1px;padding-left:4px}.fomo-shell .composer .send-wrap{gap:3px}}
+.fomo-shell .transfer-export-card {margin-top:24px;padding:0 16px}
+.fomo-shell .transfer-export-card:has(ol) {padding:16px}
+.fomo-shell .transfer-export-card ol {margin:12px 0 0;padding-left:20px;font-size:13px;line-height:2;color:var(--muted)}
+.fomo-shell #settingsTransfer .settings-row {min-height:70px}
+.fomo-shell #settingsTransfer strong {font-size:14px;font-weight:500}
+
+/* 笔记详情：多种引用关系由标题栏菜单切换。 */
+.fomo-shell #dialog.note-detail-dialog .detail-switcher {position:absolute;right:52px;top:12px;z-index:5}
+.fomo-shell #dialog.note-detail-dialog #detailSwitch {width:auto;height:36px;padding:0 10px;border-radius:8px;color:var(--muted);font-size:12px;white-space:nowrap}
+.fomo-shell #dialog.note-detail-dialog #detailSwitch:hover,.fomo-shell #dialog.note-detail-dialog #detailSwitch[aria-expanded=true] {background:var(--hover)}
+.fomo-shell #dialog.note-detail-dialog .detail-tabs {position:absolute;top:42px;right:0;display:block;width:196px;min-height:0;padding:4px;margin:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 8px 24px #0002;overflow:visible}
+.fomo-shell #dialog.note-detail-dialog .detail-tabs[hidden] {display:none}
+.fomo-shell #dialog.note-detail-dialog .detail-tabs .detail-tab {display:flex;align-items:center;justify-content:space-between;width:100%;min-width:0;height:40px;margin:0;padding:0 12px;border:0;border-radius:7px;color:var(--text);font-size:14px;font-weight:400;text-align:left}
+.fomo-shell #dialog.note-detail-dialog .detail-tabs .detail-tab:hover,.fomo-shell #dialog.note-detail-dialog .detail-tabs .detail-tab[aria-checked=true] {background:var(--hover)}
+.fomo-shell #dialog.note-detail-dialog .detail-tabs .detail-tab[aria-checked=true]::after {content:'✓';position:static;background:none;color:var(--text);height:auto}
+.fomo-shell .note-detail #detailActions {width:240px}
+.fomo-shell .note-detail #detailActions .menu-meta {display:grid;gap:6px;padding:11px 12px 8px;margin-top:4px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:16px}
+
+.fomo-shell .note-detail .detail-more-menu {position:fixed;width:240px;max-width:calc(100vw - 16px);padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--fl-shadow-menu)}
+.fomo-shell .note-detail .detail-more-menu[hidden] {display:none}
+.fomo-shell .note-detail .detail-more-menu button {display:block;width:100%;min-height:36px;padding:7px 10px;text-align:left;border:0;border-radius:7px;color:var(--text);font-size:14px}
+.fomo-shell .note-detail .detail-more-menu button:hover,.fomo-shell .note-detail .detail-more-menu button:focus-visible {background:var(--hover)}
+.fomo-shell .note-detail #detailMore {justify-content:space-between}
+.fomo-shell .note-detail #detailMore .more-chevron {width:16px;height:16px}
+.fomo-shell .note-detail #detailDelete {color:var(--danger, #e35a5a)}
+.fomo-shell .detail-date-picker {position:fixed;inset:auto;width:300px;max-width:calc(100vw - 16px);padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);box-shadow:var(--fl-shadow-menu);font-size:13px}
+.fomo-shell .detail-date-picker:not(:popover-open) {display:none!important}
+.fomo-shell .detail-date-head {display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.fomo-shell .detail-date-head strong {display:block;font-size:15px;font-weight:600;line-height:22px}
+.fomo-shell .detail-date-head span {display:block;margin-top:2px;color:var(--muted);font-size:12px;line-height:18px}
+.fomo-shell .detail-date-nav {display:flex;gap:2px}
+.fomo-shell .detail-date-nav button {display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:20px;line-height:1}
+.fomo-shell .detail-date-nav button:hover,.fomo-shell .detail-date-nav button:focus-visible {background:var(--hover);color:var(--text)}
+.fomo-shell .detail-date-week,.fomo-shell .detail-date-grid {display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.fomo-shell .detail-date-week span {display:grid;place-items:center;height:26px;color:var(--muted);font-size:11px;line-height:1}
+.fomo-shell .detail-date-day {display:grid;place-items:center;width:100%;height:32px;padding:0;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--text);font-size:13px;line-height:1}
+.fomo-shell .detail-date-day:hover,.fomo-shell .detail-date-day:focus-visible {background:var(--hover)}
+.fomo-shell .detail-date-day.other {color:var(--muted);opacity:.48}
+.fomo-shell .detail-date-day.today {border-color:color-mix(in srgb,var(--green) 55%,transparent)}
+.fomo-shell .detail-date-day.selected {border-color:var(--green);background:var(--green);color:#fff;font-weight:600}
+.fomo-shell .detail-date-time {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted)}
+.fomo-shell .detail-date-time input {width:118px;height:32px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);font:inherit}
+.fomo-shell .detail-date-time input:focus-visible {outline:2px solid var(--green);outline-offset:1px}
+.fomo-shell .detail-date-status {min-height:18px;margin:7px 0 0;color:var(--muted);font-size:12px;line-height:18px}
+.fomo-shell .detail-date-actions {display:flex;justify-content:flex-end;gap:8px;margin-top:2px}
+.fomo-shell .detail-date-actions button {min-height:32px;padding:5px 12px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);font:inherit;line-height:20px}
+.fomo-shell .detail-date-actions button:hover,.fomo-shell .detail-date-actions button:focus-visible {background:var(--hover)}
+.fomo-shell .detail-date-actions .primary-button {border-color:var(--green);background:var(--green);color:#fff}
+.fomo-shell .detail-date-actions button:disabled {opacity:.55;cursor:default}
+.fomo-shell .selection-toolbar {gap:0;padding:5px 0;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#fff;box-shadow:0 14px 36px rgba(0,0,0,.14)}
+.fomo-shell.dark .selection-toolbar {background:#2e2e2e;border-color:hsla(0,0%,100%,.12);box-shadow:0 18px 42px rgba(0,0,0,.36)}
+.fomo-shell .selection-toolbar button {width:26px;min-width:26px;height:28px;min-height:28px;margin:0 5px;padding:0;border-radius:3px}
+.fomo-shell .selection-toolbar button svg {width:16px;height:16px;padding:5px;box-sizing:content-box}
+.fomo-shell .selection-toolbar button:hover,.fomo-shell .selection-toolbar button[aria-pressed=true] {background:rgba(0,0,0,.05);color:#000;box-shadow:none}
+.fomo-shell.dark .selection-toolbar button:hover,.fomo-shell.dark .selection-toolbar button[aria-pressed=true] {background:hsla(0,0%,100%,.1);color:#d9d9d9}
+.fomo-shell #editor.structured-editor .editor-tag,.fomo-shell .note-editor.structured-editor .editor-tag {color:#5783f7}
+.fomo-shell.dark #editor.structured-editor .editor-tag,.fomo-shell.dark .note-editor.structured-editor .editor-tag {color:#2b88d8}
+
+.save-status-row[hidden]{display:none}
+
+/* Daily review: focused card and controls, following the supplied reference. */
+body.fomo-shell[data-view=review] #reviewStage {width:min(100%,720px);height:min(700px,calc(100dvh - 90px));margin:0 auto;overflow:visible}
+body.fomo-shell[data-view=review] #reviewStage #specialPanel {padding:8px 0 12px}
+body.fomo-shell[data-view=review] #reviewStage .review-banner {align-items:center}
+body.fomo-shell[data-view=review] #reviewStage #reviewSurface {display:flex;flex:1;min-height:0;flex-direction:column;padding:0;background:transparent}
+body.fomo-shell[data-view=review] #reviewStage #memos {flex:1;width:100%;min-height:0;padding:0;gap:16px;overflow-x:hidden;scroll-snap-type:x mandatory;background:transparent}
+body.fomo-shell[data-view=review] #reviewStage #memos .memo,
+body.fomo-shell[data-view=review] #reviewStage #memos .memo.is-reviewed,
+body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed),
+body.fomo-shell[data-view=review] #reviewStage #memos .memo:not(.is-reviewed)~.memo:not(.is-reviewed) {flex:0 0 100%;width:100%;height:100%;padding:24px;border-radius:12px;scroll-snap-align:start;background:var(--surface)}
+body.fomo-shell[data-view=review] #reviewNavigation {justify-content:space-between;gap:12px;padding:16px 0 0}
+body.fomo-shell[data-view=review] #reviewNavigation .review-tools,
+body.fomo-shell[data-view=review] #reviewNavigation .review-pages {display:flex;align-items:center;gap:10px}
+body.fomo-shell[data-view=review] #reviewNavigation .review-pages {gap:2px;padding:0 8px;border-radius:24px;background:var(--surface)}
+body.fomo-shell[data-view=review] #reviewNavigation .review-tools button {width:36px;height:36px;background:var(--surface);color:var(--reading-meta,var(--muted))}
+body.fomo-shell[data-view=review] #reviewNavigation .review-tools svg {width:17px;height:17px}
+body.fomo-shell[data-view=review] #reviewPage {min-width:42px;text-align:center}
+@media (max-width:600px) {body.fomo-shell[data-view=review] #reviewStage #memos .memo {padding:18px}}
+
+/* Inline reference previews keep their canonical note ID in the document model. */
+.structured-editor .editor-reference-preview {display:inline-flex;align-items:center;gap:5px;vertical-align:baseline;max-width:min(100%,520px);color:var(--muted,#999);font-size:12px;line-height:1.6;white-space:nowrap;user-select:all}
+.structured-editor .editor-reference-arrow {display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;flex:0 0 12px;color:var(--muted,#999);line-height:1}
+.structured-editor .editor-reference-arrow svg {display:block;width:12px;height:12px;fill:currentColor}
+.structured-editor .editor-reference-label {display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.structured-editor .editor-reference-label.is-truncated {-webkit-mask-image:linear-gradient(to right,#000 78%,transparent 100%);mask-image:linear-gradient(to right,#000 78%,transparent 100%)}
+.structured-editor .editor-reference-preview.ProseMirror-selectednode {outline:2px solid var(--tag,#5783f7);outline-offset:2px;border-radius:3px}
+
+body.fomo-shell[data-view=review] #reviewStage #memos .memo :is(.memo-head-right,.review-actions,.memo-footer){display:none}
+body.fomo-shell[data-view=review] #reviewNavigation .review-tools{flex-wrap:wrap}
+body.fomo-shell[data-view=review] #reviewNavigation{flex-wrap:wrap}
+body.fomo-shell[data-view=review] #reviewNavigation .review-tools #reviewReviewed:disabled{color:var(--green);opacity:1}
+body.fomo-shell[data-view=review] #reviewNavigation .review-pages{margin-left:auto}

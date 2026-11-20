@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fomo · 新建</title><link rel="stylesheet" href="fidelity.css"><link rel="stylesheet" href="ui-font.css">
+<style>
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;background:#fff;overflow:hidden;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;color:#2e2e2e}
+header{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 16px;-webkit-app-region:drag}
+header strong{font-size:14px;font-weight:600}header div{display:flex;gap:2px;-webkit-app-region:no-drag}header button{width:30px;height:30px;border:0;background:transparent;border-radius:6px;display:grid;place-items:center;color:#777;cursor:pointer;-webkit-app-region:no-drag}header button:hover{background:#f4f4f4;color:#222}header svg{width:16px;height:16px}#pinCompose[aria-pressed=true]{color:#18c964;background:#eafbf0}
+#composeEditor{min-height:calc(100dvh - 98px);padding:2px 18px 70px;outline:none;font-size:14px;line-height:1.7;overflow:auto}
+#composePlaceholder{position:absolute;left:18px;top:44px;color:#9a9a9a;font-size:14px;line-height:1.7;pointer-events:none}#composePlaceholder[hidden]{display:none}
+#composeEditor .editor-tag{color:#5783f7;background:#eef3fe;border-radius:5px;padding:1px 4px;font-size:inherit}#composeEditor .ProseMirror{outline:none;min-height:calc(100dvh - 170px)}#composeEditor p{margin:0 0 8px}
+.compose-images{position:fixed;left:0;right:0;bottom:90px;z-index:2;display:flex;flex-wrap:wrap;gap:8px;padding:8px 18px;max-height:160px;overflow:auto;background:#fff;border-top:1px solid #f5f5f5}.compose-images[hidden]{display:none}.compose-image{position:relative;width:64px;height:64px;flex:0 0 64px}.compose-image img{width:100%;height:100%;object-fit:cover;border-radius:7px;display:block}.compose-image button{position:absolute;right:-5px;top:-5px;width:19px;height:19px;border:0;border-radius:50%;background:#333;color:#fff;font-size:13px;line-height:1;cursor:pointer;padding:0}footer{position:fixed;left:0;right:0;bottom:0;height:54px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#fff}
+.tools{display:flex;align-items:center;gap:0;flex:1;color:#4a4a4a}.tools button{width:29px;height:32px;border:0;background:transparent;color:inherit;display:grid;place-items:center;font-size:15px;cursor:pointer}.tools button svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill}.tools #tagCompose{font-size:16px;font-weight:600}.tools .aa{font-weight:700}.tools .aa{font-size:15px}#boldCompose{position:relative;margin-left:12px}#boldCompose::before{content:"";position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:1px;height:18px;background:#f0f0f0}.tools button:hover{background:#f4f4f4;border-radius:5px;color:#222}
+#charCount{font-size:12px;color:#999}#send{width:34px;height:34px;margin-right:8px;border:0;border-radius:9px;background:#2bc764;color:#fff;display:grid;place-items:center;cursor:pointer}#send:disabled{background:#d2d2d2;color:#fff;cursor:default}#send svg{width:16px;height:16px;fill:currentColor}
+#status{position:fixed;left:18px;right:18px;bottom:54px;margin:0;min-height:20px;max-height:32px;overflow:auto;background:#fff;color:#777;font-size:11px;line-height:16px}#tagMenu{position:fixed;z-index:30;width:220px;max-height:300px;overflow:auto;padding:6px;background:#fff;border:1px solid #ececec;border-radius:10px;box-shadow:0 10px 30px #0002}#tagMenu[hidden]{display:none}#tagMenu button{width:100%;min-height:34px;border:0;border-radius:7px;background:transparent;color:#444;text-align:left;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;cursor:pointer}#tagMenu button:hover,#tagMenu button.selected{background:#f2f2f2}#tagMenu .tag-new{color:#999;font-size:11px;flex:0 0 auto}#tagMenu .tag-empty{color:#999;font-size:12px;padding:10px;text-align:center}
+
+/* Match the workspace composer without changing its existing toolbar. */
+body.compose-window{background:var(--surface,#fff);color:var(--text,#323232)}
+body.compose-window header{background:var(--surface,#fff)}
+#composeEditor{font-family:var(--memo-font-family,var(--fl-font-memo));font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8)}
+#composePlaceholder{font-family:var(--memo-font-family,var(--fl-font-memo));font-size:var(--memo-font-size,14px);line-height:var(--memo-line-height,1.8)}
+#composeEditor .editor-tag{font-family:inherit;font-size:calc(var(--memo-font-size, 14px) - 1px);line-height:inherit;border-radius:8px;padding:2px 4px;background:#e5f2e7;color:#365f40;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+body.compose-window.dark #composeEditor .editor-tag{background:#293e30;color:#a5d6af}
+#composeEditor :is(p,ul,ol){margin-top:0;margin-bottom:.5em;line-height:inherit}#composeEditor p{min-height:25px}#composeEditor :is(ul,ol){padding-left:22px}#composeEditor li{margin:0;line-height:inherit}#composeEditor li>p{margin-bottom:0}
+#composeEditor blockquote{margin:0 0 .5em;padding:0 0 0 10px;border-left:2px solid #efefef;color:inherit}#composeEditor blockquote :is(p,li){line-height:1.5!important}
+.fomo-shell.dark #composeEditor blockquote{border-left-color:#9d9d9d}
+#composeEditor mark:not(.search-hit){background:#ffffb4;color:inherit;padding:1px 0 2px;border-radius:0}
+.fomo-shell.dark #composeEditor mark:not(.search-hit){background:#595947;color:inherit}
+#composeEditor a{color:var(--tag,#5783f7);text-decoration:none}#composeEditor a:hover{text-decoration:underline;text-underline-offset:2px}
+#composeEditor .memo-reference{display:inline;max-width:none;margin:0;padding:0;white-space:normal;overflow-wrap:anywhere;color:inherit;text-decoration:none;background:none;font:inherit;cursor:pointer}#composeEditor .memo-reference::before,#composeEditor .memo-reference::after{content:none}
+footer{background:var(--surface,#fff);gap:5px;padding:0 16px}
+body.compose-window .tools{flex:1 1 auto;min-width:0;width:auto;height:32px;gap:2px;overflow:visible;color:#666}
+body.compose-window .tools button{width:30px;min-width:30px;height:30px;min-height:30px;padding:3px;font-size:14px;font-weight:400;line-height:1}
+body.compose-window .tools button svg{display:block;width:16px;height:16px;margin:0;fill:none;stroke:currentColor;stroke-width:1.8}
+body.compose-window .tools #tagCompose{font-size:21px;font-weight:400}
+body.compose-window .tools #boldCompose{width:37px;min-width:37px;margin-left:3px;border-left:1px solid var(--line);border-radius:0;padding-left:9px;font-size:16px;font-weight:500}
+body.compose-window #boldCompose:before{display:none}
+body.compose-window .tools #linkCompose{width:37px;min-width:37px;margin-left:5px;border-left:1px solid var(--line);border-radius:0;padding-left:9px}
+body.compose-window .tools #linkCompose svg{width:21px;height:21px}
+body.compose-window .send-wrap{display:flex;align-items:center;gap:8px;flex:0 0 auto;height:32px}
+body.compose-window #charCount{color:var(--muted);font-size:12px;line-height:16px;font-weight:400;white-space:nowrap}
+body.compose-window #cancelCompose{padding:4px 7px;background:none;border:0;font-size:14px;line-height:20px;color:var(--muted);cursor:pointer}
+body.compose-window #send{width:44px;min-width:44px;height:28px;min-height:28px;padding:4px 10px;margin:0;border-radius:6px;background:var(--green,#30cf79)}
+body.compose-window #send svg{display:block;width:16px;height:16px;fill:currentColor;stroke:none;transform:rotate(45deg)}
+body.compose-window #send:disabled{background:#d2d2d2}
+body.compose-window #composeFormatPopover{position:fixed;bottom:58px;left:82px;display:flex;align-items:center;gap:2px;padding:4px;z-index:40;border:1px solid var(--line);border-radius:8px;background:var(--surface,#fff);box-shadow:0 6px 22px #0002}
+#composeFormatPopover[hidden]{display:none!important}#composeFormatPopover button{display:grid;place-items:center;width:30px;height:30px;padding:3px;border:0;border-radius:4px;background:none;color:inherit;font-size:15px;cursor:pointer}#composeFormatPopover svg{width:16px;height:16px}#composeFormatPopover button:hover,#composeFormatPopover button[aria-pressed=true]{background:var(--hover)}
+body.compose-window button[aria-pressed=true]{background:var(--hover);color:var(--text)}
+#tagMenu[aria-label="引用建议"]{width:min(380px,calc(100vw - 24px))}
+#tagMenu .reference-date{display:block;margin-bottom:6px;font-size:12px;line-height:1.5;color:var(--muted)}#tagMenu .reference-label{display:-webkit-box;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:14px;line-height:1.8}#tagMenu .reference-option{display:block;padding:8px 12px}
+#tagMenu .reference-label mark{background:#fff36b;color:inherit;padding:0}body.dark #tagMenu .reference-label mark{background:#6c5c1f}
+#tagMenu[aria-label="标签建议"]{width:max-content;min-width:160px;max-width:calc(100vw - 24px);max-height:260px;box-sizing:border-box}#tagMenu .tag-match{color:#6890f8}#tagMenu .tag-new{padding:1px 6px;border-radius:3px;background:var(--hover)}
+#tagMenu[aria-label="标签建议"]{border:.5px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 14px 36px rgba(0,0,0,.14);scrollbar-width:thin;scrollbar-color:transparent transparent}
+#tagMenu[aria-label="标签建议"]:hover{scrollbar-color:rgba(128,128,128,.28) transparent}
+#tagMenu[aria-label="标签建议"]::-webkit-scrollbar{width:5px!important;height:10px!important;background:transparent;border-radius:999px}
+#tagMenu[aria-label="标签建议"]::-webkit-scrollbar-thumb{background:transparent;border-radius:999px}
+#tagMenu[aria-label="标签建议"]:hover::-webkit-scrollbar-thumb{background:rgba(128,128,128,.28)}
+#tagMenu[aria-label="标签建议"] button{box-sizing:border-box;min-height:34px;border-radius:6px;font-size:14px;line-height:20px}
+#tagMenu[aria-label="标签建议"].tag-suggestions--animate{animation:compose-tag-popup-in 180ms cubic-bezier(.2,0,0,1)}
+@keyframes compose-tag-popup-in{from{opacity:0;transform:translateY(-2px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#tagMenu[aria-label="标签建议"].tag-suggestions--animate{animation:none}}
+body.compose-window.dark #tagMenu .tag-match{color:#4071e2}@media(max-height:400px){#tagMenu[aria-label="标签建议"]{max-height:60vh}}
+body.compose-window.dark #composeImages,body.compose-window.dark #status,body.compose-window.dark #tagMenu{background:var(--surface);color:var(--text)}
+body.compose-window.dark #tagMenu[aria-label="标签建议"]{border-color:var(--fl-line);box-shadow:0 14px 36px rgba(0,0,0,.45)}
+body.compose-window.dark #tagMenu[aria-label="标签建议"] button{color:var(--text)}
+body.compose-window.dark #tagMenu[aria-label="标签建议"] button:is(:hover,.selected){background:var(--hover);color:var(--text)}
+body.compose-window.dark #tagMenu .reference-option{color:var(--text)}
+body.compose-window.dark #tagMenu .reference-option:is(:hover,.selected){background:var(--hover);color:var(--text)}
+@media(max-width:480px){footer{height:54px;flex-wrap:nowrap;gap:5px;padding:0 12px}body.compose-window .tools{flex:1 1 auto;min-width:0}body.compose-window .send-wrap{width:auto;justify-content:flex-end}body.compose-window #charCount{margin-right:0}#status{bottom:54px}.compose-images{bottom:90px}body.compose-window #composeFormatPopover{bottom:58px}}
+
+/* The tray window does not load cards.css, so provide the same light palette here. */
+body.compose-window:not(.dark){--fl-bg:#fcfbf6;--fl-surface:#fffefa;--fl-text:#353535;--fl-green:#4e8e65;--fl-green-dark:#346b49;--fl-green-soft:#e4f1e7;--fl-blue:#365f40;--fl-line:rgba(65,61,53,.12);--surface:var(--fl-bg);--text:var(--fl-text);--green:var(--fl-green);--green-dark:var(--fl-green-dark);--tag:var(--fl-blue);background:var(--surface)}
+body.compose-window:not(.dark) #tagMenu{background:var(--fl-surface)}
+body.compose-window:not(.dark) #tagMenu .tag-match{color:var(--tag)}
+body.compose-window:not(.dark) #pinCompose[aria-pressed=true]{color:var(--green-dark);background:var(--fl-green-soft)}
+body.compose-window:not(.dark) #send:not(:disabled):hover{background:var(--green-dark)}
+
+body.compose-window{background:var(--surface,#fff)}
+#trayComposer{position:absolute;inset:44px 12px 12px;display:flex;flex-direction:column;border:0;border-radius:12px;background:var(--surface,#fff);overflow:visible;box-shadow:none}
+#trayComposer:focus-within{border:0;box-shadow:none}
+#composeEditor{flex:1 1 auto;height:auto;min-height:0;max-height:none;padding:14px 16px;overflow:auto;overflow-wrap:anywhere}
+#composeEditor .ProseMirror{min-height:calc(100dvh - 190px)}
+#composeEditor strong,#composeEditor b{font-weight:600}
+#composePlaceholder{top:14px;left:16px}
+#trayComposer footer{position:static;flex:0 0 54px;border-radius:0 0 12px 12px}
+#trayComposer .compose-images{position:static;flex:0 0 auto;border-color:var(--line);background:var(--surface);padding-left:16px;padding-right:16px}
+#trayComposer #status{position:static;flex:0 0 auto;margin:0 16px;background:var(--surface);color:var(--muted)}
+#trayComposer #status:empty{display:none}
+@media(max-width:480px){#trayComposer footer{height:54px;flex-basis:54px;flex-wrap:nowrap}#composeEditor .ProseMirror{min-height:calc(100dvh - 190px)}}
+
+body.compose-window #composeSelectionToolbar{position:fixed;z-index:40;display:flex;align-items:center;gap:0;padding:5px 0;border:.5px solid rgba(0,0,0,.08);border-radius:8px;background:#fff;box-shadow:0 14px 36px rgba(0,0,0,.14)}
+body.compose-window #composeSelectionToolbar.selection-toolbar button{width:26px;min-width:26px;height:28px;min-height:28px;padding:0;margin:0 5px;border-radius:3px}
+body.compose-window #composeSelectionToolbar.selection-toolbar button svg{width:16px;height:16px;padding:5px;box-sizing:content-box}
+body.compose-window #composeSelectionToolbar.selection-toolbar :is([data-format="list"],[data-format="number"],[data-action="tag"],[data-action="image"]) svg{fill:none!important;stroke:currentColor!important;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#composeSelectionToolbar[hidden]{display:none!important}
+body.compose-window :is(#composeSelectionToolbar,#composeFormatPopover) button{display:grid;place-items:center;width:30px;min-width:30px;height:30px;min-height:30px;padding:3px;border:0;border-radius:4px;background:none;color:var(--text);font-size:15px;font-weight:500;cursor:pointer}
+body.compose-window :is(#composeSelectionToolbar,#composeFormatPopover) button:hover,body.compose-window :is(#composeSelectionToolbar,#composeFormatPopover) button[aria-pressed=true]{background:var(--hover)}
+body.compose-window :is(#composeSelectionToolbar,#composeFormatPopover) button:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+body.compose-window :is(#composeSelectionToolbar,#composeFormatPopover) svg{display:block;width:16px;height:16px;fill:currentColor;stroke:none}
+</style><style>html,body,body *{scrollbar-width:none!important;scrollbar-gutter:auto!important}html::-webkit-scrollbar,body::-webkit-scrollbar,body *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}</style></head>
+<body class="fomo-shell compose-window"><header><strong>新建</strong><div><button id="pinCompose" aria-label="窗口置顶" title="窗口置顶" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" stroke-linecap="round"><path d="M5 2.3h6l-.65 4.3 1.45 1.5v1.1H4.2v-1.1l1.45-1.5L5 2.3Z"/><path d="M8 9.2v4.5"/></svg></button><button id="closeCompose" aria-label="关闭" title="关闭" data-icon="close"></button></div></header><section id="trayComposer"><div id="composeEditor" contenteditable="true" data-placeholder="现在的想法是..."></div><div id="composePlaceholder">现在的想法是...</div><div id="composeImages" class="compose-images" hidden></div><input id="composeImageInput" type="file" accept="image/*" multiple hidden><div id="composeFormatPopover" role="toolbar" aria-label="文字格式" hidden><button type="button" data-format="bold" aria-label="加粗" title="加粗"><b>B</b></button><button type="button" data-format="underline" aria-label="下划线" title="下划线"><u>U</u></button><button type="button" data-format="highlight" aria-label="高亮" title="高亮">H</button></div><div id="composeSelectionToolbar" class="selection-toolbar" role="toolbar" aria-label="选中文字格式" hidden><button type="button" data-format="bold" aria-label="加粗" title="加粗"></button><button type="button" data-format="underline" aria-label="下划线" title="下划线"></button><button type="button" data-format="highlight" aria-label="高亮" title="高亮"></button><button type="button" data-format="list" aria-label="无序列表" title="无序列表"></button><button type="button" data-format="number" aria-label="有序列表" title="有序列表"></button><button type="button" data-action="tag" aria-label="插入标签" title="插入标签"></button><button type="button" data-action="image" aria-label="添加图片" title="添加图片"></button></div><div id="tagMenu" hidden role="listbox" aria-label="标签建议"></div><p id="status" role="status" aria-live="polite"></p><footer><div class="tools format-tools"><button id="tagCompose" type="button" aria-label="标签" title="插入标签">#</button><button id="imageCompose" type="button" aria-label="图片" title="添加图片" data-icon="image"></button><button id="boldCompose" type="button" aria-label="展开文字格式" title="展开文字格式" aria-expanded="false" aria-controls="composeFormatPopover" class="aa">Aa</button><button id="listCompose" type="button" aria-label="无序列表" title="无序列表" data-icon="list"></button><button id="numberCompose" type="button" aria-label="有序列表" title="有序列表" data-icon="ordered"></button><button id="quoteCompose" type="button" aria-label="引用" title="引用" data-icon="quote"></button><button id="linkCompose" type="button" aria-label="关联笔记" title="关联笔记" data-icon="mention"></button></div><div class="send-wrap"><span id="charCount">0</span><button id="cancelCompose" type="button" hidden>取消</button><button id="send" type="button" aria-label="保存笔记" title="保存笔记" disabled><span data-icon="send"></span></button></div></footer></section><script src="icons.js"></script><script src="core.js"></script><script src="markup.js"></script><script src="editor.js"></script><script src="compose.js"></script></body></html>

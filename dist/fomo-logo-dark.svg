@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-label="Fomo">
+  <rect x="2" y="2" width="92" height="92" rx="21" fill="#173d2d"/>
+  <path d="M27 22h43v10H37v14h28v10H37v20H27z" fill="#fff"/>
+  <circle cx="72" cy="72" r="6" fill="#72d6a1"/>
+  <text x="110" y="67" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#111">Fomo</text>
+</svg>

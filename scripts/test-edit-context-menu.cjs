@@ -1,0 +1,8 @@
+'use strict';
+const assert=require('node:assert/strict'),electron=require('electron');
+if(typeof electron==='string'){
+ const {spawn}=require('node:child_process'),env={...process.env};delete env.ELECTRON_RUN_AS_NODE;
+ const child=spawn(electron,['--headless','--no-sandbox','--disable-gpu',__filename],{env,stdio:'inherit',windowsHide:true});child.on('exit',code=>process.exitCode=code??1);
+}else{
+ const {app,BrowserWindow,Menu}=electron,fs=require('node:fs'),path=require('node:path'),parent=path.resolve(__dirname,'../work');fs.mkdirSync(parent,{recursive:true});app.setPath('userData',fs.mkdtempSync(path.join(parent,'context-menu-')));app.whenReady().then(()=>{const {installEditContextMenu}=require('../desktop/edit-context-menu.cjs'),w=new BrowserWindow({show:false}),original=Menu.buildFromTemplate;let template=null,popup=null;Menu.buildFromTemplate=items=>{template=items;return {popup:options=>popup=options};};try{installEditContextMenu(w);w.webContents.emit('context-menu',{}, {isEditable:false});assert.equal(template,null);w.webContents.emit('context-menu',{}, {isEditable:true,editFlags:{canUndo:true,canCopy:true,canPaste:true,canSelectAll:true}});assert.equal(popup.window,w);assert.deepEqual(template.filter(x=>x.role).map(x=>x.role),['undo','redo','cut','copy','paste','selectAll']);assert.equal(template.find(x=>x.role==='copy').enabled,true);assert.equal(template.find(x=>x.role==='cut').enabled,false);console.log('PASS: editable context menu exposes native actions and respects edit flags');}finally{Menu.buildFromTemplate=original;w.destroy();}app.exit(0);}).catch(error=>{console.error(error);app.exit(1)});
+}
