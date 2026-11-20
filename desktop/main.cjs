@@ -136,7 +136,7 @@ async function start() {
   const serveApp = async request => {
     const url = new URL(request.url);
     const file = decodeURIComponent(url.pathname).slice(1);
-    if (url.host !== 'app' || !['index.html','core.js','store.js','tag-sidebar.js','export.js','app.js','style.css','classic.css','reference.css','fidelity.css','sidebar.css','numbers-font.css','ui-font.css','cards.css','share.css','editor.js','editor-tags.js','icons.js','classic.js','markup.js','interactions.js','note.html','note.js'].includes(file)) return new Response('Not found', { status: 404 });
+    if (url.host !== 'app' || !['index.html','core.js','store.js','tag-sidebar.js','export.js','app.js','style.css','classic.css','reference.css','fidelity.css','sidebar.css','numbers-font.css','ui-font.css','HarmonyOS_Sans_SC_Regular.ttf','HarmonyOS_Sans_SC_Bold.ttf','cards.css','share.css','editor.js','editor-tags.js','icons.js','classic.js','markup.js','interactions.js','note.html','note.js'].includes(file)) return new Response('Not found', { status: 404 });
     const response = await net.fetch(pathToFileURL(path.join(app.getAppPath(), 'dist', file)).toString());
     if (!file.endsWith('.html')) return response;
     const version = encodeURIComponent(app.getVersion());

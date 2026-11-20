@@ -1,3 +1,5 @@
+@font-face{font-family:"Fomo HarmonyOS Sans";src:url("HarmonyOS_Sans_SC_Regular.ttf") format("truetype");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"Fomo HarmonyOS Sans";src:url("HarmonyOS_Sans_SC_Bold.ttf") format("truetype");font-style:normal;font-weight:600 900;font-display:swap}
 /* Fomo fidelity layer. One final source of truth after legacy styles. */
 :root {
   --fl-bg:#f9f9f9;
@@ -23,8 +25,8 @@
   --fl-shadow-card:0 0 4px rgba(0,0,0,.05);
   --fl-shadow-menu:0 14px 36px rgba(0,0,0,.14);
   --fl-shadow-sheet:0 8px 24px rgba(0,0,0,.20),0 24px 48px rgba(0,0,0,.30);
-  --fl-font-ui:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;
-  --fl-font-memo:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --fl-font-ui:"Fomo HarmonyOS Sans","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --fl-font-memo:"Fomo HarmonyOS Sans","Noto Sans SC","Microsoft YaHei",sans-serif;
   --fl-font-number:"WriteBoom Numbers","Arial Narrow","Segoe UI",sans-serif;
 }
 

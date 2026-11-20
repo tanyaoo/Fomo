@@ -1,7 +1,6 @@
 # Third-party notices
 
-The public candidate uses fonts provided by the operating system for Chinese
-text and does not distribute HarmonyOS Sans font files.
+HarmonyOS Sans SC Regular and Bold are unmodified fonts from Huawei’s official HarmonyOS Sans distribution. Copyright 2021 Huawei Device Co., Ltd. They are distributed under the HarmonyOS Sans Fonts License Agreement; see dist/LICENSE-HarmonyOS-Sans.txt.
 
 Lucide 1.8.0 Footprints icon — ISC License.
 Copyright (c) 2026 Lucide Icons and Contributors.

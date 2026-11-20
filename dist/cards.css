@@ -22,7 +22,7 @@ body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .me
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content u {text-underline-offset:5px}
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content a {text-decoration:none}
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content a:hover {text-decoration:underline;text-underline-offset:3px}
-body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content .tag-link {display:inline;font-family:inherit;font-size:calc(var(--memo-font-size, 14px) - 1px);line-height:inherit;font-weight:400;letter-spacing:inherit;padding:2px 4px;margin-right:2px;border:0;border-radius:8px;background:var(--reading-tag-bg);color:var(--reading-tag);transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content .tag-link {display:inline;font-family:inherit;font-size:12px;line-height:inherit;font-weight:400;letter-spacing:inherit;padding:2px 4px;margin-right:2px;border:0;border-radius:8px;background:var(--reading-tag-bg);color:var(--reading-tag);transition:background-color 180ms cubic-bezier(.2,0,0,1),color 180ms cubic-bezier(.2,0,0,1);box-decoration-break:clone;-webkit-box-decoration-break:clone}
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content .tag-link:hover {background:var(--reading-tag);color:var(--reading-tag-bg);text-decoration:none}
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content.collapsed {max-height:160px;overflow:hidden;mask-image:none}
 body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content.collapsed::after,
@@ -1083,3 +1083,8 @@ body.fomo-shell.dark #sidebar #profile>.brand-name{color:#fff}
 body.fomo-shell:is(.dark,:not(.dark)) :is(#editor.structured-editor,.note-editor.structured-editor) .editor-tag{font-size:calc(var(--memo-font-size, 14px) - 1px)!important;background:var(--reading-tag-bg);color:var(--reading-tag);padding:2px 4px;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 
 body.fomo-shell.dark:not([data-view=review]):not([data-view=random]) #memos>.memo .expand-button{color:var(--reading-tag)}
+
+/* Reading rhythm based on the selected reference. */
+.fomo-shell :is(.memo-content,.relation-body,#editor.structured-editor,.note-editor.structured-editor) {text-align:justify}
+.fomo-shell :is(.memo-content,.relation-body,#editor.structured-editor,.note-editor.structured-editor) p {margin-bottom:12px}
+body.fomo-shell:not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content p {margin-bottom:12px}

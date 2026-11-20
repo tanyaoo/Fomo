@@ -9,7 +9,7 @@ export function applyDisplayPreferences(value){
   body.classList.toggle('system-font-win',p.font==='system'&&windows);
   body.style.setProperty('--memo-font-size',p.fontSize+'px');
   body.style.setProperty('--memo-tag-font-size',({13:11,14:12,15:13,16:14,20:16,24:18,28:20,32:22}[p.fontSize]||p.fontSize-2)+'px');
-  body.style.setProperty('--memo-line-height',String(p.font==='default'&&p.lineHeight===1.8?1.62:p.lineHeight));
+  body.style.setProperty('--memo-line-height',String(p.font==='default'&&p.lineHeight===1.8?(11/7):p.lineHeight));
   const listPad={13:20,14:22,15:24,16:26,20:32,24:36,28:40,32:44};
   body.style.setProperty('--memo-ul-padding-left',(listPad[p.fontSize]||22)+'px');
   body.classList.toggle('heatmap-hidden',!p.showHeatmap);
