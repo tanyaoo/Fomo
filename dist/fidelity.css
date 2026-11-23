@@ -919,3 +919,6 @@ body.fomo-shell[data-view=review] #reviewNavigation .review-tools{flex-wrap:wrap
 body.fomo-shell[data-view=review] #reviewNavigation{flex-wrap:wrap}
 body.fomo-shell[data-view=review] #reviewNavigation .review-tools #reviewReviewed:disabled{color:var(--green);opacity:1}
 body.fomo-shell[data-view=review] #reviewNavigation .review-pages{margin-left:auto}
+
+/* Use the same translucent green for selected text throughout Fomo. */
+.fomo-shell::selection,.fomo-shell *::selection {background-color:rgba(36, 100, 67, .5)}
