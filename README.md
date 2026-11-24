@@ -185,7 +185,7 @@ npm run preview:studio    # 使用隔离数据进行视觉检查
 npm run dist:win          # 构建 Windows 安装包和 ZIP
 ```
 
-安装包输出到 `release/`。针对特定模块，也可以运行 `npm run test:settings`、`npm run test:editor`、`npm run test:workspace` 或 `npm run test:exports`。桌面相关测试需要可运行 Electron 的环境。
+项目使用 `.nvmrc` 固定的 Node 24 版本。首次构建请运行 `npm ci`，再运行 `npm test` 和 `npm run dist:win`。安装包输出到 `release/`。针对特定模块，也可以运行 `npm run test:settings`、`npm run test:editor`、`npm run test:workspace` 或 `npm run test:exports`。桌面相关测试需要可运行 Electron 的环境。
 
 Windows 正式发布默认要求代码签名。可使用证书或 Azure Trusted Signing；如果暂时接受未签名安装包，必须显式设置仓库变量 `MEMOFLOW_ALLOW_UNSIGNED_RELEASE=true`。未签名的安装包会显示未知发布者，不能标记为已签名版本。
 

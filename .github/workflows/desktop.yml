@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version-file: '.nvmrc'
           cache: npm
       - name: Prevent another build for an existing release tag
         if: env.PUBLISH_RELEASE == 'true'
@@ -44,6 +44,10 @@ jobs:
           MEMOFLOW_RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.version.outputs.tag }}
         run: node scripts/check-release.cjs
       - run: npm run test:release
+      - name: Verify generated artifacts match source
+        run: |
+          npm run build
+          npm run check:generated
       - run: npm run test:obsidian-package
       - name: Build Windows packages with explicit signing mode
         env:

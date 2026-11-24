@@ -75,7 +75,8 @@
     "test:statistics": "node scripts/test-statistics.cjs",
     "test:compose": "node scripts/test-compose-attachments.cjs",
     "test:compose-editor": "node scripts/test-compose-editor.cjs",
-    "test:release": "node scripts/test-release.cjs"
+    "test:release": "node scripts/test-release.cjs",
+    "check:generated": "node scripts/check-generated.cjs"
   },
   "devDependencies": {
     "bootstrap-icons": "1.13.1",
