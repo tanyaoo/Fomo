@@ -46,9 +46,18 @@ function validateSignature(result, publisher) {
   if (!result.timestamped) throw Error('签名缺少可信时间戳：' + (result.file || '未知文件'));
   return result;
 }
-module.exports = { signingConfiguration, validateSignature };
+function assertReleaseSigningPolicy(env = process.env) {
+  const publishing = env.PUBLISH_RELEASE === 'true' || Boolean(env.MEMOFLOW_RELEASE_TAG);
+  if (!publishing) return;
+  const mode = env.MEMOFLOW_WINDOWS_SIGNING?.trim() || 'none';
+  if (mode === 'none' && env.MEMOFLOW_ALLOW_UNSIGNED_RELEASE !== 'true') {
+    throw Error('正式发布未启用代码签名。请配置 certificate 或 azure 签名；如确认接受未知发布者，请显式设置仓库变量 MEMOFLOW_ALLOW_UNSIGNED_RELEASE=true');
+  }
+}
+module.exports = { assertReleaseSigningPolicy, signingConfiguration, validateSignature };
 if (require.main === module) {
   try {
+    assertReleaseSigningPolicy();
     const config = signingConfiguration();
     console.log(config.mode === 'none' ? '未启用正式签名：当前安装包仍会显示未知发布者。' : '签名参数已配置；只有构建后通过 Windows 信任和发布者校验，才可标记为已签名。');
   } catch (error) { console.error(error.message); process.exitCode = 1; }

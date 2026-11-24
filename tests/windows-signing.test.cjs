@@ -1,9 +1,15 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
-const {signingConfiguration,validateSignature}=require('../scripts/windows-signing.cjs');
+const {assertReleaseSigningPolicy,signingConfiguration,validateSignature}=require('../scripts/windows-signing.cjs');
 test('unsigned mode is explicit and cannot satisfy required signing',()=>{
  const config=signingConfiguration({});assert.equal(config.mode,'none');assert.equal(config.build.win.signExecutable,false);assert.equal(config.build.win.verifyUpdateCodeSignature,true);
  assert.throws(()=>signingConfiguration({MEMOFLOW_REQUIRE_SIGNING:'true'}),/要求正式签名/);assert.throws(()=>signingConfiguration({MEMOFLOW_WINDOWS_SIGNING:'invalid'}),/模式无效/);
+});
+test('published builds require signing or an explicit unsigned-release opt-in',()=>{
+ assert.doesNotThrow(()=>assertReleaseSigningPolicy({}));
+ assert.throws(()=>assertReleaseSigningPolicy({PUBLISH_RELEASE:'true'}),/未启用代码签名/);
+ assert.doesNotThrow(()=>assertReleaseSigningPolicy({PUBLISH_RELEASE:'true',MEMOFLOW_ALLOW_UNSIGNED_RELEASE:'true'}));
+ assert.doesNotThrow(()=>assertReleaseSigningPolicy({PUBLISH_RELEASE:'true',MEMOFLOW_WINDOWS_SIGNING:'certificate'}));
 });
 test('enabled signing needs an actual certificate and never serializes credential values',()=>{
  const env={MEMOFLOW_WINDOWS_SIGNING:'certificate',MEMOFLOW_SIGNING_PUBLISHER:'Example Verified Publisher'};
