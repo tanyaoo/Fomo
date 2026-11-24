@@ -70,7 +70,7 @@ test('default font clears system font classes across window types', () => {
   const body = apply({ font: 'default', fontSize: 14, lineHeight: 1.8, showHeatmap: true, showSources: false }, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
   assert.equal(body.dataset.displayFont, 'default');
   assert.equal(body.style.getPropertyValue('--memo-font-family'), 'var(--fl-font-memo)');
-  assert.equal(body.style.getPropertyValue('--memo-line-height'), '1.62');
+  assert.equal(body.style.getPropertyValue('--memo-line-height'), String(22 / 14));
   assert.equal(body.classList.contains('system-font-sidebar'), false);
   assert.equal(body.classList.contains('system-font-win'), false);
   assert.equal(body.classList.contains('heatmap-hidden'), false);

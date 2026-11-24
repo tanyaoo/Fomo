@@ -7,7 +7,7 @@ const cardCss = fs.readFileSync(path.join(__dirname, "..", "dist/cards.css"), "u
 const fidelityCss = fs.readFileSync(path.join(__dirname, "..", "dist/fidelity.css"), "utf8");
 const appJs = fs.readFileSync(path.join(__dirname, "..", "dist/app.js"), "utf8");
 test("reading tags follow the approved compact pill metrics", () => {
-  assert.match(cardCss, /#memos>\.memo \.memo-content \.tag-link \{[^}]*font-size:calc\(var\(--memo-font-size, 14px\) - 1px\);line-height:inherit;font-weight:400;[^}]*padding:2px 4px;[^}]*border-radius:8px/);
+  assert.match(cardCss, /#memos>\.memo \.memo-content \.tag-link \{[^}]*font-size:12px;line-height:inherit;font-weight:400;[^}]*padding:2px 4px;[^}]*border-radius:8px/);
   assert.match(cardCss, /:is\(\.memo-content,\.relation-body\) \.tag-link \{[^}]*font-size:calc\(var\(--memo-font-size, 14px\) - 1px\);line-height:inherit;padding:2px 4px;border-radius:8px/);
   assert.doesNotMatch(cardCss, /\.tag-link[^{]*\{[^}]*border-radius:6px/);
 });

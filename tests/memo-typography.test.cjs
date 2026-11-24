@@ -13,9 +13,9 @@ test("memo body text matches the reference tracking", () => {
   assert.match(referenceCss, /\.fomo-shell \.memo-content \{font-size:14px;line-height:1\.8;letter-spacing:\.1px\}/);
 });
 
-test("memo body uses the system font stack", () => {
-  assert.match(fidelityCss, /--fl-font-memo:"Microsoft YaHei UI","Microsoft YaHei",sans-serif/);
-  assert.doesNotMatch(fidelityCss, /HarmonyOS_Sans_SC_.*\.ttf/);
+test("memo body uses the configured HarmonyOS font stack", () => {
+  assert.match(fidelityCss, /--fl-font-memo:"Fomo HarmonyOS Sans","Noto Sans SC","Microsoft YaHei",sans-serif/);
+  assert.match(fidelityCss, /HarmonyOS_Sans_SC_Regular\.ttf/);
   assert.match(cardsCss, /#memos>\.memo \.memo-content \{font-family:var\(--memo-font-family,var\(--fl-font-memo\)\)/);
   assert.match(fidelityCss, /font-family:var\(--memo-font-family,var\(--fl-font-memo\)\);font-size:var\(--memo-font-size,14px\);line-height:var\(--memo-line-height,1\.8\)/);
 });
