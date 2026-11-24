@@ -25,8 +25,8 @@ jobs:
         run: |
           echo "Release runs must not be rebuilt. Recover using the retained original artifact."
           exit 1
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: npm
@@ -82,7 +82,7 @@ jobs:
           node scripts/verify-release-artifact.cjs release "$RELEASE_TAG" "$RELEASE_SHA"
       - name: Preserve exact build for recovery
         if: env.PUBLISH_RELEASE == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fomo-${{ steps.version.outputs.tag }}-${{ github.run_id }}
           path: |
