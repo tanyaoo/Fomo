@@ -85,7 +85,7 @@
     "electron-builder": "26.18.0",
     "electron-updater": "6.8.9",
     "esbuild": "0.28.2",
-    "js-yaml": "4.3.2",
+    "js-yaml": "5.5.0",
     "prosemirror-commands": "1.7.2",
     "prosemirror-history": "1.5.1",
     "prosemirror-inputrules": "1.5.1",
