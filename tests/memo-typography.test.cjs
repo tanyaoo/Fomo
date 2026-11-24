@@ -6,6 +6,7 @@ const path = require("node:path");
 const referenceCss = fs.readFileSync(path.join(__dirname, "..", "dist/reference.css"), "utf8");
 const fidelityCss = fs.readFileSync(path.join(__dirname, "..", "dist/fidelity.css"), "utf8");
 const cardsCss = fs.readFileSync(path.join(__dirname, "..", "dist/cards.css"), "utf8");
+const sidebarCss = fs.readFileSync(path.join(__dirname, "..", "dist/sidebar.css"), "utf8");
 const composeHtml = fs.readFileSync(path.join(__dirname, "..", "dist/compose.html"), "utf8");
 const noteHtml = fs.readFileSync(path.join(__dirname, "..", "dist/note.html"), "utf8");
 
@@ -18,6 +19,15 @@ test("memo body uses the configured HarmonyOS font stack", () => {
   assert.match(fidelityCss, /HarmonyOS_Sans_SC_Regular\.ttf/);
   assert.match(cardsCss, /#memos>\.memo \.memo-content \{font-family:var\(--memo-font-family,var\(--fl-font-memo\)\)/);
   assert.match(fidelityCss, /font-family:var\(--memo-font-family,var\(--fl-font-memo\)\);font-size:var\(--memo-font-size,14px\);line-height:var\(--memo-line-height,1\.8\)/);
+});
+
+test("light-mode reading and sidebar text keep their compact metrics", () => {
+  assert.match(cardsCss, /body\.fomo-shell:not\(\.dark\) :is\(\.memo-content,\.relation-body,#editor\.structured-editor,\.note-editor\.structured-editor\)\{letter-spacing:\.1px\}/);
+  assert.match(cardsCss, /body\.fomo-shell:not\(\.dark\):not\(\[data-view=review\]\):not\(\[data-view=random\]\) #memos>\.memo \.memo-content\{letter-spacing:\.1px\}/);
+  assert.match(sidebarCss, /#sidebar \.nav-item \{[^}]*font-size:13px/);
+  assert.match(sidebarCss, /#sidebar \.tag-select \{[^}]*font-size:13px/);
+  assert.match(sidebarCss, /#sidebar #quickFilters button \{[^}]*font-size:13px/);
+  assert.match(sidebarCss, /#sidebar \.sidebar-bottom>\[data-view\] \{[^}]*font-size:13px/);
 });
 
 test("memo paragraphs keep the reference height, spacing and card inset", () => {

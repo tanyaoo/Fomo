@@ -1059,8 +1059,8 @@ body.fomo-shell[data-view=review] #memos{scrollbar-width:none!important}
 body.fomo-shell[data-view=review] #memos::-webkit-scrollbar{display:none!important}
 .fomo-shell #detailEditSlot .composer-bottom{min-width:0;flex-wrap:wrap;height:auto}
 .fomo-shell #detailEditSlot .format-tools{min-width:0;flex-wrap:wrap}
-body.fomo-shell:not(.dark) :is(.memo-content,.relation-body,#editor.structured-editor,.note-editor.structured-editor){letter-spacing:normal}
-body.fomo-shell:not(.dark):not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content{letter-spacing:normal}
+body.fomo-shell:not(.dark) :is(.memo-content,.relation-body,#editor.structured-editor,.note-editor.structured-editor){letter-spacing:.1px}
+body.fomo-shell:not(.dark):not([data-view=review]):not([data-view=random]) #memos>.memo .memo-content{letter-spacing:.1px}
 body.fomo-shell:not(.dark) .topbar .search-wrap{background:#edf1ed}
 body.fomo-shell:not(.dark) #sidebar .nav-item.active{background:#dceee0;color:#244b30;--sidebar-icon-cutout:#dceee0}
 body.fomo-shell:not(.dark) #sidebar .nav-all-row:has(.active) #toggleQuickFilters{color:#244b30}
