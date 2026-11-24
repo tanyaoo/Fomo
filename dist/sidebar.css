@@ -23,7 +23,7 @@
 .fomo-shell #sidebar .numbers span::after {content:"";position:absolute;top:50%;left:calc(100% + 4px);width:5px;height:5px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;opacity:0;transform:translate(-2px,-50%) rotate(45deg);transition:opacity 150ms,transform 150ms}
 .fomo-shell #sidebar .numbers button:is(:hover,:focus-visible) :is(strong,span) {color:#696969}
 .fomo-shell #sidebar .numbers button:is(:hover,:focus-visible) span::after {opacity:1;transform:translate(0,-50%) rotate(45deg)}
-.fomo-shell #sidebar .nav-item {padding:0 10px;gap:12px;transform:none;font-size:14px;line-height:20px}
+.fomo-shell #sidebar .nav-item {padding:0 10px;gap:12px;transform:none;font-size:13px;line-height:20px}
 .fomo-shell #sidebar .nav-item>span:first-child,.fomo-shell #sidebar .tag-select>.hash {display:grid;place-items:center;flex:0 0 16px;width:16px;height:20px}
 .fomo-shell #sidebar .nav-item svg,.fomo-shell #sidebar .tag-select>.hash svg {width:16px;height:16px;fill:currentColor;stroke:none}
 .fomo-shell #sidebar .nav-item:hover {background:var(--hover)}
@@ -63,7 +63,7 @@
 .fomo-shell #sidebar .tag-search-highlight {background:#fff3a6;color:inherit;border-radius:2px}
 .fomo-shell #sidebar .tag-row {min-height:36px;border-radius:8px;transition:none}
 .fomo-shell #sidebar .tag-row:active {transform:scale(.96)}
-.fomo-shell #sidebar .tag-select {display:flex;align-items:center;gap:12px;width:100%;min-height:36px;padding:0 10px!important;font-size:14px;line-height:20px;font-weight:400;border-radius:8px;color:var(--sidebar-tag-text);min-width:0}
+.fomo-shell #sidebar .tag-select {display:flex;align-items:center;gap:12px;width:100%;min-height:36px;padding:0 10px!important;font-size:13px;line-height:20px;font-weight:400;border-radius:8px;color:var(--sidebar-tag-text);min-width:0}
 .fomo-shell #sidebar #tags>.tag-row .label {font-weight:400}
 .fomo-shell #sidebar .tag-select>.hash {transition:none}
 .fomo-shell #sidebar .tag-select>.hash svg {width:16px;height:16px;opacity:1}
@@ -98,7 +98,7 @@
 .fomo-shell #mergeTagTarget {display:block;width:100%;padding:9px 10px;font-size:14px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text)}
 .fomo-shell .tag-merge-preview {padding:12px;border-radius:6px;background:var(--hover);overflow-wrap:anywhere}
 .fomo-shell #sidebar .sidebar-bottom {padding:8px 0 0;color:var(--sidebar-muted)}
-.fomo-shell #sidebar .sidebar-bottom>[data-view] {flex:1;min-height:36px;padding:0 10px;gap:12px;border-radius:8px;font-size:14px}
+.fomo-shell #sidebar .sidebar-bottom>[data-view] {flex:1;min-height:36px;padding:0 10px;gap:12px;border-radius:8px;font-size:13px}
 .fomo-shell #sidebar .sidebar-bottom>[data-view]:hover {background:var(--hover)}
 .fomo-shell #sidebar .sidebar-bottom>[data-view].active {color:var(--green-dark);background:var(--green-pale)}
 .fomo-shell #sidebar .sidebar-bottom>a {min-width:30px;min-height:30px;border-radius:5px}
@@ -188,7 +188,7 @@
 .fomo-shell #sidebar #toggleQuickFilters svg {width:14px;height:14px;fill:currentColor;stroke:none;transform:rotate(0);transition:transform 180ms cubic-bezier(.2,0,0,1)}
 .fomo-shell #sidebar #toggleQuickFilters[aria-expanded=true] svg {transform:rotate(90deg)}
 .fomo-shell #sidebar #quickFilters {padding:0 0 0 29px;gap:0}
-.fomo-shell #sidebar #quickFilters button {display:flex;align-items:center;gap:12px;min-height:40px;padding:10px;font-size:14px;line-height:20px;color:var(--text);text-align:left}
+.fomo-shell #sidebar #quickFilters button {display:flex;align-items:center;gap:12px;min-height:40px;padding:10px;font-size:13px;line-height:20px;color:var(--text);text-align:left}
 .fomo-shell #sidebar #quickFilters button[hidden] {display:none}
 .fomo-shell #sidebar #quickFilters button>span:first-child {display:grid;place-items:center;flex:0 0 16px;width:16px;height:20px}
 .fomo-shell #sidebar #quickFilters svg {width:16px;height:16px}
