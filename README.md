@@ -8,7 +8,7 @@ Fomo 是一款面向 Windows 的本地优先卡片笔记应用。你可以用它
 
 项目借鉴了卡片笔记的记录方式与部分交互，并围绕本地存储、备份和桌面使用进行开发。Fomo 是独立项目。
 
-> **项目状态：** Fomo 仍在开发中。当前源码版本为 **1.0.61**；安装包和版本说明以 [Releases 页面](https://github.com/tanyaoo/Fomo/releases)为准。源码功能与已发布安装包不一定完全相同。
+> **项目状态：** Fomo 仍在开发中。当前源码版本为 **1.0.62**；安装包和版本说明以 [Releases 页面](https://github.com/tanyaoo/Fomo/releases)为准。源码功能与已发布安装包不一定完全相同。
 
 ## 目录
 
