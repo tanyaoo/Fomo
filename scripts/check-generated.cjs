@@ -4,7 +4,7 @@ const { execFileSync } = require('node:child_process');
 
 const roots = ['dist', 'desktop', 'obsidian-plugin', 'THIRD-PARTY-NOTICES.md'];
 const git = args => execFileSync('git', args, { encoding: 'buffer', maxBuffer: 128 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
-const textExtensions = new Set(['.css', '.html', '.js', '.json', '.md', '.txt', '.yml', '.yaml']);
+const textExtensions = new Set(['.cjs', '.css', '.html', '.js', '.json', '.md', '.ps1', '.sh', '.svg', '.toml', '.txt', '.xml', '.yml', '.yaml']);
 const text = file => textExtensions.has(require('node:path').extname(file));
 const normalizeText = value => value.toString('utf8').replace(/\r\n/g, '\n');
 const files = git(['ls-tree', '-r', '--name-only', 'HEAD', '--', ...roots]).toString('utf8').trim().split(/\r?\n/).filter(Boolean);
