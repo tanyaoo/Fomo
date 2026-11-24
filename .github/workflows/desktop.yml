@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Release runs must not be rebuilt. Recover using the retained original artifact."
           exit 1
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
