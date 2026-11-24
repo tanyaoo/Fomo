@@ -26,6 +26,7 @@ const { SCHEMES: NOTE_SCHEMES, parseNoteLink, findNoteLink } = require('./protoc
 // Keep the memo-flow origin for existing localStorage. New note links use fomo://.
 const HOME = 'memo-flow://app/index.html';
 const REPOSITORY = 'https://github.com/tanyaoo/Fomo';
+function readBuildIdentity(){try{return JSON.parse(fsSync.readFileSync(path.join(app.getAppPath(),'dist','build-info.json'),'utf8'));}catch{return null;}}
 protocol.registerSchemesAsPrivileged([{ scheme: 'fomo', privileges: { standard: true, secure: true, supportFetchAPI: true } },{ scheme: 'writeboom', privileges: { standard: true, secure: true, supportFetchAPI: true } },{ scheme: 'memo-flow', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 let window, tray, store, location, noteWindows, changingLocation = false, allowClose = false, closeRequested = false;
 let updates, updateTimer, updatePreparing = false, installApproved = false, updateRequestId='';
@@ -465,7 +466,7 @@ async function start() {
   handle('desktop:info', async () => {
     let lastBackup = '';
     try { lastBackup = JSON.parse(await fs.readFile(path.join(userDirectory, 'backup-history.json'), 'utf8')).lastBackup || ''; } catch {}
-    return { version: app.getVersion(), directory: store.directory, warning: store.warning, repository: REPOSITORY, lastBackup, closeToTray, trayAction, newNoteCloseAfterPublish, autoLaunchSupported:app.isPackaged&&process.platform==='win32',autoLaunch:app.isPackaged&&process.platform==='win32'?app.getLoginItemSettings({path:process.execPath}).openAtLogin:false };
+    return { version: app.getVersion(), build: readBuildIdentity(), directory: store.directory, warning: store.warning, repository: REPOSITORY, lastBackup, closeToTray, trayAction, newNoteCloseAfterPublish, autoLaunchSupported:app.isPackaged&&process.platform==='win32',autoLaunch:app.isPackaged&&process.platform==='win32'?app.getLoginItemSettings({path:process.execPath}).openAtLogin:false };
   });
   handle('desktop:open-data', async () => { const error = await shell.openPath(store.directory); if (error) throw Error(error); });
   handle('desktop:releases', () => shell.openExternal(RELEASES));

@@ -6,6 +6,7 @@ work/
 /output/
 /reference/
 /archive/
+dist/build-info.json
 .env
 .env.*
 !.env.example
