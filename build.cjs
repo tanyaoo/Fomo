@@ -2,6 +2,8 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const root=__dirname;
+const { writeBuildIdentity }=require('./scripts/build-identity.cjs');
+writeBuildIdentity({cwd:root});
 // Reject corrupted source bytes instead of silently shipping replacement characters.
 for(const file of fs.readdirSync(path.join(root,'dist'))){
  if(/\.(css|js|html)$/.test(file))new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,'dist',file)));

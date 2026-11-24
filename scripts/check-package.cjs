@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),asar=require('@electron/asar');
 const root=path.resolve(__dirname,'..'),{version}=require('../package.json'),archive=path.join(root,'release/win-unpacked/resources/app.asar');
 const hash=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');
-const packed=JSON.parse(asar.extractFile(archive,'package.json').toString());assert.equal(packed.version,version);
+const packed=JSON.parse(asar.extractFile(archive,'package.json').toString());assert.equal(packed.version,version);const {verifyBuildIdentity}=require('./verify-build-identity.cjs');const buildIdentity=verifyBuildIdentity({archive,root,version,release:process.env.PUBLISH_RELEASE==='true'});
 const files=asar.listPackage(archive).map(name=>name.replace(/\\/g,'/').replace(/^\//,''));let verified=0;
 for(const file of files){
  if(file==='package.json')continue;
@@ -24,5 +24,5 @@ if(signingConfig.mode!=='none'){
  const signatures=JSON.parse(command.stdout.replace(/^\uFEFF/,''));assert.equal(signatures.length,3);
  signatures.forEach(record=>validateSignature(record,signingConfig.publisher));signing={mode:signingConfig.mode,verified:true,files:signatures};
 }
-const result={version,verifiedFiles:verified,asarSha256:hash(fs.readFileSync(archive)),artifacts,signing};fs.mkdirSync(path.join(root,'work'),{recursive:true});fs.writeFileSync(path.join(root,'work',`verified-release-${version}.json`),JSON.stringify(result,null,2));console.log('PASS: packaged '+version+'; '+verified+' files match current source, no data/test artifacts; EXE and ZIP hashes recorded.');
+const result={version,buildIdentity,verifiedFiles:verified,asarSha256:hash(fs.readFileSync(archive)),artifacts,signing};fs.mkdirSync(path.join(root,'work'),{recursive:true});fs.writeFileSync(path.join(root,'work',`verified-release-${version}.json`),JSON.stringify(result,null,2));console.log('PASS: packaged '+version+'; '+verified+' files match current source, no data/test artifacts; EXE and ZIP hashes recorded.');
 console.log(signing.verified?'PASS: Windows trusts installer, app and helper signatures; timestamp and updater publisher verified.':'NOTICE: 正式代码签名未启用；本次构建不得标为已签名。');
