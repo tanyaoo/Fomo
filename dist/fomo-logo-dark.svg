@@ -1,6 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-label="Fomo">
-  <rect x="2" y="2" width="92" height="92" rx="21" fill="#173d2d"/>
-  <path d="M27 22h43v10H37v14h28v10H37v20H27z" fill="#fff"/>
-  <circle cx="72" cy="72" r="6" fill="#72d6a1"/>
-  <text x="110" y="67" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#111">Fomo</text>
+  <title>Fomo</title>
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18352E"/><stop offset=".55" stop-color="#0B1613"/><stop offset="1" stop-color="#080D0C"/></linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#789F95"/><stop offset=".45" stop-color="#205E4D"/><stop offset="1" stop-color="#182B26"/></linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#D8FFEE"/><stop offset=".48" stop-color="#52F5C5"/><stop offset="1" stop-color="#00DFA4"/></linearGradient>
+    <linearGradient id="short" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#59F5CD"/><stop offset="1" stop-color="#00DDA5"/></linearGradient>
+  </defs>
+  <g transform="translate(-0.4609 -0.4609) scale(0.09465021)">
+    <rect x="26" y="26" width="972" height="972" rx="224" fill="url(#tile)" stroke="url(#edge)" stroke-width="8"/>
+    <rect x="234" y="500" width="100" height="232" rx="50" fill="#B4D9DF"/>
+    <rect x="386" y="396" width="100" height="248" rx="50" fill="#BDEAE4"/>
+    <rect x="538" y="208" width="100" height="608" rx="50" fill="url(#hero)"/>
+    <rect x="690" y="500" width="100" height="232" rx="50" fill="url(#short)"/>
+  </g>
+  <g transform="translate(88.8 0) scale(0.3)" fill="#111">
+    <path d="M64 264V95Q64 56 105 56H216V103H118V144H205V190H118V264Z"/>
+    <path fill-rule="evenodd" d="M231 185a79 79 0 1 0 158 0a79 79 0 1 0-158 0M270 185a40 40 0 1 0 80 0a40 40 0 1 0-80 0"/>
+    <path d="M407 264V112H455V132C469 110 484 106 505 106C532 106 551 118 562 138C580 115 600 106 624 106C670 106 696 138 696 184V264H646V188C646 163 634 151 614 151C593 151 580 166 580 190V264H530V188C530 163 518 151 499 151C478 151 457 166 457 190V264Z"/>
+    <path fill-rule="evenodd" d="M714 185a79 79 0 1 0 158 0a79 79 0 1 0-158 0M753 185a40 40 0 1 0 80 0a40 40 0 1 0-80 0"/>
+    <rect x="302" y="86" width="16" height="58" rx="8" fill="#00C992"/>
+  </g>
 </svg>
