@@ -80,22 +80,22 @@
     "verify:installed": "node scripts/verify-installed-build.cjs"
   },
   "devDependencies": {
-    "bootstrap-icons": "1.13.1",
+    "bootstrap-icons": "1.13.2",
     "electron": "44.9.3",
     "electron-builder": "26.18.0",
-    "electron-updater": "6.8.9",
+    "electron-updater": "6.8.11",
     "esbuild": "0.28.2",
     "js-yaml": "4.3.2",
     "prosemirror-commands": "1.7.2",
-    "prosemirror-history": "1.5.1",
-    "prosemirror-inputrules": "1.5.1",
+    "prosemirror-history": "1.5.2",
+    "prosemirror-inputrules": "1.7.0",
     "prosemirror-keymap": "1.2.3",
-    "prosemirror-model": "1.25.12",
+    "prosemirror-model": "1.25.13",
     "prosemirror-schema-basic": "1.2.5",
-    "prosemirror-schema-list": "1.5.1",
+    "prosemirror-schema-list": "1.6.1",
     "prosemirror-state": "1.4.4",
-    "prosemirror-transform": "1.12.2",
-    "prosemirror-view": "1.42.6"
+    "prosemirror-transform": "1.12.7",
+    "prosemirror-view": "1.43.0"
   },
   "build": {
     "publish": [
