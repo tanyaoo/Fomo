@@ -100,6 +100,9 @@ module.exports = async ({ app, window, getStore, userDirectory }) => {
     await new Promise(resolve => setTimeout(resolve, 50));
   }
   assert.equal((await getStore().readDraft()).current.content, '', 'cleared main draft should be persisted');
+  const durableDraft = await getStore().readComposeDraft();
+  assert.match(durableDraft.content, /转移到新窗口/, 'the receiving window must persist the transferred draft before acknowledgement');
+  assert.match(durableDraft.html, /<strong>/, 'the persisted transfer retains formatting');
 
   await composeWindow.webContents.executeJavaScript(`document.querySelector('#composeEditor').memoEditor.setText(Array.from({length: 80}, (_, index) => '长内容 ' + (index + 1)).join('\\n'))`);
   await new Promise(resolve => setTimeout(resolve, 250));
@@ -111,7 +114,7 @@ module.exports = async ({ app, window, getStore, userDirectory }) => {
   await new Promise(resolve => setTimeout(resolve, 150));
   assert.equal(await composeWindow.webContents.executeJavaScript('document.querySelector("#composeEditor").contains(document.activeElement)'), true);
 
-  composeWindow.close();
+  composeWindow.destroy();
   console.log('PASS: editor-detach — rich draft transfer, explicit acknowledgement, caret focus and isolated compose window');
   window.close();
 };

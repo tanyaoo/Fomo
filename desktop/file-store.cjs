@@ -3,6 +3,9 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { randomUUID, createHash } = require('node:crypto');
 const Core = require('../dist/core.js');
+function validComposeDraft(item) {
+  return !!item && (item.submissionId===undefined || typeof item.submissionId==='string' && /^[a-f0-9-]{36}$/.test(item.submissionId)) && typeof item.content === 'string' && item.content.length <= 1000000 && typeof item.html === 'string' && item.html.length <= 2000000 && Array.isArray(item.images) && item.images.every(src => typeof src === 'string' && src.length <= 12000000 && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(src)) && item.images.reduce((sum,src)=>sum+src.length,0) <= 45000000;
+}
 
 async function atomicWrite(file, value, io = fs) {
   await io.mkdir(path.dirname(file), { recursive: true });
@@ -99,11 +102,53 @@ class FileStore {
     });
   }
   readDraft() { return this.serialize(async () => {const value=await this.readJSON(path.join(this.directory,'draft.json'));if(value!==undefined&&(!value||typeof value.current?.content!=='string'))throw Error('草稿格式无效，原文件仍然保留');return value;}); }
+  composeDraft(value) {
+    return this.serialize(async () => {
+      if (!validComposeDraft(value)) throw Error('新建窗口草稿格式无效');
+      const file = path.join(this.directory, 'compose-draft.json');
+      const existing = await this.readJSON(file);
+      if (existing !== undefined && !validComposeDraft(existing)) throw Error('已有新建窗口草稿无法读取，原文件未覆盖');
+      return atomicWrite(file, JSON.stringify(value), this.io);
+    });
+  }
+  readComposeDraft() {
+    return this.serialize(async () => {
+      const value = await this.readJSON(path.join(this.directory, 'compose-draft.json'));
+      if (value !== undefined && !validComposeDraft(value)) throw Error('新建窗口草稿格式无效，原文件仍然保留');
+      return value;
+    });
+  }
+  clearComposeDraftIfMatches(expected) {
+    return this.replaceComposeDraftIfMatches(expected,{content:'',html:'',images:[]});
+  }
+  replaceComposeDraftIfMatches(expected,replacement) {
+    return this.serialize(async () => {
+      if (!validComposeDraft(expected) || !expected.submissionId || !validComposeDraft(replacement)) throw Error('草稿标识无效');
+      const file=path.join(this.directory,'compose-draft.json'),current=await this.readJSON(file);
+      if(current!==undefined&&!validComposeDraft(current))throw Error('新建窗口草稿格式无效，原文件仍然保留');
+      if(!current||current.submissionId!==expected.submissionId||current.content.trim()!==expected.content.trim()||current.html!==expected.html||JSON.stringify(current.images)!==JSON.stringify(expected.images))return false;
+      await atomicWrite(file,JSON.stringify(replacement),this.io);
+      return true;
+    });
+  }
+  ensureComposeDraftId() {
+    return this.serialize(async () => {
+      const file=path.join(this.directory,'compose-draft.json');
+      const existing=await this.readJSON(file);
+      if(existing!==undefined&&!validComposeDraft(existing))throw Error('新建窗口草稿格式无效，原文件仍然保留');
+      if(existing?.submissionId)return existing;
+      const draft={...(existing||{content:'',html:'',images:[]}),submissionId:randomUUID()};
+      await atomicWrite(file,JSON.stringify(draft),this.io);
+      return draft;
+    });
+  }
   backupInfo() { return this.serialize(() => this.backups.info()); }
   configureBackups(value) { return this.serialize(() => this.backups.configure(value)); }
   backupNow() { return this.serialize(async () => { await this.backups.create(); return this.backups.info(); }); }
   autoBackup() { return this.serialize(() => this.backups.automatic()); }
   previewBackup(id) { return this.serialize(() => this.backups.preview(id)); }
+  previewComposeDraftBackup(id) { return this.serialize(() => this.backups.previewComposeDraft(id)); }
+  restoreComposeDraftBackup(request) { return this.serialize(() => this.backups.restoreComposeDraft(request)); }
   deleteBackup(id) { return this.serialize(() => this.backups.remove(id)); }
   restoreBackup(request) { return this.serialize(() => this.backups.restore(request)); }
   restoreAiConversationBackup(request) { return this.serialize(() => this.backups.restoreConversations(request)); }
@@ -283,4 +328,4 @@ class FileStore {
     } catch (error) { this.warning = '笔记已保存，Markdown 副本生成失败：' + error.message; }
   }
 }
-module.exports = { FileStore, atomicWrite, markdown };
+module.exports = { FileStore, atomicWrite, markdown, validComposeDraft };

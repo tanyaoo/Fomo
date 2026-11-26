@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('memoDesktop', {
   configureBackups: value => ipcRenderer.invoke('desktop:backup-configure',value),
   backupNow: () => ipcRenderer.invoke('desktop:backup-now'),
   previewBackup: id => ipcRenderer.invoke('desktop:backup-preview',id),
+  previewComposeDraftBackup: id => ipcRenderer.invoke('desktop:backup-preview-compose-draft',id),
+  restoreComposeDraftBackup: request => ipcRenderer.invoke('desktop:backup-restore-compose-draft',request),
   deleteBackup: id => ipcRenderer.invoke('desktop:backup-delete',id),
   restoreBackup: request => ipcRenderer.invoke('desktop:backup-restore',request),
   restoreAiConversationBackup: request => ipcRenderer.invoke('desktop:backup-restore-ai-conversations',request),
