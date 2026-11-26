@@ -104,7 +104,7 @@ class ComposeWindow {
     const store=this.getStore(),submissionId=payload.submissionId||randomUUID();
     if(payload.submissionId){const draft=await store.readComposeDraft();if(!draft||draft.submissionId!==submissionId||draft.content.trim()!==content||draft.html!==payload.html||JSON.stringify(draft.images)!==JSON.stringify(images))throw Error('草稿已变化，请重新保存');}
     const state=await store.readState(),desired=JSON.parse(JSON.stringify(state)),now=new Date().toISOString(),existing=state.memos.find(item=>item.id===submissionId);
-    if(existing&&(existing.content!==content||existing.html!==payload.html||JSON.stringify(existing.images)!==JSON.stringify(images)))throw Error('笔记标识冲突，草稿已保留');
+    if(existing&&(existing.content!==content||existing.html!==payload.html||JSON.stringify(existing.images)!==JSON.stringify(images)))throw Error('笔记标识冲突，草稿已保留。请关闭并重新打开新建窗口后继续保存');
     const memo=existing||{id:submissionId,content,html:payload.html,created:now,updated:now,starred:false,deleted:false,images,references:[]};
     if(!existing){memo.references=Core.refsOf(memo);desired.memos.unshift(memo);await store.save(state,desired);}
     try{if(payload.submissionId)await store.clearComposeDraftIfMatches({submissionId,content,html:payload.html,images});}
