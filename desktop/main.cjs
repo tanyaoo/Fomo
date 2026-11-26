@@ -225,7 +225,7 @@ async function start() {
   window.webContents.on('will-navigate', (event, url) => { if (url !== HOME) event.preventDefault(); });
   window.webContents.on('will-attach-webview', event => event.preventDefault());
   noteWindows=new NoteWindows({root:app.getAppPath(),getStore:()=>store,onCompose:focusEditor,onSaved:id=>{if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);},onEdit:id=>{if(window.isMinimized())window.restore();window.show();window.focus();window.webContents.send('desktop:open-memo',id);}});
-  const composeWindow=new ComposeWindow({root:app.getAppPath(),getStore:()=>store,canOpen:()=>!changingLocation&&!closeRequested&&!updatePreparing&&!installApproved&&!allowClose,boundsFile:path.join(userDirectory,'compose-window.json'),getNewNoteCloseAfterPublish:()=>newNoteCloseAfterPublish,onShowPublished:(id,bounds)=>noteWindows.open(id,false,bounds),onSaved:id=>{noteWindows.notify();if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);}});
+  const composeWindow=new ComposeWindow({root:app.getAppPath(),getStore:()=>{if(changingLocation||closeRequested||updatePreparing||installApproved||allowClose)throw Error('请等待当前操作结束');return store;},canOpen:()=>!changingLocation&&!closeRequested&&!updatePreparing&&!installApproved&&!allowClose,boundsFile:path.join(userDirectory,'compose-window.json'),getNewNoteCloseAfterPublish:()=>newNoteCloseAfterPublish,onShowPublished:(id,bounds)=>noteWindows.open(id,false,bounds),onSaved:id=>{noteWindows.notify();if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);}});
   const devWatchers = [];
   if (!app.isPackaged && process.env.WRITEOOM_DEV_PREVIEW === '1') {
     let reloadTimer = null, srcTimer = null, building = false;
