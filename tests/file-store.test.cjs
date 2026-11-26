@@ -15,6 +15,14 @@ async function fixture(t, io) {
 }
 const memo = id => ({ id, content: '记录一个想法 #工作/灵感', html: '<b>记录一个想法</b> #工作/灵感', images: [],
   created: '2026-10-11T01:00:00.000Z', updated: '2026-10-11T01:00:00.000Z', deleted: false, starred: false });
+test('completed submission clears only its own unchanged composer draft', async t => {
+  const {store}=await fixture(t);await store.init();
+  const old={submissionId:'12345678-1234-1234-1234-123456789abc',content:'旧草稿',html:'<p>旧草稿</p>',images:[]};
+  const newer={submissionId:'87654321-4321-4321-4321-cba987654321',content:'新草稿',html:'<p>新草稿</p>',images:[]};
+  await store.composeDraft(old);await store.composeDraft(newer);
+  assert.equal(await store.clearComposeDraftIfMatches(old),false);assert.deepEqual(await store.readComposeDraft(),newer);
+  assert.equal(await store.clearComposeDraftIfMatches(newer),true);assert.deepEqual(await store.readComposeDraft(),{content:'',html:'',images:[]});
+});
 test('native save survives restart, retains rich text, and generates searchable Markdown', async t => {
   const { dir, store } = await fixture(t); const base = await store.init();
   const next = await store.save(base, { ...base, memos: [memo('one')] });
@@ -141,6 +149,40 @@ test('native draft with editing context and images survives a complete restart',
   const { store, dir } = await fixture(t); await store.init();
   const draft = { current: { content: '还没写完', html: '<b>还没写完</b>', images: [] }, editing: 'one', editingBase: memo('one'), newDraft: { content: '之前的草稿', images: [] } };
   await store.draft(draft); assert.deepEqual(await new FileStore(dir).readDraft(), draft);
+});
+test('independent composer draft survives restart and rejects corrupt existing data', async t => {
+  const {store,dir}=await fixture(t);await store.init();
+  const draft={content:'待续',html:'<p><strong>待续</strong></p>',images:['data:image/png;base64,YQ==']};
+  await store.composeDraft(draft);assert.deepEqual(await new FileStore(dir).readComposeDraft(),draft);
+  const file=path.join(dir,'compose-draft.json');await fs.writeFile(file,'broken');
+  await assert.rejects(store.readComposeDraft());await assert.rejects(store.composeDraft(draft));assert.equal(await fs.readFile(file,'utf8'),'broken');
+});
+test('failed independent composer draft replacement preserves the previous copy', async t => {
+  let fail=false;
+  const io={...fs,rename:async(from,to)=>{if(fail&&to.endsWith('compose-draft.json'))throw Error('disk full');return fs.rename(from,to);}};
+  const {store,dir}=await fixture(t,io);await store.init();
+  const previous={content:'原稿',html:'<p>原稿</p>',images:[]};
+  await store.composeDraft(previous);fail=true;
+  await assert.rejects(store.composeDraft({content:'新稿',html:'<p>新稿</p>',images:[]}),/disk full/);
+  assert.deepEqual(await new FileStore(dir).readComposeDraft(),previous);
+});
+test('independent composer draft writes are serialized with the latest value retained', async t => {
+  const {store,dir}=await fixture(t);await store.init();
+  const first={content:'第一版',html:'<p>第一版</p>',images:[]},second={content:'第二版',html:'<p>第二版</p>',images:[]};
+  await Promise.all([store.composeDraft(first),store.composeDraft(second)]);
+  assert.deepEqual(await new FileStore(dir).readComposeDraft(),second);
+});
+test('a legacy composer draft receives a stable submission identity without losing content', async t => {
+  const {store,dir}=await fixture(t);await store.init();
+  await store.composeDraft({content:'原草稿',html:'<p>原草稿</p>',images:[]});
+  const first=await store.ensureComposeDraftId(),second=await new FileStore(dir).ensureComposeDraftId();
+  assert.match(first.submissionId,/^[a-f0-9-]{36}$/);assert.deepEqual(second,first);assert.equal(first.content,'原草稿');
+});
+test('independent composer draft rejects malformed attachments without replacing a valid draft', async t => {
+  const {store}=await fixture(t);await store.init();
+  const previous={content:'保留',html:'<p>保留</p>',images:[]};await store.composeDraft(previous);
+  await assert.rejects(store.composeDraft({...previous,images:['file:///private.png']}),/格式无效/);
+  assert.deepEqual(await store.readComposeDraft(),previous);
 });
 
 

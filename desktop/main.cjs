@@ -225,7 +225,7 @@ async function start() {
   window.webContents.on('will-navigate', (event, url) => { if (url !== HOME) event.preventDefault(); });
   window.webContents.on('will-attach-webview', event => event.preventDefault());
   noteWindows=new NoteWindows({root:app.getAppPath(),getStore:()=>store,onCompose:focusEditor,onSaved:id=>{if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);},onEdit:id=>{if(window.isMinimized())window.restore();window.show();window.focus();window.webContents.send('desktop:open-memo',id);}});
-  const composeWindow=new ComposeWindow({root:app.getAppPath(),getStore:()=>store,boundsFile:path.join(userDirectory,'compose-window.json'),getNewNoteCloseAfterPublish:()=>newNoteCloseAfterPublish,onShowPublished:(id,bounds)=>noteWindows.open(id,false,bounds),onSaved:id=>{noteWindows.notify();if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);}});
+  const composeWindow=new ComposeWindow({root:app.getAppPath(),getStore:()=>store,canOpen:()=>!changingLocation&&!closeRequested&&!updatePreparing&&!installApproved&&!allowClose,boundsFile:path.join(userDirectory,'compose-window.json'),getNewNoteCloseAfterPublish:()=>newNoteCloseAfterPublish,onShowPublished:(id,bounds)=>noteWindows.open(id,false,bounds),onSaved:id=>{noteWindows.notify();if(window&&!window.isDestroyed())window.webContents.send('desktop:note-saved',id);}});
   const devWatchers = [];
   if (!app.isPackaged && process.env.WRITEOOM_DEV_PREVIEW === '1') {
     let reloadTimer = null, srcTimer = null, building = false;
@@ -279,6 +279,7 @@ async function start() {
   handle('desktop:update-preference', auto => updates.preference(auto));
   const prepareUpdate = () => {
     if (noteWindows.hasPendingEdits()) throw Error('请先保存或取消独立笔记窗口中的修改，再安装更新');
+    if ((composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))) throw Error('请先保存并关闭新建笔记窗口，再安装更新');
     if (changingLocation || closeRequested || updatePreparing || installApproved) throw Error('请等待当前操作结束');
     updates.prepare(); updatePreparing = true;
     const requestId=updateRequestId=require('node:crypto').randomUUID();
@@ -295,8 +296,10 @@ async function start() {
     try {
       await store.tail;
       if (noteWindows.hasPendingEdits()) throw Error('独立笔记窗口仍有未保存的修改');
+      if ((composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))) throw Error('新建笔记窗口仍在打开');
       clearTimeout(windowSaveTimer); windowSaveTimer = null;
       await writeWindowState();
+      if ((composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))) throw Error('新建笔记窗口仍在打开');
       updatePreparing = false; installApproved = true; allowClose = true;
       updates.install();
       if (updates.status().phase === 'error') { installApproved = false; allowClose = false; window.webContents.send('desktop:update-aborted'); }
@@ -309,9 +312,11 @@ async function start() {
     closeRequested = false;
     if (ok!==true) { explicitQuit=false; await dialog.showMessageBox(window, { type: 'warning', title: '草稿尚未安全保存', message: '请先保存笔记或复制输入内容，再关闭应用。' }); return; }
     if (noteWindows.hasPendingEdits()) { explicitQuit=false; await dialog.showMessageBox(window, { type: 'warning', title: '独立笔记尚未保存', message: '请先保存或取消独立笔记窗口中的修改，再退出应用。' });noteWindows.focusPending();return false; }
+    if ((composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))) { explicitQuit=false; await dialog.showMessageBox(window, { type: 'warning', title: '新建笔记窗口仍在打开', message: '请先保存并关闭新建笔记窗口，再退出应用。' });composeWindow.open();return false; }
     clearTimeout(windowSaveTimer); windowSaveTimer = null;
     await store.tail;
     await writeWindowState();
+    if ((composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))) { explicitQuit=false; await dialog.showMessageBox(window, { type: 'warning', title: '新建笔记窗口仍在打开', message: '请先保存并关闭新建笔记窗口，再退出应用。' }); composeWindow.open(); return false; }
     allowClose = true; window.close();
   });
   const accessStore = callback => { if (changingLocation) throw Error('正在迁移数据，请稍候'); if(installApproved)throw Error('正在安装更新，请稍候'); return callback(store); };
@@ -362,6 +367,12 @@ async function start() {
   handle('desktop:backup-configure', value => accessStore(current => current.configureBackups(value)));
   handle('desktop:backup-now', () => accessStore(current => current.backupNow()));
   handle('desktop:backup-preview', id => accessStore(current => current.previewBackup(id)));
+  handle('desktop:backup-preview-compose-draft', id => accessStore(current => current.previewComposeDraftBackup(id)));
+  handle('desktop:backup-restore-compose-draft', async request => {
+    if(changingLocation||closeRequested||updatePreparing||installApproved)throw Error('请等待当前操作结束');
+    if(composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed()))throw Error('请先关闭新建笔记窗口');
+    changingLocation=true;try{return await store.restoreComposeDraftBackup(request);}finally{changingLocation=false;}
+  });
   handle('desktop:backup-delete', id => accessStore(current => current.deleteBackup(id)));
   handle('desktop:backup-restore-ai-conversations', request => accessStore(current => current.restoreAiConversationBackup(request)));
   handle('desktop:backup-restore', async request => { const result=await accessStore(current => current.restoreBackup(request));noteWindows.notify();composeWindow.notifyPreferences();return result; });
@@ -453,6 +464,7 @@ async function start() {
   const backupTimer=setInterval(()=>{if(!changingLocation&&!updatePreparing&&!installApproved)store.autoBackup().catch(()=>{});},60000);
   window.once('closed',()=>clearInterval(backupTimer));
   handle('desktop:change-data', async () => {
+    if (composeWindow.detaching||composeWindow.opening||(composeWindow.window&&!composeWindow.window.isDestroyed())) throw Error('请先保存并关闭新建笔记窗口');
     if (changingLocation || closeRequested || updatePreparing || installApproved) throw Error('请等待当前操作结束');
     changingLocation = true;
     try {

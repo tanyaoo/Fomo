@@ -124,6 +124,10 @@ test('review scope supports Fomo-style counts, dates, and hierarchical tags',()=
  for(const note of notes)assert.deepEqual(reviewTags(note.content),Core.tagsOf(note.content));assert.deepEqual(reviewNotes(notes,date,'',false,{period:'3',include:'工作',exclude:'工作/排除'}).map(n=>n.id),['a']);assert.deepEqual(reviewNotes(notes,date,'',false,{noTags:true}).map(n=>n.id),['b']);assert.equal(reviewOptions({count:999,period:'bad'}).count,8);assert.equal(reviewOptions({count:999,period:'bad'}).period,'all');
  const many=Array.from({length:20},(_,i)=>({id:'n-'+i,created:recent,content:'文本'}));assert.equal(reviewNotes(many,date,'',false,{count:4}).length,4);assert.equal(reviewNotes(many,date,'',false,{count:12}).length,12);
 });
+test('review month range includes the last valid day in a shorter month',()=>{
+ const {reviewNotes}=PluginClass._test,date=new Date(2025,2,31,12),notes=[{id:'in',created:new Date(2025,1,28,13).toISOString(),content:'边界'},{id:'out',created:new Date(2025,1,27,13).toISOString(),content:'更早'}];
+ assert.deepEqual(reviewNotes(notes,date,'',false,{period:'1'}).map(note=>note.id),['in']);
+});
 test('review settings save independently without dropping concurrent options',async()=>{
  const plugin=new PluginClass();plugin.settings={folder:'Fomo'};plugin.settingsWrites=Promise.resolve();plugin.saveData=async()=>{};plugin.app={workspace:{getLeavesOfType:()=>[]}};await Promise.all([plugin.updateReviewOption('count',12),plugin.updateReviewOption('period','3'),plugin.updateReviewOption('include','#工作/项目/')]);assert.equal(plugin.settings.reviewOptions.count,12);assert.equal(plugin.settings.reviewOptions.period,'3');assert.equal(plugin.settings.reviewOptions.include,'工作/项目');await assert.rejects(plugin.updateReviewOption('count',100),/无效/);await assert.rejects(plugin.updateReviewOption('include','工作 invalid'),/无效/);assert.equal(plugin.settings.reviewOptions.count,12);
 });

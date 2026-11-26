@@ -2,8 +2,11 @@
   'use strict';
   const $=s=>document.querySelector(s);document.querySelectorAll('[data-icon]').forEach(el=>{el.innerHTML=window.memoIcons[el.dataset.icon]||'';});
   let editor=null,pinned=false,busy=false,reading=false,disposed=false,images=[],tagsCache=[],tagChoices=[],tagIndex=-1,tagRequest=null,tagRevision=0,dismissedSelection='',dismissedTag='';
+  let submissionId='',draftReady=false,draftTimer=null,draftWrites=Promise.resolve(),draftError=null;
+  function queueComposeDraft(){if(!draftReady||disposed)return;clearTimeout(draftTimer);draftTimer=null;const value={content:editor.getText(),html:editor.getHTML(),images:[...images],submissionId};draftWrites=draftWrites.then(()=>window.memoCompose.writeDraft(value)).then(()=>{draftError=null;}).catch(error=>{draftError=error;$('#status').textContent='草稿备份失败：'+error.message;});}
+  function scheduleComposeDraft(){if(!draftReady||disposed)return;clearTimeout(draftTimer);draftTimer=setTimeout(queueComposeDraft,300);}
   const menu=$('#tagMenu');
-  const update=()=>{const count=editor?editor.getDisplayText().trim().length:0;$('#charCount').textContent=count+' 字';$('#charCount').hidden=count===0;$('#cancelCompose').hidden=count===0&&!images.length;$('#cancelCompose').disabled=busy||reading;$('#composePlaceholder').hidden=count>0||images.length>0;$('#send').disabled=busy||reading||(count===0&&!images.length);$('#imageCompose').disabled=busy||reading;$('#composeImageInput').disabled=busy||reading;$('#composeEditor').setAttribute('aria-busy',String(reading));if(editor){for(const [id,command]of [['listCompose','list'],['numberCompose','number'],['quoteCompose','quote']])$('#'+id).setAttribute('aria-pressed',String(editor.isActive(command)));for(const button of document.querySelectorAll('#composeFormatPopover [data-format],#composeSelectionToolbar [data-format]'))button.setAttribute('aria-pressed',String(editor.isActive(button.dataset.format)));updateSelectionToolbar();}};
+  const update=()=>{const count=editor?editor.getDisplayText().trim().length:0;$('#charCount').textContent=count+' 字';$('#charCount').hidden=count===0;$('#cancelCompose').hidden=count===0&&!images.length;$('#cancelCompose').disabled=busy||reading;$('#composePlaceholder').hidden=count>0||images.length>0;$('#send').disabled=busy||reading||!draftReady||(count===0&&!images.length);$('#imageCompose').disabled=busy||reading||!draftReady;$('#composeImageInput').disabled=busy||reading||!draftReady;$('#composeEditor').setAttribute('aria-busy',String(reading));if(editor){for(const [id,command]of [['listCompose','list'],['numberCompose','number'],['quoteCompose','quote']])$('#'+id).setAttribute('aria-pressed',String(editor.isActive(command)));for(const button of document.querySelectorAll('#composeFormatPopover [data-format],#composeSelectionToolbar [data-format]'))button.setAttribute('aria-pressed',String(editor.isActive(button.dataset.format)));updateSelectionToolbar();}};
   function selectionKey(){const selection=editor?.getSelection();return selection?selection.anchor+':'+selection.head:'';}
   function hideSelection(dismiss=false){$('#composeSelectionToolbar').hidden=true;if(dismiss)dismissedSelection=selectionKey();}
   function updateSelectionToolbar(){
@@ -76,14 +79,15 @@
     suggestTags();
   }
   const expandTagMenu=()=>{editor.insertText('#');editor.focus();setTimeout(()=>{update();suggestTags();},0);};
-  function renderImages(){const wrap=$('#composeImages');wrap.replaceChildren();wrap.hidden=!images.length;images.forEach((src,index)=>{const box=document.createElement('div');box.className='compose-image';const img=document.createElement('img');img.src=src;img.alt='笔记图片 '+(index+1);const remove=document.createElement('button');remove.type='button';remove.setAttribute('aria-label','移除图片 '+(index+1));remove.textContent='×';remove.onclick=()=>{if(busy||reading)return;images.splice(index,1);renderImages();update();};box.append(img,remove);wrap.append(box);});}
-  editor=window.MemoEditor.create($('#composeEditor'),{onFiles:files=>addImages(files),onChange:()=>{dismissedTag='';suggestTags();update();},onSelection:()=>{suggestTags();update();},onKeyDown:event=>{if(!event.isComposing&&event.keyCode!==229&&(event.ctrlKey||event.metaKey||event.shiftKey)&&event.key==='Enter'){event.preventDefault();save();return true;}return false;}});update();
+  function renderImages(){const wrap=$('#composeImages');wrap.replaceChildren();wrap.hidden=!images.length;images.forEach((src,index)=>{const box=document.createElement('div');box.className='compose-image';const img=document.createElement('img');img.src=src;img.alt='笔记图片 '+(index+1);const remove=document.createElement('button');remove.type='button';remove.setAttribute('aria-label','移除图片 '+(index+1));remove.textContent='×';remove.onclick=()=>{if(busy||reading)return;images.splice(index,1);renderImages();update();scheduleComposeDraft();};box.append(img,remove);wrap.append(box);});}
+  editor=window.MemoEditor.create($('#composeEditor'),{onFiles:files=>addImages(files),onChange:()=>{dismissedTag='';suggestTags();update();scheduleComposeDraft();},onSelection:()=>{suggestTags();update();},onKeyDown:event=>{if(!event.isComposing&&event.keyCode!==229&&(event.ctrlKey||event.metaKey||event.shiftKey)&&event.key==='Enter'){event.preventDefault();save();return true;}return false;}});update();
   const detachedToken=new URLSearchParams(location.search).get('draft');
-  if(detachedToken){
+  if(detachedToken){busy=true;editor.setEditable(false);update();
     $('#status').textContent='正在接收草稿…';
-    window.memoCompose.takeDraft(detachedToken).then(async draft=>{if(disposed)return false;if(draft.html)editor.setHTML(draft.html);else editor.setText(draft.content||'');images=Array.isArray(draft.images)?draft.images:[];renderImages();update();if(typeof editor.focusEnd==='function')editor.focusEnd();else editor.focusTextBlock(0,0);const loaded=await window.memoCompose.draftLoaded(detachedToken);if(!loaded)throw Error('草稿接收确认失败');$('#status').textContent='';return true;}).catch(error=>{$('#status').textContent='草稿接收失败：'+error.message;});
+    window.memoCompose.takeDraft(detachedToken).then(async draft=>{if(disposed)return false;submissionId=draft.submissionId;if(draft.html)editor.setHTML(draft.html);else editor.setText(draft.content||'');images=Array.isArray(draft.images)?draft.images:[];renderImages();update();if(typeof editor.focusEnd==='function')editor.focusEnd();else editor.focusTextBlock(0,0);const loaded=await window.memoCompose.draftLoaded(detachedToken);if(!loaded)throw Error('草稿接收确认失败');draftReady=true;busy=false;editor.setEditable(true);update();editor.focusEnd();scheduleComposeDraft();$('#status').textContent='';return true;}).catch(error=>{$('#status').textContent='草稿接收失败：'+error.message;});
   }else{
-    editor.focusTextBlock(0,0);
+    busy=true;editor.setEditable(false);update();
+    window.memoCompose.readDraft().then(draft=>{if(disposed)return;if(draft){submissionId=draft.submissionId;if(draft.html)editor.setHTML(draft.html);else editor.setText(draft.content||'');images=draft.images;renderImages();}draftReady=true;busy=false;editor.setEditable(true);update();editor.focusTextBlock(0,0);}).catch(error=>{if(disposed)return;busy=false;draftError=error;editor.setEditable(false);update();$('#status').textContent='草稿读取失败，原文件已保留：'+error.message;});
   }
   loadTags();
   $('#composeEditor').setAttribute('role','textbox');$('#composeEditor').setAttribute('aria-multiline','true');$('#composeEditor').setAttribute('aria-label','记录想法');$('#composeEditor').setAttribute('aria-controls','tagMenu');$('#composeEditor').setAttribute('aria-autocomplete','list');
@@ -97,13 +101,14 @@
   window.addEventListener('beforeunload',stopReads);
   function readImage(file,index,total){return new Promise((resolve,reject)=>{const reader=new FileReader();readers.add(reader);reader.onload=()=>{readers.delete(reader);resolve(reader.result);};reader.onerror=()=>{readers.delete(reader);reject(reader.error||Error('图片读取失败'));};reader.onabort=()=>{readers.delete(reader);reject(Error('读取已取消'));};reader.onprogress=e=>{if(!disposed&&e.lengthComputable)$('#status').textContent='图片 '+index+'/'+total+' · '+Math.round(e.loaded/e.total*100)+'%';};reader.readAsDataURL(file);});}
   async function addImages(files){
-    if(busy||reading||disposed)return;
-    if(files.reduce((sum,file)=>sum+file.size,0)>32*1024*1024){$('#status').textContent='单次图片总大小请不超过 32 MB，已有草稿保留';return;}
+    if(busy||reading||disposed||!draftReady)return;
+    const existingBytes=images.reduce((sum,src)=>{const data=src.slice(src.indexOf(',')+1);return sum+data.length*3/4-(data.endsWith('==')?2:data.endsWith('=')?1:0);},0);
+    if(existingBytes+files.reduce((sum,file)=>sum+file.size,0)>32*1024*1024){$('#status').textContent='图片总大小请不超过 32 MB，已有草稿保留';return;}
     reading=true;update();let failed=0,added=0;
     try{for(const [index,file]of files.entries()){
       if(disposed)break;$('#status').textContent='图片 '+(index+1)+'/'+files.length+' 读取中…';
       if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)||file.size>8*1024*1024){failed++;continue;}
-      try{const src=await readImage(file,index+1,files.length);if(disposed)break;if(typeof src==='string'){const decoded=new Image();decoded.src=src;await decoded.decode();if(disposed)break;images.push(src);added++;renderImages();}}catch{failed++;}
+      try{const src=await readImage(file,index+1,files.length);if(disposed)break;if(typeof src==='string'){const decoded=new Image();decoded.src=src;await decoded.decode();if(disposed)break;images.push(src);added++;renderImages();scheduleComposeDraft();}}catch{failed++;}
     }}finally{reading=false;if(!disposed){renderImages();update();$('#status').textContent=failed?'已添加 '+added+' 张，'+failed+' 张未添加；支持 PNG、JPEG、WebP、GIF，单张不超过 8 MB。已有草稿保留':'';}}
   }
   $('#composeEditor').addEventListener('dragover',event=>{if(event.dataTransfer?.types.includes('Files'))event.preventDefault();});
@@ -118,14 +123,16 @@
   formatPanel.onclick=event=>{const button=event.target.closest('[data-format]');if(button&&!busy){editor.command(button.dataset.format);update();}};
   $('#linkCompose').onmousedown=event=>event.preventDefault();
   $('#linkCompose').onclick=()=>{if(!busy){editor.insertText('@');editor.focus();setTimeout(suggestTags,0);}};
-  $('#cancelCompose').onclick=()=>{if(busy||reading)return;editor.setText('');images=[];hideTagMenu();hideFormats();renderImages();update();editor.focus();};
+  $('#cancelCompose').onclick=()=>{if(busy||reading)return;editor.setText('');images=[];hideTagMenu();hideFormats();renderImages();update();scheduleComposeDraft();editor.focus();};
   $('#listCompose').onclick=()=>editor.command('list');
   $('#numberCompose').onclick=()=>editor.command('number');
   $('#quoteCompose').onclick=()=>editor.command('quote');
   
-  $('#closeCompose').onclick=()=>{if(busy)return;stopReads();window.memoCompose.close();};
+  const requestClose=async()=>{if(busy)return;if(reading){$('#status').textContent='图片正在读取，请稍候';return;}busy=true;editor.setEditable(false);update();try{if(draftReady){clearTimeout(draftTimer);queueComposeDraft();await draftWrites;if(draftError)throw draftError;}await window.memoCompose.close();}catch(error){$('#status').textContent='关闭失败：'+error.message;}finally{if(!disposed){busy=false;editor.setEditable(draftReady);update();}}};
+  window.memoCompose.onRequestClose(requestClose);
+  $('#closeCompose').onclick=requestClose;
   $('#pinCompose').onclick=async()=>{try{pinned=await window.memoCompose.pin(!pinned);$('#pinCompose').setAttribute('aria-pressed',String(pinned));$('#pinCompose').title=pinned?'取消窗口置顶':'窗口置顶';$('#pinCompose').setAttribute('aria-label',$('#pinCompose').title);$('#status').textContent=pinned?'窗口已置顶':'已取消置顶';setTimeout(()=>{if($('#status').textContent===(pinned?'窗口已置顶':'已取消置顶'))$('#status').textContent='';},1600);}catch(error){$('#status').textContent=error.message;}};
-  const save=async()=>{if(busy||reading||disposed)return;hideTagMenu();const content=editor.getText().trim();if(!content&&!images.length){editor.focusTextBlock(0,0);return;}busy=true;editor.setEditable(false);update();try{await window.memoCompose.save({content,html:editor.getHTML(),images:[...images]});busy=false;editor.setEditable(true);editor.setText('');images=[];renderImages();update();$('#status').textContent='已保存';}catch(error){busy=false;editor.setEditable(true);update();$('#status').textContent='保存失败：'+error.message;}};
+  const save=async()=>{if(busy||reading||disposed||!draftReady)return;const content=editor.getText().trim();if(!content&&!images.length){editor.focusTextBlock(0,0);return;}busy=true;editor.setEditable(false);update();clearTimeout(draftTimer);queueComposeDraft();await draftWrites;if(draftError){busy=false;editor.setEditable(true);update();$('#status').textContent='草稿备份失败，请重试';return;}hideTagMenu();try{await window.memoCompose.save({content,html:editor.getHTML(),images:[...images],submissionId});submissionId=crypto.randomUUID();busy=false;editor.setEditable(true);editor.setText('');images=[];renderImages();update();$('#status').textContent='已保存';}catch(error){busy=false;editor.setEditable(true);update();$('#status').textContent='保存失败：'+error.message;}};
   $('#send').onclick=save;
   document.addEventListener('keydown',event=>{
     if(event.isComposing||event.keyCode===229||editor.isComposing())return;
@@ -148,5 +155,5 @@
   document.addEventListener('pointerdown',event=>{if(!event.target.closest('#composeFormatPopover,#boldCompose'))hideFormats();if(!event.target.closest('#composeEditor,#composeSelectionToolbar'))hideSelection();},true);
   $('#composeEditor').addEventListener('scroll',()=>{hideSelection();if(!menu.hidden)positionTags();});window.addEventListener('resize',()=>{hideSelection();if(!menu.hidden)positionTags();});document.addEventListener('focusin',()=>{if(!$('#composeEditor').contains(document.activeElement)&&!$('#composeSelectionToolbar').contains(document.activeElement))hideSelection();});
   $('#composeEditor').addEventListener('blur',()=>setTimeout(()=>{const active=document.activeElement;if(active===$('#composeEditor')||$('#composeEditor').contains(active)||menu.contains(active)||active?.closest?.('#tagMenu,#tagCompose'))return;hideTagMenu();},120));
-  document.addEventListener('keydown',event=>{if(event.isComposing||event.keyCode===229||editor.isComposing()||event.defaultPrevented)return;if((event.ctrlKey||event.metaKey||event.shiftKey)&&event.key==='Enter'){event.preventDefault();save();}if(event.key==='Escape'&&!busy){stopReads();window.memoCompose.close();}});
+  document.addEventListener('keydown',event=>{if(event.isComposing||event.keyCode===229||editor.isComposing()||event.defaultPrevented)return;if((event.ctrlKey||event.metaKey||event.shiftKey)&&event.key==='Enter'){event.preventDefault();save();}if(event.key==='Escape'&&!busy)requestClose();});
 })();
